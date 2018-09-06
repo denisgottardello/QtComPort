@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/Icons">
+        <file>Icons/close.png</file>
+        <file>Icons/open.png</file>
+        <file>Icons/new.png</file>
+        <file>Icons/ok.png</file>
+        <file>Icons/QtComPort.png</file>
+    </qresource>
+    <qresource prefix="/qt/etc">
+        <file>qt.conf</file>
+    </qresource>
+    <qresource prefix="/Translations">
+        <file>QtComPort_it.qm</file>
+    </qresource>
+</RCC>

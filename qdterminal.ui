@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>745</width>
+    <width>819</width>
     <height>480</height>
    </rect>
   </property>
@@ -157,29 +157,6 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_7">
-     <property name="leftMargin">
-      <number>1</number>
-     </property>
-     <property name="topMargin">
-      <number>1</number>
-     </property>
-     <property name="rightMargin">
-      <number>1</number>
-     </property>
-     <property name="bottomMargin">
-      <number>1</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="QLConnection">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
     <widget class="QWidget" name="widget_4" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <property name="leftMargin">
@@ -247,6 +224,13 @@
         </property>
         <property name="margin">
          <number>3</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="QLConnection">
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
@@ -328,6 +312,44 @@
               <property name="checked">
                <bool>true</bool>
               </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_2">
+              <property name="title">
+               <string>New line width</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_9">
+               <property name="leftMargin">
+                <number>1</number>
+               </property>
+               <property name="topMargin">
+                <number>1</number>
+               </property>
+               <property name="rightMargin">
+                <number>1</number>
+               </property>
+               <property name="bottomMargin">
+                <number>1</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="QRBCR">
+                 <property name="text">
+                  <string>CR</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="QRBLF">
+                 <property name="text">
+                  <string>LF</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -552,6 +574,8 @@
   <tabstop>QPBDTR</tabstop>
   <tabstop>QPBRTS</tabstop>
   <tabstop>QRBPrintableOnly</tabstop>
+  <tabstop>QRBCR</tabstop>
+  <tabstop>QRBLF</tabstop>
   <tabstop>QRBSym</tabstop>
   <tabstop>QRBDec</tabstop>
   <tabstop>QRBHex</tabstop>

@@ -65,7 +65,7 @@ QDFontDialog::~QDFontDialog() {
     delete ui;
 }
 
-void QDFontDialog::on_QLWFonts_clicked(QModelIndex index) {
+void QDFontDialog::on_QLWFonts_clicked(QModelIndex ) {
     QFont font= ui->QLWFonts->item(ui->QLWFonts->currentIndex().row())->font();
     switch(ui->QLWStyles->currentIndex().row()) {
     case 0: font.setStyle(QFont::StyleNormal); break;

@@ -61,8 +61,8 @@ public:
     void SendByteArray(QByteArray QBABufferIn);
 
 private:
-    bool IsNewConnection, IsCTSEnabled, IsDCDEnabled, IsDSREnabled;
-    int RowCount;
+    bool IsNewConnection;
+    int PinoutSignals, RowCount;
     QByteArray QBAByteIn;
     QDateTime QDTLastByteIn;
     QSerialPort SerialPort;

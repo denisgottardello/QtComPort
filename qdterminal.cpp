@@ -26,12 +26,14 @@ QDTerminal::QDTerminal(QWidget *parent, QString ConnectionPath) : QDialog(parent
     this->ConnectionPath= ConnectionPath;
     this->IsNewConnection= IsNewConnection;
     QdTerminal= NULL;
-    IsCTSEnabled= IsDCDEnabled= IsDSREnabled= false;
+    PinoutSignals= 0;
     DirectoryPath= "";
     ui->QLCTS->setStyleSheet("background-color: green; color: black");
     ui->QLDCD->setStyleSheet("background-color: green; color: black");
     ui->QLDSR->setStyleSheet("background-color: green; color: black");
-    QFont(ui->QPTELog->font()).setFixedPitch(true);
+    QFont Font("DejaVu Sans Mono", 8);
+    Font.setFixedPitch(true);
+    ui->QPTELog->setFont(Font);
     Tcp= new QTcpSocket(this);
     QDTLastByteIn= QDateTime::currentDateTime();
     RowCount= 0;
@@ -106,20 +108,20 @@ void QDTerminal::Error(QAbstractSocket::SocketError ) {
 
 void QDTerminal::OnTimeout() {
     QTControl->stop();
-    if ((SerialPort.pinoutSignals() & QSerialPort::ClearToSendSignal)!= IsCTSEnabled) {
+    if ((SerialPort.pinoutSignals() & QSerialPort::ClearToSendSignal)!= (PinoutSignals & QSerialPort::ClearToSendSignal)) {
         if (SerialPort.pinoutSignals() & QSerialPort::ClearToSendSignal) ui->QLCTS->setStyleSheet("background-color: red; color: black");
         else ui->QLCTS->setStyleSheet("background-color: green; color: black");
-        IsCTSEnabled= SerialPort.pinoutSignals() & QSerialPort::ClearToSendSignal;
+        PinoutSignals= SerialPort.pinoutSignals();
     }
-    if ((SerialPort.pinoutSignals() & QSerialPort::DataCarrierDetectSignal)!= IsDCDEnabled) {
+    if ((SerialPort.pinoutSignals() & QSerialPort::DataCarrierDetectSignal)!= (PinoutSignals & QSerialPort::DataCarrierDetectSignal)) {
         if (SerialPort.pinoutSignals() & QSerialPort::DataCarrierDetectSignal) ui->QLDCD->setStyleSheet("background-color: red; color: black");
         else ui->QLDCD->setStyleSheet("background-color: green; color: black");
-        IsDCDEnabled= SerialPort.pinoutSignals() & QSerialPort::DataCarrierDetectSignal;
+        PinoutSignals= SerialPort.pinoutSignals();
     }
-    if ((SerialPort.pinoutSignals() & QSerialPort::DataSetReadySignal)!= IsDSREnabled) {
+    if ((SerialPort.pinoutSignals() & QSerialPort::DataSetReadySignal)!= (PinoutSignals & QSerialPort::DataSetReadySignal)) {
         if (SerialPort.pinoutSignals() & QSerialPort::DataSetReadySignal) ui->QLDSR->setStyleSheet("background-color: red; color: black");
         else ui->QLDSR->setStyleSheet("background-color: green; color: black");
-        IsDSREnabled= SerialPort.pinoutSignals() & QSerialPort::DataSetReadySignal;
+        PinoutSignals= SerialPort.pinoutSignals();
     }
     QByteArray QBABufferIn= SerialPort.readAll();
     if (QBABufferIn.size()> 0) {
@@ -557,6 +559,7 @@ void QDTerminal::SaveProfile(QString ConnectionPath) {
         Settings->setValue("Mode", Mode);
         Settings->setValue("NewLineAfter", ui->QCBNewLineAfter->isChecked());
         Settings->setValue("NewLineAfterMs", ui->QSBNewLineAfterMs->value());
+        Settings->setValue("NewLineWidth", ui->QRBCR->isChecked() ? "cr" : "lf");
         Settings->setValue("RowCount", ui->QCBRowCount->isChecked());
         Settings->setValue("SendBreak", SendBreak);
         Settings->setValue("Server", Server);
@@ -573,8 +576,14 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
         if (ui->QRBPrintableOnly->isChecked()) {
             switch(QBABufferIn.at(count)) {
             case 7: QApplication::beep(); break;
-            case 10: BufferIn+= "\n"; break;
-            case 13: break;
+            case 10: {
+                if (ui->QRBLF->isChecked()) BufferIn+= "\n";
+                break;
+            }
+            case 13: {
+                if (ui->QRBCR->isChecked()) BufferIn+= "\n";
+                break;
+            }
             default: {
                     if (int(QBABufferIn.at(count))>= 32 && int(QBABufferIn.at(count))<= 126) BufferIn+= char(QBABufferIn.at(count));
                     else BufferIn+= "[?]";
@@ -705,6 +714,8 @@ void QDTerminal::ReadConfigurationFile() {
         ui->QSBNewLineAfterMs->setValue(Settings->value("NewLineAfterMs", 1000).toInt());
         ui->QCBRowCount->setChecked(Settings->value("RowCount", false).toBool());
         ui->QCBTimestamp->setChecked(Settings->value("Timestamp", false).toBool());
+        ui->QRBCR->setChecked(Settings->value("NewLineWidth", "lf").toString().compare("cr")== 0);
+        ui->QRBLF->setChecked(Settings->value("NewLineWidth", "lf").toString().compare("lf")== 0);
         SendBreak= Settings->value("SendBreak", false).toBool();
         Server= Settings->value("Server").toString();
         Socket= Settings->value("Socket").toInt();

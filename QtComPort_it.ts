@@ -256,71 +256,91 @@
     </message>
     <message>
         <location filename="qdterminal.ui" line="336"/>
+        <source>New line width</source>
+        <translation type="unfinished">Nuova riga con</translation>
+    </message>
+    <message>
+        <location filename="qdterminal.ui" line="354"/>
+        <source>CR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdterminal.ui" line="361"/>
+        <source>LF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdterminal.ui" line="374"/>
         <source>Sym</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="346"/>
+        <location filename="qdterminal.ui" line="384"/>
         <source>Dec</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="353"/>
+        <location filename="qdterminal.ui" line="391"/>
         <source>Hex</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="360"/>
+        <location filename="qdterminal.ui" line="398"/>
         <source>Bin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="367"/>
+        <location filename="qdterminal.ui" line="405"/>
         <source>New line after</source>
         <translation type="unfinished">Caporiga dopo</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="384"/>
+        <location filename="qdterminal.ui" line="422"/>
         <source>ms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="391"/>
+        <location filename="qdterminal.ui" line="429"/>
         <source>Row count</source>
         <translation type="unfinished">Numero riga</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="458"/>
+        <location filename="qdterminal.ui" line="436"/>
+        <source>Timestamp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdterminal.ui" line="503"/>
         <source>Send</source>
         <translation type="unfinished">Invia</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="483"/>
+        <location filename="qdterminal.ui" line="528"/>
         <source>Clear</source>
         <translation type="unfinished">Pulisci</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="490"/>
+        <location filename="qdterminal.ui" line="535"/>
         <source>Select all</source>
         <translation type="unfinished">Seleziona tutto</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="497"/>
+        <location filename="qdterminal.ui" line="542"/>
         <source>Copy</source>
         <translation type="unfinished">Copia</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="504"/>
+        <location filename="qdterminal.ui" line="549"/>
         <source>Save to file</source>
         <translation type="unfinished">Salva su file</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="514"/>
+        <location filename="qdterminal.ui" line="559"/>
         <source>Send file</source>
         <translation type="unfinished">Invia file</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="494"/>
+        <location filename="qdterminal.cpp" line="504"/>
         <source>The ComPort is already in use!</source>
         <translation type="unfinished"></translation>
     </message>

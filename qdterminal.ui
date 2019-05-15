@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>819</width>
+    <width>827</width>
     <height>480</height>
    </rect>
   </property>
@@ -305,13 +305,65 @@
              <number>1</number>
             </property>
             <item>
-             <widget class="QRadioButton" name="QRBPrintableOnly">
-              <property name="text">
-               <string>Printable only</string>
+             <widget class="QGroupBox" name="groupBox_3">
+              <property name="title">
+               <string>Log mode</string>
               </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <property name="leftMargin">
+                <number>1</number>
+               </property>
+               <property name="topMargin">
+                <number>1</number>
+               </property>
+               <property name="rightMargin">
+                <number>1</number>
+               </property>
+               <property name="bottomMargin">
+                <number>1</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="QRBPrintableOnly">
+                 <property name="text">
+                  <string>Printable only</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="QRBSym">
+                 <property name="text">
+                  <string>Sym</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="QRBDec">
+                 <property name="text">
+                  <string>Dec</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="QRBHex">
+                 <property name="text">
+                  <string>Hex</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="QRBBin">
+                 <property name="text">
+                  <string>Bin</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -350,37 +402,6 @@
                 </widget>
                </item>
               </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="QRBSym">
-              <property name="text">
-               <string>Sym</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="QRBDec">
-              <property name="text">
-               <string>Dec</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="QRBHex">
-              <property name="text">
-               <string>Hex</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="QRBBin">
-              <property name="text">
-               <string>Bin</string>
-              </property>
              </widget>
             </item>
             <item>
@@ -574,12 +595,12 @@
   <tabstop>QPBDTR</tabstop>
   <tabstop>QPBRTS</tabstop>
   <tabstop>QRBPrintableOnly</tabstop>
-  <tabstop>QRBCR</tabstop>
-  <tabstop>QRBLF</tabstop>
   <tabstop>QRBSym</tabstop>
   <tabstop>QRBDec</tabstop>
   <tabstop>QRBHex</tabstop>
   <tabstop>QRBBin</tabstop>
+  <tabstop>QRBCR</tabstop>
+  <tabstop>QRBLF</tabstop>
   <tabstop>QCBNewLineAfter</tabstop>
   <tabstop>QSBNewLineAfterMs</tabstop>
   <tabstop>QCBRowCount</tabstop>

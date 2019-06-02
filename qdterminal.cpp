@@ -37,6 +37,8 @@ QDTerminal::QDTerminal(QWidget *parent, QString ConnectionPath) : QDialog(parent
     Tcp= new QTcpSocket(this);
     QDTLastByteIn= QDateTime::currentDateTime();
     RowCount= 0;
+    QFontMetrics FontMetrics(ui->QPTELog->font());
+    ui->QPTELog->setTabStopWidth(2* FontMetrics.width(' '));
 }
 
 QDTerminal::~QDTerminal() {
@@ -176,6 +178,8 @@ void QDTerminal::on_QPBChangeFont_clicked() {
     if (QdFontDialog.exec()== QDialog::Accepted) {
         ui->QPTELog->setFont(QdFontDialog.GetCurrentFont());
         ui->QPBSaveProfile->setEnabled(true);
+        QFontMetrics FontMetrics(ui->QPTELog->font());
+        ui->QPTELog->setTabStopWidth(2* FontMetrics.width(' '));
     }
 }
 
@@ -241,30 +245,30 @@ void QDTerminal::on_QPBModify_clicked() {
         }
     }
     switch(Parity) {
-    case 'N': QdOpenComPort.ui->QCBParity->setCurrentIndex(0); break;
-    case 'E': QdOpenComPort.ui->QCBParity->setCurrentIndex(1); break;
-    case 'O': QdOpenComPort.ui->QCBParity->setCurrentIndex(2); break;
-    case 'M': QdOpenComPort.ui->QCBParity->setCurrentIndex(3); break;
-    case 'S': QdOpenComPort.ui->QCBParity->setCurrentIndex(4); break;
+        case 'N': QdOpenComPort.ui->QCBParity->setCurrentIndex(0); break;
+        case 'E': QdOpenComPort.ui->QCBParity->setCurrentIndex(1); break;
+        case 'O': QdOpenComPort.ui->QCBParity->setCurrentIndex(2); break;
+        case 'M': QdOpenComPort.ui->QCBParity->setCurrentIndex(3); break;
+        case 'S': QdOpenComPort.ui->QCBParity->setCurrentIndex(4); break;
     }
     switch(ByteSize) {
-    case 5: QdOpenComPort.ui->QCBDataBits->setCurrentIndex(0); break;
-    case 6: QdOpenComPort.ui->QCBDataBits->setCurrentIndex(1); break;
-    case 7: QdOpenComPort.ui->QCBDataBits->setCurrentIndex(2); break;
-    case 8: QdOpenComPort.ui->QCBDataBits->setCurrentIndex(3); break;
+        case 5: QdOpenComPort.ui->QCBDataBits->setCurrentIndex(0); break;
+        case 6: QdOpenComPort.ui->QCBDataBits->setCurrentIndex(1); break;
+        case 7: QdOpenComPort.ui->QCBDataBits->setCurrentIndex(2); break;
+        case 8: QdOpenComPort.ui->QCBDataBits->setCurrentIndex(3); break;
     }
     switch(StopBits) {
-    case 0: QdOpenComPort.ui->QCBStopBits->setCurrentIndex(0); break;
-    case 1: QdOpenComPort.ui->QCBStopBits->setCurrentIndex(1); break;
-    case 2: QdOpenComPort.ui->QCBStopBits->setCurrentIndex(2); break;
+        case 0: QdOpenComPort.ui->QCBStopBits->setCurrentIndex(0); break;
+        case 1: QdOpenComPort.ui->QCBStopBits->setCurrentIndex(1); break;
+        case 2: QdOpenComPort.ui->QCBStopBits->setCurrentIndex(2); break;
     }
     QdOpenComPort.ui->QCBFlowControl->setCurrentIndex(FlowControl);
     QdOpenComPort.ui->QCBSendBreak->setChecked(SendBreak);
     QdOpenComPort.ui->QLEServer->setText(Server);
     QdOpenComPort.ui->QSBSocket->setValue(Socket);
     switch(Mode) {
-    case MODERS232: QdOpenComPort.ui->QRBRS232->setChecked(true); break;
-    case MODETCPIP: {
+        case MODERS232: QdOpenComPort.ui->QRBRS232->setChecked(true); break;
+        case MODETCPIP: {
             QdOpenComPort.ui->QRBTCPIP->setChecked(true);
             QdOpenComPort.ui->QRBTCPIP->click();
             break;
@@ -272,22 +276,22 @@ void QDTerminal::on_QPBModify_clicked() {
     }
     if (QdOpenComPort.exec()== QDialog::Accepted) {
         switch(QdOpenComPort.ui->QCBParity->currentIndex()) {
-        case 0: Parity= 'N'; break;
-        case 1: Parity= 'E'; break;
-        case 2: Parity= 'O'; break;
-        case 3: Parity= 'M'; break;
-        case 4: Parity= 'S'; break;
+            case 0: Parity= 'N'; break;
+            case 1: Parity= 'E'; break;
+            case 2: Parity= 'O'; break;
+            case 3: Parity= 'M'; break;
+            case 4: Parity= 'S'; break;
         }
         switch(QdOpenComPort.ui->QCBDataBits->currentIndex()) {
-        case 0: ByteSize= 5; break;
-        case 1: ByteSize= 6; break;
-        case 2: ByteSize= 7; break;
-        case 3: ByteSize= 8; break;
+            case 0: ByteSize= 5; break;
+            case 1: ByteSize= 6; break;
+            case 2: ByteSize= 7; break;
+            case 3: ByteSize= 8; break;
         }
         switch(QdOpenComPort.ui->QCBStopBits->currentIndex()) {
-        case 0: StopBits= 0; break;
-        case 1: StopBits= 1; break;
-        case 2: StopBits= 2; break;
+            case 0: StopBits= 0; break;
+            case 1: StopBits= 1; break;
+            case 2: StopBits= 2; break;
         }
         ComPort= QdOpenComPort.ui->QCBComPort->currentText();
         BaudRate= QdOpenComPort.ui->QCBBaudRate->currentText().toInt();
@@ -303,8 +307,8 @@ void QDTerminal::on_QPBModify_clicked() {
 
 void QDTerminal::on_QPBOpen_clicked() {
     switch(Mode) {
-    case MODERS232: OpenComPort(); break;
-    case MODETCPIP: OpenTcpPort(); break;
+        case MODERS232: OpenComPort(); break;
+        case MODETCPIP: OpenTcpPort(); break;
     }
     RowCount= 1;
 }
@@ -448,10 +452,10 @@ void QDTerminal::OpenComPort() {
         setData= setParity= setStopBits= setFlowControl= false;
         SerialPort.setBaudRate(BaudRate);
         switch(ByteSize) {
-        case 5: setData= SerialPort.setDataBits(QSerialPort::Data5); break;
-        case 6: setData= SerialPort.setDataBits(QSerialPort::Data6); break;
-        case 7: setData= SerialPort.setDataBits(QSerialPort::Data7); break;
-        case 8: setData= SerialPort.setDataBits(QSerialPort::Data8); break;
+            case 5: setData= SerialPort.setDataBits(QSerialPort::Data5); break;
+            case 6: setData= SerialPort.setDataBits(QSerialPort::Data6); break;
+            case 7: setData= SerialPort.setDataBits(QSerialPort::Data7); break;
+            case 8: setData= SerialPort.setDataBits(QSerialPort::Data8); break;
         }
         if (Parity== 'N') setParity= SerialPort.setParity(QSerialPort::NoParity);
         else if (Parity== 'E') setParity= SerialPort.setParity(QSerialPort::EvenParity);
@@ -459,14 +463,14 @@ void QDTerminal::OpenComPort() {
         else if (Parity== 'M') setParity= SerialPort.setParity(QSerialPort::MarkParity);
         else if (Parity== 'S') setParity= SerialPort.setParity(QSerialPort::SpaceParity);
         switch(StopBits) {
-        case 0: setStopBits= SerialPort.setStopBits(QSerialPort::OneStop); break;
-        case 1: setStopBits= SerialPort.setStopBits(QSerialPort::OneAndHalfStop); break;
-        case 2: setStopBits= SerialPort.setStopBits(QSerialPort::TwoStop); break;
+            case 0: setStopBits= SerialPort.setStopBits(QSerialPort::OneStop); break;
+            case 1: setStopBits= SerialPort.setStopBits(QSerialPort::OneAndHalfStop); break;
+            case 2: setStopBits= SerialPort.setStopBits(QSerialPort::TwoStop); break;
         }
         switch(FlowControl) {
-        case 0: setFlowControl= SerialPort.setFlowControl(QSerialPort::NoFlowControl); break;
-        case 1: setFlowControl= SerialPort.setFlowControl(QSerialPort::HardwareControl); break;
-        case 2: setFlowControl= SerialPort.setFlowControl(QSerialPort::SoftwareControl); break;
+            case 0: setFlowControl= SerialPort.setFlowControl(QSerialPort::NoFlowControl); break;
+            case 1: setFlowControl= SerialPort.setFlowControl(QSerialPort::HardwareControl); break;
+            case 2: setFlowControl= SerialPort.setFlowControl(QSerialPort::SoftwareControl); break;
         }
         if (setData && setParity && setStopBits && setFlowControl) {
             ui->QPBOpen->setEnabled(false);
@@ -490,14 +494,14 @@ void QDTerminal::OpenComPort() {
             ui->QPBSaveProfileAs->setEnabled(true);
             ui->QLConnection->setText("ComPort: "+ ComPort+ ", BaudRate: "+ QString::number(BaudRate)+ ", Parity: "+ Parity+ ", ByteSize: "+ QString::number(ByteSize));
             switch(StopBits) {
-            case 0: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 1"); break;
-            case 1: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 1.5"); break;
-            case 2: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 2"); break;
+                case 0: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 1"); break;
+                case 1: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 1.5"); break;
+                case 2: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 2"); break;
             }
             switch(FlowControl) {
-            case 0: ui->QLConnection->setText(ui->QLConnection->text()+ ", FlowControl: none"); break;
-            case 1: ui->QLConnection->setText(ui->QLConnection->text()+ ", FlowControl: hardware"); break;
-            case 2: ui->QLConnection->setText(ui->QLConnection->text()+ ", FlowControl: handshake off"); break;
+                case 0: ui->QLConnection->setText(ui->QLConnection->text()+ ", FlowControl: none"); break;
+                case 1: ui->QLConnection->setText(ui->QLConnection->text()+ ", FlowControl: hardware"); break;
+                case 2: ui->QLConnection->setText(ui->QLConnection->text()+ ", FlowControl: handshake off"); break;
             }
             ui->QPBSendFile->setEnabled(true);
         } else {
@@ -505,7 +509,7 @@ void QDTerminal::OpenComPort() {
             ui->QPBOpen->setEnabled(true);
             ui->QPBModify->setEnabled(true);
         }
-    }
+    } else ui->QPBClose->setEnabled(true);
 }
 
 void QDTerminal::OpenTcpPort() {
@@ -572,85 +576,175 @@ void QDTerminal::SaveProfile(QString ConnectionPath) {
 
 void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
     QString BufferIn;
-    for (int count= 0; count< QBABufferIn.size(); count++) {
-        if (ui->QRBPrintableOnly->isChecked()) {
+    if (ui->QRBPrintableOnly->isChecked()) {
+        if (ui->QCBNewLineAfter->isChecked()) {
+            if (ui->QPTELog->toPlainText().length()> 0) {
+                if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
+                    BufferIn+= "\n";
+                }
+            }
+        }
+        if (ui->QPTELog->toPlainText().length()> 0 && ui->QPTELog->toPlainText().at(ui->QPTELog->toPlainText().length()- 1)== '\n') {
+            if (ui->QCBRowCount->isChecked()) {
+                BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
+                RowCount++;
+            }
+            if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+        }
+        for (int count= 0; count< QBABufferIn.size(); count++) {
             switch(QBABufferIn.at(count)) {
-            case 7: QApplication::beep(); break;
-            case 10: {
-                if (ui->QRBLF->isChecked()) BufferIn+= "\n";
-                break;
-            }
-            case 13: {
-                if (ui->QRBCR->isChecked()) BufferIn+= "\n";
-                break;
-            }
-            default: {
+                case 7: QApplication::beep(); break;
+                case 9: BufferIn+= "\t"; break;
+                case 10: {
+                    if (ui->QRBLF->isChecked()) {
+                        BufferIn+= "\n";
+                        if (ui->QCBRowCount->isChecked() && count< QBABufferIn.size()- 1) {
+                            BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
+                            RowCount++;
+                        }
+                        if (ui->QCBTimestamp->isChecked() && count< QBABufferIn.size()- 1) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+                    }
+                    break;
+                }
+                case 13: {
+                    if (ui->QRBCR->isChecked()) {
+                        BufferIn+= "\n";
+                        if (ui->QCBRowCount->isChecked() && count< QBABufferIn.size()- 1) {
+                            BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
+                            RowCount++;
+                        }
+                        if (ui->QCBTimestamp->isChecked() && count< QBABufferIn.size()- 1) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+                    }
+                    break;
+                }
+                default: {
                     if (int(QBABufferIn.at(count))>= 32 && int(QBABufferIn.at(count))<= 126) BufferIn+= char(QBABufferIn.at(count));
                     else BufferIn+= "[?]";
                     break;
                 }
             }
-        } else if (ui->QRBSym->isChecked()) {
-            switch(QBABufferIn.at(count)) {
-            case 0: BufferIn+= "[NUL]"; break;
-            case 1: BufferIn+= "[SOH]"; break;
-            case 2: BufferIn+= "[STX]"; break;
-            case 3: BufferIn+= "[ETX]"; break;
-            case 4: BufferIn+= "[EOT]"; break;
-            case 5: BufferIn+= "[ENQ]"; break;
-            case 6: BufferIn+= "[ACQ]"; break;
-            case 7: BufferIn+= "[BEL]"; break;
-            case 8: BufferIn+= "[BS]"; break;
-            case 9: BufferIn+= "[TAB]"; break;
-            case 10: BufferIn+= "[LF]\n"; break;
-            case 11: BufferIn+= "[VT]"; break;
-            case 12: BufferIn+= "[FF]"; break;
-            case 13: BufferIn+= "[CR]\r"; break;
-            case 14: BufferIn+= "[SO]"; break;
-            case 15: BufferIn+= "[SI]"; break;
-            case 16: BufferIn+= "[DLE]"; break;
-            case 17: BufferIn+= "[DC1]"; break;
-            case 18: BufferIn+= "[DC2]"; break;
-            case 19: BufferIn+= "[DC3]"; break;
-            case 20: BufferIn+= "[DC4]"; break;
-            case 21: BufferIn+= "[NAK]"; break;
-            case 22: BufferIn+= "[SYN]"; break;
-            case 23: BufferIn+= "[ETB]"; break;
-            case 24: BufferIn+= "[CAN]"; break;
-            case 25: BufferIn+= "[EM]"; break;
-            case 26: BufferIn+= "[SUB]"; break;
-            case 27: BufferIn+= "[ESC]"; break;
-            case 28: BufferIn+= "[FS]"; break;
-            case 29: BufferIn+= "[GS]"; break;
-            case 30: BufferIn+= "[RS]"; break;
-            case 31: BufferIn+= "[US]"; break;
-            default: BufferIn+= QString(char(QBABufferIn.at(count))); break;
-            }
-        } else if (ui->QRBDec->isChecked()) BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count))).rightJustified(3, '0')+ "]";
-        else if (ui->QRBBin->isChecked()) BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count)), 2).rightJustified(8, '0')+ "]";
-        else BufferIn+= "[0x"+ QString::number(uchar(QBABufferIn.at(count)), 16).rightJustified(2, '0').toUpper()+ "]";
-    }
-    if (ui->QCBNewLineAfter->isChecked()) {
-        if (ui->QPTELog->toPlainText().length()> 0) {
-            if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
-                if (ui->QCBRowCount->isChecked()) {
-                    BufferIn= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-"+ BufferIn;
-                    RowCount++;
+        }
+    } else if (ui->QRBSym->isChecked()) {
+        if (ui->QCBNewLineAfter->isChecked()) {
+            if (ui->QPTELog->toPlainText().length()> 0) {
+                if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
+                    BufferIn+= "\n";
                 }
-                if (ui->QCBTimestamp->isChecked()) BufferIn= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-"+ BufferIn;
-                ui->QPTELog->setPlainText(ui->QPTELog->toPlainText()+ '\n'+ BufferIn);
-            } else ui->QPTELog->setPlainText(ui->QPTELog->toPlainText()+ BufferIn);
-        } else {
+            }
+        }
+        if (ui->QPTELog->toPlainText().length()> 0 && ui->QPTELog->toPlainText().at(ui->QPTELog->toPlainText().length()- 1)== '\n') {
             if (ui->QCBRowCount->isChecked()) {
-                BufferIn= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-"+ BufferIn;
+                BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
                 RowCount++;
             }
-            if (ui->QCBTimestamp->isChecked()) BufferIn= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-"+ BufferIn;
-            ui->QPTELog->setPlainText(ui->QPTELog->toPlainText()+ BufferIn);
+            if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
         }
-        QDTLastByteIn= QDateTime::currentDateTime();
-    } else ui->QPTELog->setPlainText(ui->QPTELog->toPlainText()+ BufferIn);
+        for (int count= 0; count< QBABufferIn.size(); count++) {
+            switch(QBABufferIn.at(count)) {
+                case 0: BufferIn+= "[NUL]"; break;
+                case 1: BufferIn+= "[SOH]"; break;
+                case 2: BufferIn+= "[STX]"; break;
+                case 3: BufferIn+= "[ETX]"; break;
+                case 4: BufferIn+= "[EOT]"; break;
+                case 5: BufferIn+= "[ENQ]"; break;
+                case 6: BufferIn+= "[ACQ]"; break;
+                case 7: BufferIn+= "[BEL]"; break;
+                case 8: BufferIn+= "[BS]"; break;
+                case 9: BufferIn+= "[TAB]"; break;
+                case 10: {
+                    BufferIn+= "[LF]\n";
+                    if (ui->QCBRowCount->isChecked() && count< QBABufferIn.size()- 1) {
+                        BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
+                        RowCount++;
+                    }
+                    if (ui->QCBTimestamp->isChecked() && count< QBABufferIn.size()- 1) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+                    break;
+                }
+                case 11: BufferIn+= "[VT]"; break;
+                case 12: BufferIn+= "[FF]"; break;
+                case 13: {
+                    BufferIn+= "[CR]\r";
+                    if (ui->QCBRowCount->isChecked() && count< QBABufferIn.size()- 1) {
+                        BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
+                        RowCount++;
+                    }
+                    if (ui->QCBTimestamp->isChecked() && count< QBABufferIn.size()- 1) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+                    break;
+                }
+                case 14: BufferIn+= "[SO]"; break;
+                case 15: BufferIn+= "[SI]"; break;
+                case 16: BufferIn+= "[DLE]"; break;
+                case 17: BufferIn+= "[DC1]"; break;
+                case 18: BufferIn+= "[DC2]"; break;
+                case 19: BufferIn+= "[DC3]"; break;
+                case 20: BufferIn+= "[DC4]"; break;
+                case 21: BufferIn+= "[NAK]"; break;
+                case 22: BufferIn+= "[SYN]"; break;
+                case 23: BufferIn+= "[ETB]"; break;
+                case 24: BufferIn+= "[CAN]"; break;
+                case 25: BufferIn+= "[EM]"; break;
+                case 26: BufferIn+= "[SUB]"; break;
+                case 27: BufferIn+= "[ESC]"; break;
+                case 28: BufferIn+= "[FS]"; break;
+                case 29: BufferIn+= "[GS]"; break;
+                case 30: BufferIn+= "[RS]"; break;
+                case 31: BufferIn+= "[US]"; break;
+                default: BufferIn+= QString(char(QBABufferIn.at(count))); break;
+            }
+        }
+
+    } else if (ui->QRBDec->isChecked()) {
+        if (ui->QCBNewLineAfter->isChecked()) {
+            if (ui->QPTELog->toPlainText().length()> 0) {
+                if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
+                    BufferIn+= "\n";
+                    if (ui->QCBRowCount->isChecked()) {
+                        BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
+                        RowCount++;
+                    }
+                    if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+                }
+            }
+        }
+        for (int count= 0; count< QBABufferIn.size(); count++) {
+            BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count))).rightJustified(3, '0')+ "]";
+        }
+    } else if (ui->QRBBin->isChecked()) {
+        if (ui->QCBNewLineAfter->isChecked()) {
+            if (ui->QPTELog->toPlainText().length()> 0) {
+                if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
+                    BufferIn+= "\n";
+                    if (ui->QCBRowCount->isChecked()) {
+                        BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
+                        RowCount++;
+                    }
+                    if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+                }
+            }
+        }
+        for (int count= 0; count< QBABufferIn.size(); count++) {
+            BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count)), 2).rightJustified(8, '0')+ "]";
+        }
+    } else {
+        if (ui->QCBNewLineAfter->isChecked()) {
+            if (ui->QPTELog->toPlainText().length()> 0) {
+                if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
+                    BufferIn+= "\n";
+                    if (ui->QCBRowCount->isChecked()) {
+                        BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
+                        RowCount++;
+                    }
+                    if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+                }
+            }
+        }
+        for (int count= 0; count< QBABufferIn.size(); count++) {
+            BufferIn+= "[0x"+ QString::number(uchar(QBABufferIn.at(count)), 16).rightJustified(2, '0').toUpper()+ "]";
+        }
+    }
+    ui->QPTELog->setPlainText(ui->QPTELog->toPlainText()+ BufferIn);
     ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    QDTLastByteIn= QDateTime::currentDateTime();
 }
 
 void QDTerminal::SendByteArray(QByteArray QBABufferIn) {

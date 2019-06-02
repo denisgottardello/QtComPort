@@ -50,7 +50,7 @@ void QFMainForm::on_QAQtVersion_triggered() {
 }
 
 void QFMainForm::on_QAVersion_triggered() {
-    QMessageBox::information(this, "Info", tr("QtComPort Version ")+ ("0.0.11.0"), "Ok");
+    QMessageBox::information(this, "Info", tr("QtComPort Version ")+ ("0.0.12.0"), "Ok");
 }
 
 void QFMainForm::on_QPBBridge_clicked() {

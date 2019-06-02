@@ -35,8 +35,10 @@
 #include "QSerialPortInfo"
 #include "QDateTime"
 
-const static int MODERS232= 0;
-const static int MODETCPIP= 1;
+enum {
+    MODERS232= 0,
+    MODETCPIP= 1
+};
 
 namespace Ui {
     class QDTerminal;

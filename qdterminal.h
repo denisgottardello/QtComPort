@@ -83,6 +83,7 @@ private slots:
     void Error(QAbstractSocket::SocketError socketError);
     void on_QCBNewLineAfter_clicked();
     void on_QCBRowCount_toggled(bool checked);
+    void on_QCBSpecialCharacters_clicked();
     void on_QCBTimestamp_toggled(bool checked);
     void on_QLESend_returnPressed();
     void on_QPBChangeFont_clicked();
@@ -104,6 +105,7 @@ private slots:
     void on_QRBDec_clicked();
     void on_QRBHex_clicked();
     void on_QRBPrintableOnly_clicked();
+    void on_QRBPrintableOnly_toggled(bool checked);
     void on_QPBSelectAll_clicked();
     void on_QRBSym_clicked();
     void on_QSBNewLineAfterMs_valueChanged(int arg1);

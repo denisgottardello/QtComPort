@@ -57,7 +57,6 @@ private slots:
     void on_QPBBridge_clicked();
     void on_QPBLoadProfile_clicked();
     void on_QPBNewProfile_clicked();
-    void on_QPBQuit_clicked();
 
 };
 

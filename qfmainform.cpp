@@ -50,7 +50,7 @@ void QFMainForm::on_QAQtVersion_triggered() {
 }
 
 void QFMainForm::on_QAVersion_triggered() {
-    QMessageBox::information(this, "Info", tr("QtComPort Version ")+ ("0.0.12.0"), "Ok");
+    QMessageBox::information(this, "Info", tr("QtComPort Version ")+ ("0.0.13.0"), "Ok");
 }
 
 void QFMainForm::on_QPBBridge_clicked() {
@@ -145,10 +145,6 @@ void QFMainForm::on_QPBNewProfile_clicked() {
         QVTerminals.append(Terminal);
         if (QVTerminals.count()> 1) ui->QPBBridge->setEnabled(true);
     }
-}
-
-void QFMainForm::on_QPBQuit_clicked() {
-    QCoreApplication::quit();
 }
 
 void QFMainForm::ReadConfigurationFile(QString ConnectionPath) {

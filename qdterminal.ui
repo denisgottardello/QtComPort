@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>827</width>
+    <width>875</width>
     <height>480</height>
    </rect>
   </property>
@@ -333,6 +333,16 @@
                 </widget>
                </item>
                <item>
+                <widget class="QCheckBox" name="QCBSpecialCharacters">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Show special characters</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QRadioButton" name="QRBSym">
                  <property name="text">
                   <string>Sym</string>
@@ -595,6 +605,7 @@
   <tabstop>QPBDTR</tabstop>
   <tabstop>QPBRTS</tabstop>
   <tabstop>QRBPrintableOnly</tabstop>
+  <tabstop>QCBSpecialCharacters</tabstop>
   <tabstop>QRBSym</tabstop>
   <tabstop>QRBDec</tabstop>
   <tabstop>QRBHex</tabstop>

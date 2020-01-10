@@ -24,8 +24,7 @@
 QDTerminal::QDTerminal(QWidget *parent, QString ConnectionPath) : QDialog(parent), ui(new Ui::QDTerminal) {
     ui->setupUi(this);
     this->ConnectionPath= ConnectionPath;
-    this->IsNewConnection= IsNewConnection;
-    QdTerminal= NULL;
+    QdTerminal= nullptr;
     PinoutSignals= 0;
     DirectoryPath= "";
     ui->QLCTS->setStyleSheet("background-color: green; color: black");
@@ -48,49 +47,30 @@ QDTerminal::~QDTerminal() {
 
 bool QDTerminal::eventFilter(QObject *object, QEvent *event) {
     if (object== ui->QPTELog && event->type()== QEvent::KeyPress) {
-        QKeyEvent *keyEvent= (QKeyEvent*)event;
+        QKeyEvent *keyEvent= static_cast<QKeyEvent*>(event);
         QString KeyPressed;
         switch(keyEvent->key()) {
-        case Qt::Key_F1: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3b); break; }
-        case Qt::Key_F2: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3c); break; }
-        case Qt::Key_F3: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3d); break; }
-        case Qt::Key_F4: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3e); break; }
-        case Qt::Key_F5: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3f); break; }
-        case Qt::Key_F6: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x40); break; }
-        case Qt::Key_F7: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x41); break; }
-        case Qt::Key_F8: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x42); break; }
-        case Qt::Key_F9: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x43); break; }
-        case Qt::Key_F10: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x44); break; }
-        case Qt::Key_F11: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x85); break; }
-        case Qt::Key_F12: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x86); break; }
-        case Qt::Key_Pause: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x0); break; }
-        case Qt::Key_Return:
-        case Qt::Key_Enter: KeyPressed= '\r'; break;
-        default: KeyPressed= keyEvent->text(); break;
+            case Qt::Key_F1: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3b); break; }
+            case Qt::Key_F2: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3c); break; }
+            case Qt::Key_F3: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3d); break; }
+            case Qt::Key_F4: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3e); break; }
+            case Qt::Key_F5: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x3f); break; }
+            case Qt::Key_F6: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x40); break; }
+            case Qt::Key_F7: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x41); break; }
+            case Qt::Key_F8: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x42); break; }
+            case Qt::Key_F9: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x43); break; }
+            case Qt::Key_F10: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x44); break; }
+            case Qt::Key_F11: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x85); break; }
+            case Qt::Key_F12: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x86); break; }
+            case Qt::Key_Pause: { KeyPressed= QChar(0x0); KeyPressed+= QChar(0x0); break; }
+            case Qt::Key_Return:
+            case Qt::Key_Enter: KeyPressed= '\r'; break;
+            default: KeyPressed= keyEvent->text(); break;
         }
         switch(Mode) {
-        case MODERS232: SerialPort.write(KeyPressed.toLatin1());
-        case MODETCPIP: Tcp->write(KeyPressed.toLatin1()); break;
+            case MODERS232: SerialPort.write(KeyPressed.toLatin1()); break;
+            case MODETCPIP: Tcp->write(KeyPressed.toLatin1()); break;
         }
-        /*switch(keyEvent->key()) {
-        case Qt::Key_Return:
-        case Qt::Key_Enter: {
-                switch(Mode) {
-                case MODERS232: QcSerialComPort.SendChar('\r');
-                case MODETCPIP: Tcp->write(QString("\r").toLatin1()); break;
-                }
-                break;
-            }
-        case Qt::Key_F1: {
-
-            }
-        default: {
-                switch(Mode) {
-                case MODERS232: QcSerialComPort.SendString(keyEvent->->text()->text()); break;
-                case MODETCPIP: Tcp->write(QString(keyEvent->text()).toLatin1()); break;
-                }
-            }
-        }*/
         return true;
     } else return QObject::eventFilter(object, event);
 }
@@ -128,7 +108,7 @@ void QDTerminal::OnTimeout() {
     }
     QByteArray QBABufferIn= SerialPort.readAll();
     if (QBABufferIn.size()> 0) {
-        if (QdTerminal!= NULL) QdTerminal->SendByteArray(QBABufferIn);
+        if (QdTerminal) QdTerminal->SendByteArray(QBABufferIn);
         ShowBufferIn(QBABufferIn);
         QBAByteIn.append(QBABufferIn);
     }
@@ -198,7 +178,7 @@ void QDTerminal::on_QPBClose_clicked() {
     ui->QPTELog->removeEventFilter(this);
     ui->QLConnection->setText("");
     switch(Mode) {
-    case MODERS232: {
+        case MODERS232: {
             disconnect(QTControl, SIGNAL(timeout()), this, SLOT(OnTimeout()));
             delete QTControl;
             ui->QPBRTS->setEnabled(false);
@@ -211,7 +191,7 @@ void QDTerminal::on_QPBClose_clicked() {
             ui->QLDSR->setStyleSheet("");
             break;
         }
-    case MODETCPIP: {
+        case MODETCPIP: {
             disconnect(Tcp, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
             disconnect(Tcp, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
             disconnect(Tcp, SIGNAL(connected()), this, SLOT(Connected()));
@@ -331,7 +311,7 @@ void QDTerminal::on_QPBSaveProfile_clicked() {
 
 void QDTerminal::on_QPBSaveProfileAs_clicked() {
     QString Path= QFileDialog::getSaveFileName(this, "Save As", QDir::currentPath(), "QtComPort (*.qcp)");
-    if (Path!= NULL) {
+    if (Path.length()> 0) {
         if (!Path.endsWith(".qcp", Qt::CaseInsensitive)!= 0) Path+= ".qcp";
         ConnectionPath= Path;
         QTBTerminal->setTabText(TabNumber, ConnectionPath);
@@ -343,7 +323,7 @@ void QDTerminal::on_QPBSaveProfileAs_clicked() {
 
 void QDTerminal::on_QPBSaveToFile_clicked() {
     QString Path= QFileDialog::getSaveFileName(this, "Save to file", DirectoryPath);
-    if (Path!= NULL) {
+    if (Path.length()> 0) {
         DirectoryPath= QFileInfo(Path).dir().absolutePath();
         QFile FileOut(Path);
         FileOut.open(QIODevice::WriteOnly);
@@ -543,7 +523,7 @@ void QDTerminal::OpenTcpPort() {
 void QDTerminal::ReadyRead() {
     QByteArray QBABufferIn= Tcp->readAll();
     if (QBABufferIn.length()> 0) {
-        if (QdTerminal!= NULL) QdTerminal->SendByteArray(QBABufferIn);
+        if (QdTerminal) QdTerminal->SendByteArray(QBABufferIn);
         ShowBufferIn(QBABufferIn);
         QBAByteIn.append(QBABufferIn);
     }
@@ -594,13 +574,11 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                 }
             }
         }
-        //if (ui->QPTELog->toPlainText().length()> 0 && ui->QPTELog->toPlainText().at(ui->QPTELog->toPlainText().length()- 1)== '\n') {
         if (ui->QCBRowCount->isChecked()) {
             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
             RowCount++;
         }
         if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
-        //}
         for (int count= 0; count< QBABufferIn.size(); count++) {
             switch(QBABufferIn.at(count)) {
                 case 1: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[SOH]"; break;
@@ -634,7 +612,8 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                 }
                 case 21: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[NACK]"; break;
                 default: {
-                    if (int(QBABufferIn.at(count))>= 32 && int(QBABufferIn.at(count))<= 126) BufferIn+= char(QBABufferIn.at(count));
+                    if ((uchar(QBABufferIn.at(count))>= 32 && uchar(QBABufferIn.at(count))<= 126) ||
+                            (uchar(QBABufferIn.at(count))>= 128 && uchar(QBABufferIn.at(count))<= 254)) BufferIn+= char(QBABufferIn.at(count));
                     else BufferIn+= "[?]";
                     break;
                 }
@@ -648,13 +627,11 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                 }
             }
         }
-        //if (ui->QPTELog->toPlainText().length()> 0 && ui->QPTELog->toPlainText().at(ui->QPTELog->toPlainText().length()- 1)== '\n') {
         if (ui->QCBRowCount->isChecked()) {
             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
             RowCount++;
         }
         if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
-        //}
         for (int count= 0; count< QBABufferIn.size(); count++) {
             switch(QBABufferIn.at(count)) {
                 case 0: BufferIn+= "[NUL]"; break;
@@ -711,13 +688,11 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
 
     } else if (ui->QRBDec->isChecked()) {
         if (ui->QCBNewLineAfter->isChecked()) {
-            //if (ui->QPTELog->toPlainText().length()> 0) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
                     BufferIn+= "\n";
                 }
             }
-            //}
         }
         if (ui->QCBRowCount->isChecked()) {
             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
@@ -833,8 +808,8 @@ void QDTerminal::ReadConfigurationFile() {
         Server= Settings->value("Server").toString();
         Socket= Settings->value("Socket").toInt();
         switch(Mode) {
-        case MODERS232: OpenComPort(); break;
-        case MODETCPIP: OpenTcpPort(); break;
+            case MODERS232: OpenComPort(); break;
+            case MODETCPIP: OpenTcpPort(); break;
         }
     }{
         delete Settings;

@@ -33,7 +33,7 @@ class QDOpenComPort : public QDialog
     Q_OBJECT
 
 public:
-    explicit QDOpenComPort(QWidget *parent = 0);
+    explicit QDOpenComPort(QWidget *parent = nullptr);
     ~QDOpenComPort();
     Ui::QDOpenComPort *ui;
 
@@ -42,8 +42,9 @@ private:
 private slots:
     void on_QLEServer_returnPressed();
     void on_QLEServer_textChanged(QString );
-    void on_QRBTCPIP_clicked();
-    void on_QRBRS232_clicked();
+    void on_QRBTCP_toggled(bool checked);
+    void on_QRBTCPSsl_toggled(bool checked);
+    void on_QRBRS232_toggled(bool checked);
     void on_QPBCancel_clicked();
     void on_QPBOk_clicked();
 

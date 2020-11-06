@@ -25,7 +25,6 @@ QDTerminal::QDTerminal(QWidget *parent, QString ConnectionPath) : QDialog(parent
     ui->setupUi(this);
     this->ConnectionPath= ConnectionPath;
     QdTerminal= nullptr;
-    PinoutSignals= 0;
     DirectoryPath= "";
     ui->QLCTS->setStyleSheet("background-color: green; color: black");
     ui->QLDCD->setStyleSheet("background-color: green; color: black");
@@ -33,15 +32,18 @@ QDTerminal::QDTerminal(QWidget *parent, QString ConnectionPath) : QDialog(parent
     QFont Font("DejaVu Sans Mono", 8);
     Font.setFixedPitch(true);
     ui->QPTELog->setFont(Font);
-    Tcp= new QTcpSocket(this);
+    SslSocket= new QSslSocket();
+    TcpSocket= new QTcpSocket();
     QDTLastByteIn= QDateTime::currentDateTime();
     RowCount= 0;
     QFontMetrics FontMetrics(ui->QPTELog->font());
-    ui->QPTELog->setTabStopWidth(2* FontMetrics.width(' '));
+    ui->QPTELog->setTabStopDistance(2* FontMetrics.horizontalAdvance(' '));
     on_QRBPrintableOnly_toggled(ui->QRBPrintableOnly->isChecked());
 }
 
 QDTerminal::~QDTerminal() {
+    delete SslSocket;
+    delete TcpSocket;
     delete ui;
 }
 
@@ -68,8 +70,9 @@ bool QDTerminal::eventFilter(QObject *object, QEvent *event) {
             default: KeyPressed= keyEvent->text(); break;
         }
         switch(Mode) {
-            case MODERS232: SerialPort.write(KeyPressed.toLatin1()); break;
-            case MODETCPIP: Tcp->write(KeyPressed.toLatin1()); break;
+            case MODE_RS232: SerialPort.write(KeyPressed.toLatin1()); break;
+            case MODE_TCP: TcpSocket->write(KeyPressed.toLatin1()); break;
+            case MODE_TCP_SSL: SslSocket->write(KeyPressed.toLatin1()); break;
         }
         return true;
     } else return QObject::eventFilter(object, event);
@@ -85,26 +88,36 @@ void QDTerminal::Disconnected() {
 }
 
 void QDTerminal::Error(QAbstractSocket::SocketError ) {
-    ui->QPTELog->setPlainText(ui->QPTELog->toPlainText()+ Tcp->errorString());
+    switch(Mode) {
+        case MODE_TCP: {
+            ui->QPTELog->setPlainText(ui->QPTELog->toPlainText()+ TcpSocket->errorString());
+            break;
+        }
+        case MODE_TCP_SSL: {
+            ui->QPTELog->setPlainText(ui->QPTELog->toPlainText()+ SslSocket->errorString());
+            break;
+        }
+        default: break;
+    }
     ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
 }
 
 void QDTerminal::OnTimeout() {
     QTControl->stop();
-    if ((SerialPort.pinoutSignals() & QSerialPort::ClearToSendSignal)!= (PinoutSignals & QSerialPort::ClearToSendSignal)) {
+    if ((SerialPort.pinoutSignals() & QSerialPort::ClearToSendSignal)!= (pinoutSignals & QSerialPort::ClearToSendSignal)) {
         if (SerialPort.pinoutSignals() & QSerialPort::ClearToSendSignal) ui->QLCTS->setStyleSheet("background-color: red; color: black");
         else ui->QLCTS->setStyleSheet("background-color: green; color: black");
-        PinoutSignals= SerialPort.pinoutSignals();
+        pinoutSignals= SerialPort.pinoutSignals();
     }
-    if ((SerialPort.pinoutSignals() & QSerialPort::DataCarrierDetectSignal)!= (PinoutSignals & QSerialPort::DataCarrierDetectSignal)) {
+    if ((SerialPort.pinoutSignals() & QSerialPort::DataCarrierDetectSignal)!= (pinoutSignals & QSerialPort::DataCarrierDetectSignal)) {
         if (SerialPort.pinoutSignals() & QSerialPort::DataCarrierDetectSignal) ui->QLDCD->setStyleSheet("background-color: red; color: black");
         else ui->QLDCD->setStyleSheet("background-color: green; color: black");
-        PinoutSignals= SerialPort.pinoutSignals();
+        pinoutSignals= SerialPort.pinoutSignals();
     }
-    if ((SerialPort.pinoutSignals() & QSerialPort::DataSetReadySignal)!= (PinoutSignals & QSerialPort::DataSetReadySignal)) {
+    if ((SerialPort.pinoutSignals() & QSerialPort::DataSetReadySignal)!= (pinoutSignals & QSerialPort::DataSetReadySignal)) {
         if (SerialPort.pinoutSignals() & QSerialPort::DataSetReadySignal) ui->QLDSR->setStyleSheet("background-color: red; color: black");
         else ui->QLDSR->setStyleSheet("background-color: green; color: black");
-        PinoutSignals= SerialPort.pinoutSignals();
+        pinoutSignals= SerialPort.pinoutSignals();
     }
     QByteArray QBABufferIn= SerialPort.readAll();
     if (QBABufferIn.size()> 0) {
@@ -133,13 +146,19 @@ void QDTerminal::on_QCBNewLineAfter_clicked() {
 
 void QDTerminal::on_QLESend_returnPressed() {
     switch(Mode) {
-        case MODERS232: {
+        case MODE_RS232: {
             if (SerialPort.write(QString(ui->QLESend->text()+ "\r\n").toLatin1())) ui->QLESend->setText("");
             break;
         }
-        case MODETCPIP: {
-            Tcp->write(ui->QLESend->text().toLatin1());
-            Tcp->write(QString("\r\n").toLatin1());
+        case MODE_TCP: {
+            TcpSocket->write(ui->QLESend->text().toLatin1());
+            TcpSocket->write(QString("\r\n").toLatin1());
+            ui->QLESend->setText("");
+            break;
+        }
+        case MODE_TCP_SSL: {
+            SslSocket->write(ui->QLESend->text().toLatin1());
+            SslSocket->write(QString("\r\n").toLatin1());
             ui->QLESend->setText("");
             break;
         }
@@ -164,7 +183,8 @@ void QDTerminal::on_QPBChangeFont_clicked() {
         ui->QPTELog->setFont(QdFontDialog.GetCurrentFont());
         ui->QPBSaveProfile->setEnabled(true);
         QFontMetrics FontMetrics(ui->QPTELog->font());
-        ui->QPTELog->setTabStopWidth(2* FontMetrics.width(' '));
+        //ui->QPTELog->setTabStopWidth(2* FontMetrics.width(' '));
+        ui->QPTELog->setTabStopDistance(2* FontMetrics.horizontalAdvance(' '));
     }
 }
 
@@ -178,7 +198,7 @@ void QDTerminal::on_QPBClose_clicked() {
     ui->QPTELog->removeEventFilter(this);
     ui->QLConnection->setText("");
     switch(Mode) {
-        case MODERS232: {
+        case MODE_RS232: {
             disconnect(QTControl, SIGNAL(timeout()), this, SLOT(OnTimeout()));
             delete QTControl;
             ui->QPBRTS->setEnabled(false);
@@ -191,12 +211,20 @@ void QDTerminal::on_QPBClose_clicked() {
             ui->QLDSR->setStyleSheet("");
             break;
         }
-        case MODETCPIP: {
-            disconnect(Tcp, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
-            disconnect(Tcp, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
-            disconnect(Tcp, SIGNAL(connected()), this, SLOT(Connected()));
-            disconnect(Tcp, SIGNAL(disconnected()), this, SLOT(Disconnected()));
-            Tcp->disconnectFromHost();
+        case MODE_TCP: {
+            disconnect(TcpSocket, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
+            disconnect(TcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+            disconnect(TcpSocket, SIGNAL(connected()), this, SLOT(Connected()));
+            disconnect(TcpSocket, SIGNAL(disconnected()), this, SLOT(Disconnected()));
+            TcpSocket->disconnectFromHost();
+            break;
+        }
+        case MODE_TCP_SSL: {
+            disconnect(SslSocket, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
+            disconnect(SslSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+            disconnect(SslSocket, SIGNAL(connected()), this, SLOT(Connected()));
+            disconnect(SslSocket, SIGNAL(disconnected()), this, SLOT(Disconnected()));
+            SslSocket->disconnectFromHost();
             break;
         }
     }
@@ -252,10 +280,15 @@ void QDTerminal::on_QPBModify_clicked() {
     QdOpenComPort.ui->QLEServer->setText(Server);
     QdOpenComPort.ui->QSBSocket->setValue(Socket);
     switch(Mode) {
-        case MODERS232: QdOpenComPort.ui->QRBRS232->setChecked(true); break;
-        case MODETCPIP: {
-            QdOpenComPort.ui->QRBTCPIP->setChecked(true);
-            QdOpenComPort.ui->QRBTCPIP->click();
+        case MODE_RS232: QdOpenComPort.ui->QRBRS232->setChecked(true); break;
+        case MODE_TCP: {
+            QdOpenComPort.ui->QRBTCP->setChecked(true);
+            QdOpenComPort.ui->QRBTCP->click();
+            break;
+        }
+        case MODE_TCP_SSL: {
+            QdOpenComPort.ui->QRBTCPSsl->setChecked(true);
+            QdOpenComPort.ui->QRBTCPSsl->click();
             break;
         }
     }
@@ -283,17 +316,19 @@ void QDTerminal::on_QPBModify_clicked() {
         FlowControl= QdOpenComPort.ui->QCBFlowControl->currentIndex();
         SendBreak= QdOpenComPort.ui->QCBSendBreak->isChecked();
         Server= QdOpenComPort.ui->QLEServer->text();
-        Socket= QdOpenComPort.ui->QSBSocket->value();
-        if (QdOpenComPort.ui->QRBRS232->isChecked()) Mode= MODERS232;
-        else Mode= MODETCPIP;
+        Socket= static_cast<quint16>(QdOpenComPort.ui->QSBSocket->value());
+        if (QdOpenComPort.ui->QRBRS232->isChecked()) Mode= MODE_RS232;
+        else if (QdOpenComPort.ui->QRBTCP->isChecked()) Mode= MODE_TCP;
+        else Mode= MODE_TCP_SSL;
         if (ConnectionPath.length()> 0) ui->QPBSaveProfile->setEnabled(true);
     }
 }
 
 void QDTerminal::on_QPBOpen_clicked() {
     switch(Mode) {
-        case MODERS232: OpenComPort(); break;
-        case MODETCPIP: OpenTcpPort(); break;
+        case MODE_RS232: OpenComPort(); break;
+        case MODE_TCP: OpenTcpPort(); break;
+        case MODE_TCP_SSL: OpenTcpSslPort(); break;
     }
     RowCount= 1;
 }
@@ -339,7 +374,7 @@ void QDTerminal::on_QPBSend_clicked() {
     a+= char(7);
     a+= "#";
     switch(Mode) {
-        case MODERS232: {
+        case MODE_RS232: {
             if (SerialPort.isOpen()) {
                 if (SendBreak) {
                     SerialPort.setBreakEnabled(true);
@@ -350,9 +385,14 @@ void QDTerminal::on_QPBSend_clicked() {
             }
             break;
         }
-        case MODETCPIP: {
-            Tcp->write(a.toLocal8Bit());
-            Tcp->waitForBytesWritten(2000);
+        case MODE_TCP: {
+            TcpSocket->write(a.toLocal8Bit());
+            TcpSocket->waitForBytesWritten(2000);
+            break;
+        }
+        case MODE_TCP_SSL: {
+            SslSocket->write(a.toLocal8Bit());
+            SslSocket->waitForBytesWritten(2000);
             break;
         }
     }
@@ -367,7 +407,7 @@ void QDTerminal::on_QPBSendFile_clicked() {
         if (FileIn.open(QIODevice::ReadOnly)) {
             QByteArray QBABufferIn= FileIn.readAll();
             switch(Mode) {
-                case MODERS232: {
+                case MODE_RS232: {
                     if (SerialPort.isOpen()) {
                         if (SendBreak) {
                             SerialPort.setBreakEnabled(true);
@@ -378,9 +418,14 @@ void QDTerminal::on_QPBSendFile_clicked() {
                     }
                     break;
                 }
-                case MODETCPIP: {
-                    Tcp->write(QBABufferIn, QBABufferIn.size());
-                    Tcp->waitForBytesWritten(2000);
+                case MODE_TCP: {
+                    TcpSocket->write(QBABufferIn, QBABufferIn.size());
+                    TcpSocket->waitForBytesWritten(2000);
+                    break;
+                }
+                case MODE_TCP_SSL: {
+                    SslSocket->write(QBABufferIn, QBABufferIn.size());
+                    SslSocket->waitForBytesWritten(2000);
                     break;
                 }
             }
@@ -481,7 +526,7 @@ void QDTerminal::OpenComPort() {
             ui->QPBClose->setEnabled(true);
             ui->QPTELog->installEventFilter(this);
             ui->QPBSaveProfileAs->setEnabled(true);
-            ui->QLConnection->setText("ComPort: "+ ComPort+ ", BaudRate: "+ QString::number(BaudRate)+ ", Parity: "+ Parity+ ", ByteSize: "+ QString::number(ByteSize));
+            ui->QLConnection->setText("ComPort: "+ ComPort+ ",PinoutSignals BaudRate: "+ QString::number(BaudRate)+ ", Parity: "+ Parity+ ", ByteSize: "+ QString::number(ByteSize));
             switch(StopBits) {
                 case 0: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 1"); break;
                 case 1: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 1.5"); break;
@@ -511,17 +556,51 @@ void QDTerminal::OpenTcpPort() {
     ui->QPBSend->setEnabled(true);
     ui->QPTELog->installEventFilter(this);
     ui->QPBSaveProfileAs->setEnabled(true);
-    ui->QLConnection->setText("TCPIP: "+ Server+ ":"+ QString::number(Socket));
+    ui->QLConnection->setText("TCP: "+ Server+ ":"+ QString::number(Socket));
     ui->QPBSendFile->setEnabled(true);
-    connect(Tcp, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
-    connect(Tcp, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
-    connect(Tcp, SIGNAL(connected()), this, SLOT(Connected()));
-    connect(Tcp, SIGNAL(disconnected()), this, SLOT(Disconnected()));
-    Tcp->connectToHost(Server, Socket);
+    connect(TcpSocket, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
+    connect(TcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+    connect(TcpSocket, SIGNAL(connected()), this, SLOT(Connected()));
+    connect(TcpSocket, SIGNAL(disconnected()), this, SLOT(Disconnected()));
+    TcpSocket->connectToHost(Server, Socket);
+}
+
+void QDTerminal::OpenTcpSslPort() {
+    ui->QPBOpen->setEnabled(false);
+    ui->QPBModify->setEnabled(false);
+    ui->QPBClose->setEnabled(true);
+    ui->QPBChangeFont->setEnabled(true);
+    ui->QPBColors->setEnabled(true);
+    ui->QLESend->setEnabled(true);
+    ui->QPBSend->setEnabled(true);
+    ui->QPTELog->installEventFilter(this);
+    ui->QPBSaveProfileAs->setEnabled(true);
+    ui->QLConnection->setText("SSL: "+ Server+ ":"+ QString::number(Socket));
+    ui->QPBSendFile->setEnabled(true);
+    connect(SslSocket, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
+    connect(SslSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+    connect(SslSocket, SIGNAL(connected()), this, SLOT(Connected()));
+    connect(SslSocket, SIGNAL(disconnected()), this, SLOT(Disconnected()));
+    SslSocket->setPeerVerifyMode(QSslSocket::VerifyNone);
+    SslSocket->connectToHostEncrypted(Server, Socket);
+    if (SslSocket->waitForConnected()) {
+        SslSocket->waitForEncrypted();
+    }
 }
 
 void QDTerminal::ReadyRead() {
-    QByteArray QBABufferIn= Tcp->readAll();
+    QByteArray QBABufferIn;
+    switch(Mode) {
+        case MODE_TCP: {
+            QBABufferIn= TcpSocket->readAll();
+            break;
+        }
+        case MODE_TCP_SSL: {
+            QBABufferIn= SslSocket->readAll();
+            break;
+        }
+        default: break;
+    }
     if (QBABufferIn.length()> 0) {
         if (QdTerminal) QdTerminal->SendByteArray(QBABufferIn);
         ShowBufferIn(QBABufferIn);
@@ -742,7 +821,7 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
 
 void QDTerminal::SendByteArray(QByteArray QBABufferIn) {
     switch(Mode) {
-        case MODERS232: {
+        case MODE_RS232: {
             if (SerialPort.isOpen()) {
                 if (SendBreak) {
                     SerialPort.setBreakEnabled(true);
@@ -753,9 +832,14 @@ void QDTerminal::SendByteArray(QByteArray QBABufferIn) {
             }
             break;
         }
-        case MODETCPIP: {
-            Tcp->write(QBABufferIn, QBABufferIn.size());
-            Tcp->waitForBytesWritten(2000);
+        case MODE_TCP: {
+            TcpSocket->write(QBABufferIn, QBABufferIn.size());
+            TcpSocket->waitForBytesWritten(2000);
+            break;
+        }
+        case MODE_TCP_SSL: {
+            SslSocket->write(QBABufferIn, QBABufferIn.size());
+            SslSocket->waitForBytesWritten(2000);
             break;
         }
     }
@@ -796,7 +880,7 @@ void QDTerminal::ReadConfigurationFile() {
         b= Color.toInt();
         Palette.setColor(QPalette::Base, QColor::fromRgb(r, g, b));
         ui->QPTELog->setPalette(Palette);
-        Mode= Settings->value("Mode", MODERS232).toInt();
+        Mode= static_cast<Modes>(Settings->value("Mode", MODE_RS232).toInt());
         ui->QCBNewLineAfter->setChecked(Settings->value("NewLineAfter", false).toBool());
         ui->QSBNewLineAfterMs->setValue(Settings->value("NewLineAfterMs", 1000).toInt());
         ui->QCBRowCount->setChecked(Settings->value("RowCount", false).toBool());
@@ -806,10 +890,11 @@ void QDTerminal::ReadConfigurationFile() {
         ui->QRBLF->setChecked(Settings->value("NewLineWidth", "lf").toString().compare("lf")== 0);
         SendBreak= Settings->value("SendBreak", false).toBool();
         Server= Settings->value("Server").toString();
-        Socket= Settings->value("Socket").toInt();
+        Socket= static_cast<quint16>(Settings->value("Socket").toInt());
         switch(Mode) {
-            case MODERS232: OpenComPort(); break;
-            case MODETCPIP: OpenTcpPort(); break;
+            case MODE_RS232: OpenComPort(); break;
+            case MODE_TCP: OpenTcpPort(); break;
+            case MODE_TCP_SSL: OpenTcpSslPort(); break;
         }
     }{
         delete Settings;

@@ -37,9 +37,16 @@
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="QRBTCPIP">
+    <widget class="QRadioButton" name="QRBTCP">
      <property name="text">
-      <string>TCP IP</string>
+      <string>TCP</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="QRBTCPSsl">
+     <property name="text">
+      <string>SSL</string>
      </property>
     </widget>
    </item>
@@ -248,7 +255,8 @@
  </widget>
  <tabstops>
   <tabstop>QRBRS232</tabstop>
-  <tabstop>QRBTCPIP</tabstop>
+  <tabstop>QRBTCP</tabstop>
+  <tabstop>QRBTCPSsl</tabstop>
   <tabstop>QCBComPort</tabstop>
   <tabstop>QCBBaudRate</tabstop>
   <tabstop>QCBParity</tabstop>

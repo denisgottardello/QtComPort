@@ -32,7 +32,7 @@
 
 QFMainForm::QFMainForm(QWidget *parent) : QMainWindow(parent), ui(new Ui::QFMainForm) {
     ui->setupUi(this);
-    QRect scr= QApplication::desktop()->screenGeometry();
+    QRect scr= QApplication::screens().at(0)->geometry();
     move(scr.center()- rect().center());
     if (QCoreApplication::arguments().count()> 1) ReadConfigurationFile(QCoreApplication::arguments().at(1));
 }
@@ -50,7 +50,7 @@ void QFMainForm::on_QAQtVersion_triggered() {
 }
 
 void QFMainForm::on_QAVersion_triggered() {
-    QMessageBox::information(this, "Info", tr("QtComPort Version ")+ ("0.0.14.0"), "Ok");
+    QMessageBox::information(this, "Info", tr("QtComPort Version ")+ ("0.0.15.0"), "Ok");
 }
 
 void QFMainForm::on_QPBBridge_clicked() {
@@ -97,7 +97,7 @@ void QFMainForm::on_QPBBridge_clicked() {
 
 void QFMainForm::on_QPBLoadProfile_clicked() {
     QString ConnectionPath= QFileDialog::getOpenFileName(this, "Open connection file", QDir::currentPath());
-    if (ConnectionPath!= NULL) {
+    if (ConnectionPath.length()> 0) {
         ReadConfigurationFile(ConnectionPath);
         if (QVTerminals.count()> 1) ui->QPBBridge->setEnabled(true);
         ui->QTBTerminal->setCurrentIndex(ui->QTBTerminal->count()- 1);
@@ -112,22 +112,22 @@ void QFMainForm::on_QPBNewProfile_clicked() {
         Terminal->TabNumber= ui->QTBTerminal->addTab(Terminal, "New");
         Terminal->QTBTerminal= ui->QTBTerminal;
         switch(QdOpenComPort.ui->QCBParity->currentIndex()) {
-        case 0: Terminal->Parity= 'N'; break;
-        case 1: Terminal->Parity= 'E'; break;
-        case 2: Terminal->Parity= 'O'; break;
-        case 3: Terminal->Parity= 'M'; break;
-        case 4: Terminal->Parity= 'S'; break;
+            case 0: Terminal->Parity= 'N'; break;
+            case 1: Terminal->Parity= 'E'; break;
+            case 2: Terminal->Parity= 'O'; break;
+            case 3: Terminal->Parity= 'M'; break;
+            case 4: Terminal->Parity= 'S'; break;
         }
         switch(QdOpenComPort.ui->QCBDataBits->currentIndex()) {
-        case 0: Terminal->ByteSize= 5; break;
-        case 1: Terminal->ByteSize= 6; break;
-        case 2: Terminal->ByteSize= 7; break;
-        case 3: Terminal->ByteSize= 8; break;
+            case 0: Terminal->ByteSize= 5; break;
+            case 1: Terminal->ByteSize= 6; break;
+            case 2: Terminal->ByteSize= 7; break;
+            case 3: Terminal->ByteSize= 8; break;
         }
         switch(QdOpenComPort.ui->QCBStopBits->currentIndex()) {
-        case 0: Terminal->StopBits= 0; break;
-        case 1: Terminal->StopBits= 1; break;
-        case 2: Terminal->StopBits= 2; break;
+            case 0: Terminal->StopBits= 0; break;
+            case 1: Terminal->StopBits= 1; break;
+            case 2: Terminal->StopBits= 2; break;
         }
         Terminal->ComPort= QdOpenComPort.ui->QCBComPort->currentText();
         Terminal->BaudRate= QdOpenComPort.ui->QCBBaudRate->currentText().toInt();
@@ -135,9 +135,10 @@ void QFMainForm::on_QPBNewProfile_clicked() {
         Terminal->ui->QPTELog->setStyleSheet("background-color: black; color: white");
         Terminal->SendBreak= QdOpenComPort.ui->QCBSendBreak->isChecked();
         Terminal->Server= QdOpenComPort.ui->QLEServer->text();
-        Terminal->Socket= QdOpenComPort.ui->QSBSocket->value();
-        if (QdOpenComPort.ui->QRBRS232->isChecked()) Terminal->Mode= MODERS232;
-        else Terminal->Mode= MODETCPIP;
+        Terminal->Socket= static_cast<quint16>(QdOpenComPort.ui->QSBSocket->value());
+        if (QdOpenComPort.ui->QRBRS232->isChecked()) Terminal->Mode= MODE_RS232;
+        else if (QdOpenComPort.ui->QRBTCP->isChecked()) Terminal->Mode= MODE_TCP;
+        else Terminal->Mode= MODE_TCP_SSL;
         Terminal->ui->QPBOpen->setEnabled(true);
         Terminal->ui->QPBOpen->click();
         Terminal->QVTerminals= &QVTerminals;

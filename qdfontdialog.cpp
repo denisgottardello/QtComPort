@@ -20,7 +20,6 @@
 
 #include "qdfontdialog.h"
 #include "ui_qdfontdialog.h"
-#include "QDebug"
 
 QDFontDialog::QDFontDialog(QWidget *parent) : QDialog(parent), ui(new Ui::QDFontDialog) {
     ui->setupUi(this);

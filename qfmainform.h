@@ -21,17 +21,18 @@
 #ifndef QFMAINFORM_H
 #define QFMAINFORM_H
 
-#include <QMainWindow>
-#include "QDesktopWidget"
-#include "QFileDialog"
-#include "QScrollBar"
-#include "qdopencomport.h"
-#include "QMessageBox"
-#include "qdterminal.h"
 #include "qdbridge.h"
-#include "qdopencomport.h"
-#include "QSerialPortInfo"
 #include "QDesktopServices"
+#include "QDesktopWidget"
+#include "qdopencomport.h"
+#include "qdopencomport.h"
+#include "qdterminal.h"
+#include "QFileDialog"
+#include "QMessageBox"
+#include "QScreen"
+#include "QScrollBar"
+#include "QSerialPortInfo"
+#include <QMainWindow>
 
 namespace Ui {
     class QFMainForm;
@@ -42,12 +43,12 @@ class QFMainForm : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit QFMainForm(QWidget *parent = 0);
+    explicit QFMainForm(QWidget *parent = nullptr);
     ~QFMainForm();
 
 private:
     Ui::QFMainForm *ui;
-    QVector <QDTerminal*>QVTerminals;
+    QVector<QDTerminal*> QVTerminals;
     void ReadConfigurationFile(QString Path);
 
 private slots:

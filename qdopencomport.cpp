@@ -65,7 +65,7 @@ void QDOpenComPort::on_QPBCancel_clicked() {
     this->reject();
 }
 
-void QDOpenComPort::on_QRBRS232_clicked() {
+void QDOpenComPort::on_QRBRS232_toggled(bool ) {
     ui->QCBComPort->setEnabled(true);
     ui->QCBBaudRate->setEnabled(true);
     ui->QCBParity->setEnabled(true);
@@ -77,7 +77,7 @@ void QDOpenComPort::on_QRBRS232_clicked() {
     ui->QPBOk->setEnabled(true);
 }
 
-void QDOpenComPort::on_QRBTCPIP_clicked() {
+void QDOpenComPort::on_QRBTCP_toggled(bool ) {
     ui->QCBComPort->setEnabled(false);
     ui->QCBBaudRate->setEnabled(false);
     ui->QCBParity->setEnabled(false);
@@ -88,6 +88,10 @@ void QDOpenComPort::on_QRBTCPIP_clicked() {
     ui->QSBSocket->setEnabled(true);
     if (ui->QLEServer->text().length()> 0) ui->QPBOk->setEnabled(true);
     else ui->QPBOk->setEnabled(false);
+}
+
+void QDOpenComPort::on_QRBTCPSsl_toggled(bool checked) {
+    on_QRBTCP_toggled(checked);
 }
 
 void QDOpenComPort::on_QLEServer_returnPressed() {

@@ -48,8 +48,6 @@ TRANSLATIONS  = QtComPort_it.ts
 
 RC_FILE = QtComPort.rc
 
-QMAKE_MAC_SDK = macosx10.11
-
 ICON = QtComPort.icns
 
 DISTFILES += \

@@ -11,5 +11,6 @@
     </qresource>
     <qresource prefix="/Translations">
         <file>QtComPort_it.qm</file>
+        <file>qt_it.qm</file>
     </qresource>
 </RCC>

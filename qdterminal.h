@@ -35,6 +35,16 @@
 #include "ui_qdterminal.h"
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
+#ifndef QDTERMINALLOGFORMATS_H
+    class QDTerminal;
+    #include "qdterminallogformats.h"
+#endif
+
+enum TerminalLogFormats {
+    TERMINAL_LOG_FORMAT_COMPACT= 1,
+    TERMINAL_LOG_FORMAT_FULL= 0,
+    TERMINAL_LOG_FORMAT_SEPARATOR= 2,
+};
 
 enum Modes {
     MODE_RS232= 0,
@@ -77,6 +87,7 @@ private:
     QSslSocket *SslSocket= nullptr;
     QTcpSocket *TcpSocket= nullptr;
     QTimer *QTControl;
+    TerminalLogFormats TerminalLogFormat= TERMINAL_LOG_FORMAT_FULL;
     bool eventFilter(QObject *object, QEvent *event);
     void OpenComPort();
     void OpenTcpPort();
@@ -116,6 +127,7 @@ private slots:
     void on_QPBSelectAll_clicked();
     void on_QRBSym_clicked();
     void on_QSBNewLineAfterMs_valueChanged(int arg1);
+    void on_QTBTerminalLogFormats_clicked();
     void OnTimeout();
     void ReadyRead();
 

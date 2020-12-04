@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>875</width>
+    <width>975</width>
     <height>480</height>
    </rect>
   </property>
@@ -373,6 +373,13 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <widget class="QToolButton" name="QTBTerminalLogFormats">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
@@ -610,6 +617,7 @@
   <tabstop>QRBDec</tabstop>
   <tabstop>QRBHex</tabstop>
   <tabstop>QRBBin</tabstop>
+  <tabstop>QTBTerminalLogFormats</tabstop>
   <tabstop>QRBCR</tabstop>
   <tabstop>QRBLF</tabstop>
   <tabstop>QCBNewLineAfter</tabstop>

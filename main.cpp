@@ -28,8 +28,9 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setStyle(QStyleFactory::create("plastique"));
 
-    QTranslator translator;
+    QTranslator translator, translator2;
     if (translator.load("QtComPort_"+ QLocale::system().name(), ":/Translations")) a.installTranslator(&translator);
+    if (translator2.load("qt_"+ QLocale::system().name(), ":/Translations")) a.installTranslator(&translator2);
 
     QFMainForm w;
     w.show();

@@ -29,10 +29,14 @@
 #include "qdterminal.h"
 #include "QFileDialog"
 #include "QMessageBox"
+#include "QNetworkAccessManager"
+#include "QNetworkReply"
 #include "QScreen"
 #include "QScrollBar"
 #include "QSerialPortInfo"
 #include <QMainWindow>
+
+#define VERSION QString("0.0.16.0")
 
 namespace Ui {
     class QFMainForm;
@@ -48,10 +52,12 @@ public:
 
 private:
     Ui::QFMainForm *ui;
+    QNetworkAccessManager *NetworkAccessManager= nullptr;
     QVector<QDTerminal*> QVTerminals;
     void ReadConfigurationFile(QString Path);
 
 private slots:
+    void finished(QNetworkReply *reply);
     void on_QAAuthor_triggered();
     void on_QAQtVersion_triggered();
     void on_QAVersion_triggered();

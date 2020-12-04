@@ -106,68 +106,77 @@
     </message>
     <message>
         <location filename="qdopencomport.ui" line="32"/>
-        <location filename="qdopencomport.ui" line="55"/>
+        <location filename="qdopencomport.ui" line="62"/>
         <source>RS232</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="42"/>
-        <location filename="qdopencomport.ui" line="143"/>
+        <location filename="qdopencomport.ui" line="150"/>
         <source>TCP IP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="90"/>
+        <location filename="qdopencomport.ui" line="97"/>
         <source>ComPort</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="83"/>
+        <location filename="qdopencomport.ui" line="90"/>
         <source>Baud rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="100"/>
+        <location filename="qdopencomport.ui" line="107"/>
         <source>Parity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="126"/>
+        <location filename="qdopencomport.ui" line="133"/>
         <source>Data bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="116"/>
+        <location filename="qdopencomport.ui" line="123"/>
         <source>Stop bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="73"/>
+        <location filename="qdopencomport.ui" line="42"/>
+        <source>TCP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="49"/>
+        <source>SSL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="80"/>
         <source>Flow control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="133"/>
+        <location filename="qdopencomport.ui" line="140"/>
         <source>Send break</source>
         <translation type="unfinished">Invia break</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="161"/>
+        <location filename="qdopencomport.ui" line="168"/>
         <source>Socket</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="168"/>
+        <location filename="qdopencomport.ui" line="175"/>
         <source>Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="229"/>
+        <location filename="qdopencomport.ui" line="236"/>
         <source>Cancel</source>
         <translation type="unfinished">Annulla</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="236"/>
+        <location filename="qdopencomport.ui" line="243"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
@@ -265,17 +274,22 @@
         <translation type="unfinished">Mostra caratteri speciali</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="382"/>
+        <location filename="qdterminal.ui" line="379"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdterminal.ui" line="389"/>
         <source>New line width</source>
         <translation type="unfinished">Nuova riga con</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="400"/>
+        <location filename="qdterminal.ui" line="407"/>
         <source>CR</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="407"/>
+        <location filename="qdterminal.ui" line="414"/>
         <source>LF</source>
         <translation type="unfinished"></translation>
     </message>
@@ -300,58 +314,91 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="420"/>
+        <location filename="qdterminal.ui" line="427"/>
         <source>New line after</source>
         <translation type="unfinished">Caporiga dopo</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="437"/>
+        <location filename="qdterminal.ui" line="444"/>
         <source>ms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="444"/>
+        <location filename="qdterminal.ui" line="451"/>
         <source>Row count</source>
         <translation type="unfinished">Numero riga</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="451"/>
+        <location filename="qdterminal.ui" line="458"/>
         <source>Timestamp</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="518"/>
+        <location filename="qdterminal.ui" line="525"/>
         <source>Send</source>
         <translation type="unfinished">Invia</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="543"/>
+        <location filename="qdterminal.ui" line="550"/>
         <source>Clear</source>
         <translation type="unfinished">Pulisci</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="550"/>
+        <location filename="qdterminal.ui" line="557"/>
         <source>Select all</source>
         <translation type="unfinished">Seleziona tutto</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="557"/>
+        <location filename="qdterminal.ui" line="564"/>
         <source>Copy</source>
         <translation type="unfinished">Copia</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="564"/>
+        <location filename="qdterminal.ui" line="571"/>
         <source>Save to file</source>
         <translation type="unfinished">Salva su file</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="574"/>
+        <location filename="qdterminal.ui" line="581"/>
         <source>Send file</source>
         <translation type="unfinished">Invia file</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="517"/>
+        <location filename="qdterminal.cpp" line="557"/>
         <source>The ComPort is already in use!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QDTerminalLogFormats</name>
+    <message>
+        <location filename="qdterminallogformats.ui" line="14"/>
+        <source>Terminal log formats</source>
+        <translation type="unfinished">Formato log nel terminale</translation>
+    </message>
+    <message>
+        <location filename="qdterminallogformats.ui" line="23"/>
+        <source>Compact</source>
+        <translation type="unfinished">Compatto</translation>
+    </message>
+    <message>
+        <location filename="qdterminallogformats.ui" line="30"/>
+        <source>Separator (,)</source>
+        <translation type="unfinished">Separatore (,)</translation>
+    </message>
+    <message>
+        <location filename="qdterminallogformats.ui" line="37"/>
+        <source>Full ([0x..])</source>
+        <translation type="unfinished">Completo ([0x..])</translation>
+    </message>
+    <message>
+        <location filename="qdterminallogformats.ui" line="79"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Annulla</translation>
+    </message>
+    <message>
+        <location filename="qdterminallogformats.ui" line="86"/>
+        <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -413,12 +460,17 @@
         <translation type="unfinished">Versione Qt</translation>
     </message>
     <message>
-        <location filename="qfmainform.cpp" line="49"/>
+        <location filename="qfmainform.cpp" line="51"/>
+        <source>New version available. Do you want to open the QtComPort download page?</source>
+        <translation type="unfinished">Nuova versione disponibile. Vuoi aprire la pagina web di QtComPort?</translation>
+    </message>
+    <message>
+        <location filename="qfmainform.cpp" line="63"/>
         <source>Qt version: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qfmainform.cpp" line="53"/>
+        <location filename="qfmainform.cpp" line="67"/>
         <source>QtComPort Version </source>
         <translation type="unfinished">QtComPort Versione </translation>
     </message>

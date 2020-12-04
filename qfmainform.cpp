@@ -35,10 +35,24 @@ QFMainForm::QFMainForm(QWidget *parent) : QMainWindow(parent), ui(new Ui::QFMain
     QRect scr= QApplication::screens().at(0)->geometry();
     move(scr.center()- rect().center());
     if (QCoreApplication::arguments().count()> 1) ReadConfigurationFile(QCoreApplication::arguments().at(1));
+    NetworkAccessManager= new QNetworkAccessManager(this);
+    connect(NetworkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
+    NetworkAccessManager->get(QNetworkRequest(QUrl("http://www.denisgottardello.it/QtComPort/QtComPortVersion.txt")));
 }
 
 QFMainForm::~QFMainForm() {
+    if (NetworkAccessManager) delete NetworkAccessManager;
     delete ui;
+}
+
+void QFMainForm::finished(QNetworkReply *reply) {
+    if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()== 200) {
+        if (QString(reply->readAll().trimmed()).compare(VERSION)!= 0) {
+            if (QMessageBox::information(this, "Info", tr("New version available. Do you want to open the QtComPort download page?"), QMessageBox::Yes | QMessageBox::No)== QMessageBox::Yes) {
+                QDesktopServices::openUrl(QUrl("http://www.denisgottardello.it/QtComPort"));
+            }
+        }
+    }
 }
 
 void QFMainForm::on_QAAuthor_triggered() {
@@ -50,7 +64,7 @@ void QFMainForm::on_QAQtVersion_triggered() {
 }
 
 void QFMainForm::on_QAVersion_triggered() {
-    QMessageBox::information(this, "Info", tr("QtComPort Version ")+ ("0.0.15.0"), "Ok");
+    QMessageBox::information(this, "Info", tr("QtComPort Version ")+ VERSION, "Ok");
 }
 
 void QFMainForm::on_QPBBridge_clicked() {

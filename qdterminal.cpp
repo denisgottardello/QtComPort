@@ -398,6 +398,10 @@ void QDTerminal::on_QPBSend_clicked() {
     }
 }
 
+void QDTerminal::on_QPBSelectAll_clicked() {
+    ui->QPTELog->selectAll();
+}
+
 void QDTerminal::on_QPBSendFile_clicked() {
     QFileDialog FileDialog;
     FileDialog.setDirectory(DirectoryPath);
@@ -475,8 +479,19 @@ void QDTerminal::on_QSBNewLineAfterMs_valueChanged(int ) {
     on_QRBPrintableOnly_clicked();
 }
 
-void QDTerminal::on_QPBSelectAll_clicked() {
-    ui->QPTELog->selectAll();
+void QDTerminal::on_QTBTerminalLogFormats_clicked() {
+    QDTerminalLogFormats TerminalLogFormats(this);
+    switch (TerminalLogFormat) {
+        case TERMINAL_LOG_FORMAT_COMPACT: TerminalLogFormats.ui->QRBCompact->setChecked(true); break;
+        case TERMINAL_LOG_FORMAT_FULL: TerminalLogFormats.ui->QRBFull->setChecked(true); break;
+        case TERMINAL_LOG_FORMAT_SEPARATOR: TerminalLogFormats.ui->QRBSeparator->setChecked(true); break;
+    }
+    if (TerminalLogFormats.exec()== QDialog::Accepted) {
+        if (TerminalLogFormats.ui->QRBCompact->isChecked()) TerminalLogFormat= TERMINAL_LOG_FORMAT_COMPACT;
+        else if (TerminalLogFormats.ui->QRBFull->isChecked()) TerminalLogFormat= TERMINAL_LOG_FORMAT_FULL;
+        else TerminalLogFormat= TERMINAL_LOG_FORMAT_SEPARATOR;
+        on_QRBPrintableOnly_clicked();
+    }
 }
 
 void QDTerminal::OpenComPort() {
@@ -526,7 +541,7 @@ void QDTerminal::OpenComPort() {
             ui->QPBClose->setEnabled(true);
             ui->QPTELog->installEventFilter(this);
             ui->QPBSaveProfileAs->setEnabled(true);
-            ui->QLConnection->setText("ComPort: "+ ComPort+ ",PinoutSignals BaudRate: "+ QString::number(BaudRate)+ ", Parity: "+ Parity+ ", ByteSize: "+ QString::number(ByteSize));
+            ui->QLConnection->setText("ComPort: "+ ComPort+ ", BaudRate: "+ QString::number(BaudRate)+ ", Parity: "+ Parity+ ", ByteSize: "+ QString::number(ByteSize));
             switch(StopBits) {
                 case 0: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 1"); break;
                 case 1: ui->QLConnection->setText(ui->QLConnection->text()+ ", StopBits: 1.5"); break;
@@ -637,6 +652,7 @@ void QDTerminal::SaveProfile(QString ConnectionPath) {
         Settings->setValue("Server", Server);
         Settings->setValue("Socket", Socket);
         Settings->setValue("SpecialCharacters", ui->QCBSpecialCharacters->isChecked());
+        Settings->setValue("TerminalLogFormat", TerminalLogFormat);
         Settings->setValue("Timestamp", ui->QCBTimestamp->isChecked());
     }{
         delete Settings;
@@ -779,7 +795,12 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
         }
         if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
         for (int count= 0; count< QBABufferIn.size(); count++) {
-            BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count))).rightJustified(3, '0')+ "]";
+            switch (TerminalLogFormat) {
+                case TERMINAL_LOG_FORMAT_COMPACT: BufferIn+= QString::number(uchar(QBABufferIn.at(count))).rightJustified(3, '0'); break;
+                case TERMINAL_LOG_FORMAT_FULL: BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count))).rightJustified(3, '0')+ "]"; break;
+                case TERMINAL_LOG_FORMAT_SEPARATOR: BufferIn+= QString::number(uchar(QBABufferIn.at(count))).rightJustified(3, '0')+ ","; break;
+            }
+
         }
     } else if (ui->QRBBin->isChecked()) {
         if (ui->QCBNewLineAfter->isChecked()) {
@@ -795,7 +816,11 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
         }
         if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
         for (int count= 0; count< QBABufferIn.size(); count++) {
-            BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count)), 2).rightJustified(8, '0')+ "]";
+            switch (TerminalLogFormat) {
+                case TERMINAL_LOG_FORMAT_COMPACT: BufferIn+= QString::number(uchar(QBABufferIn.at(count)), 2).rightJustified(8, '0'); break;
+                case TERMINAL_LOG_FORMAT_FULL: BufferIn+= "[0b"+ QString::number(uchar(QBABufferIn.at(count)), 2).rightJustified(8, '0')+ "]"; break;
+                case TERMINAL_LOG_FORMAT_SEPARATOR: BufferIn+= QString::number(uchar(QBABufferIn.at(count)), 2).rightJustified(8, '0')+ ","; break;
+            }
         }
     } else {
         if (ui->QCBNewLineAfter->isChecked()) {
@@ -811,7 +836,11 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
         }
         if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
         for (int count= 0; count< QBABufferIn.size(); count++) {
-            BufferIn+= "[0x"+ QString::number(uchar(QBABufferIn.at(count)), 16).rightJustified(2, '0').toUpper()+ "]";
+            switch (TerminalLogFormat) {
+                case TERMINAL_LOG_FORMAT_COMPACT: BufferIn+= QString::number(uchar(QBABufferIn.at(count)), 16).rightJustified(2, '0').toUpper(); break;
+                case TERMINAL_LOG_FORMAT_FULL: BufferIn+= "[0x"+ QString::number(uchar(QBABufferIn.at(count)), 16).rightJustified(2, '0').toUpper()+ "]"; break;
+                case TERMINAL_LOG_FORMAT_SEPARATOR: BufferIn+= QString::number(uchar(QBABufferIn.at(count)), 16).rightJustified(2, '0').toUpper()+ ","; break;
+            }
         }
     }
     ui->QPTELog->setPlainText(ui->QPTELog->toPlainText()+ BufferIn);
@@ -891,6 +920,7 @@ void QDTerminal::ReadConfigurationFile() {
         SendBreak= Settings->value("SendBreak", false).toBool();
         Server= Settings->value("Server").toString();
         Socket= static_cast<quint16>(Settings->value("Socket").toInt());
+        TerminalLogFormat= static_cast<TerminalLogFormats>(Settings->value("TerminalLogFormat", TERMINAL_LOG_FORMAT_FULL).toInt());
         switch(Mode) {
             case MODE_RS232: OpenComPort(); break;
             case MODE_TCP: OpenTcpPort(); break;

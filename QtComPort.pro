@@ -16,6 +16,7 @@ unix:!mac {
 }
 
 SOURCES += main.cpp\
+    qdterminallogformats.cpp \
         qfmainform.cpp \
     qdopencomport.cpp \
     qdfontdialog.cpp \
@@ -28,14 +29,16 @@ HEADERS  += qfmainform.h \
     qdfontdialog.h \
     qdterminal.h \
     qdbridge.h \
-    qdcolors.h
+    qdcolors.h \
+    qdterminallogformats.h
 
 FORMS    += qfmainform.ui \
     qdopencomport.ui \
     qdfontdialog.ui \
     qdterminal.ui \
     qdbridge.ui \
-    qdcolors.ui
+    qdcolors.ui \
+    qdterminallogformats.ui
 
 OTHER_FILES += \
     qt.conf \

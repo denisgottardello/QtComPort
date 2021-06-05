@@ -30,6 +30,7 @@
 #include "QSerialPortInfo"
 #include "QSettings"
 #include "QSslSocket"
+#include "QTcpServer"
 #include "QTcpSocket"
 #include "QTimer"
 #include "ui_qdterminal.h"
@@ -40,16 +41,17 @@
     #include "qdterminallogformats.h"
 #endif
 
+enum Modes {
+    MODE_RS232= 0,
+    MODE_TCP_CLIENT= 1,
+    MODE_TCP_CLIENT_SSL= 2,
+    MODE_TCP_SERVER= 3
+};
+
 enum TerminalLogFormats {
     TERMINAL_LOG_FORMAT_COMPACT= 1,
     TERMINAL_LOG_FORMAT_FULL= 0,
     TERMINAL_LOG_FORMAT_SEPARATOR= 2,
-};
-
-enum Modes {
-    MODE_RS232= 0,
-    MODE_TCP= 1,
-    MODE_TCP_SSL= 2
 };
 
 namespace Ui {
@@ -65,8 +67,8 @@ public:
     ~QDTerminal();
     Ui::QDTerminal *ui;
     bool SendBreak;
-    int TabNumber, BaudRate, ByteSize, StopBits, FlowControl;
     char Parity;
+    int TabNumber, BaudRate, ByteSize, StopBits, FlowControl, MaxClients;
     Modes Mode;
     QDTerminal *QdTerminal= nullptr;
     QString ComPort, Server;
@@ -84,13 +86,16 @@ private:
     QSerialPort SerialPort;
     QSerialPort::PinoutSignals pinoutSignals;
     QString ConnectionPath, DirectoryPath;
-    QSslSocket *SslSocket= nullptr;
-    QTcpSocket *TcpSocket= nullptr;
+    QSslSocket *SslSocketClient= nullptr;
+    QTcpServer *TcpServer= nullptr;
+    QTcpSocket *TcpSocketClient= nullptr;
     QTimer *QTControl;
+    QVector<QTcpSocket*> QVTcpSocketsServer;
     TerminalLogFormats TerminalLogFormat= TERMINAL_LOG_FORMAT_FULL;
     bool eventFilter(QObject *object, QEvent *event);
     void OpenComPort();
-    void OpenTcpPort();
+    void OpenTcpClientPort();
+    void OpenTcpServerPort();
     void OpenTcpSslPort();
     void SaveProfile(QString ConnectionPath);
     void ShowBufferIn(QByteArray &QBABufferIn);
@@ -128,6 +133,7 @@ private slots:
     void on_QRBSym_clicked();
     void on_QSBNewLineAfterMs_valueChanged(int arg1);
     void on_QTBTerminalLogFormats_clicked();
+    void OnNewConnection();
     void OnTimeout();
     void ReadyRead();
 

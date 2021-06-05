@@ -34,7 +34,7 @@ class QDBridge : public QDialog
     Q_OBJECT
 
 public:
-    explicit QDBridge(QWidget *parent = 0);
+    explicit QDBridge(QWidget *parent = nullptr);
     ~QDBridge();
     Ui::QDBridge *ui;
     struct TerminalRadioButton {

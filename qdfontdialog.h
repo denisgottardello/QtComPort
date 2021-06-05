@@ -34,7 +34,7 @@ class QDFontDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit QDFontDialog(QWidget *parent = 0);
+    explicit QDFontDialog(QWidget *parent = nullptr);
     ~QDFontDialog();
     QFont GetCurrentFont();
     void SetCurrentFont(QFont font);

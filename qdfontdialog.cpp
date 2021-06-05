@@ -98,7 +98,7 @@ void QDFontDialog::SetCurrentFont(QFont font) {
     }
     for (int count= 0; count< ui->QLWSizes->count(); count++) {
         if (ui->QLWSizes->item(count)->text().compare(QString::number(font.pointSize()))== 0) {
-            ui->QLWSizes->setCurrentRow(count); break;
+            ui->QLWSizes->setCurrentRow(count);
             break;
         }
     }

@@ -48,7 +48,7 @@ QFMainForm::~QFMainForm() {
 void QFMainForm::finished(QNetworkReply *reply) {
     if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()== 200) {
         if (QString(reply->readAll().trimmed()).compare(VERSION)!= 0) {
-            if (QMessageBox::information(this, "Info", tr("New version available. Do you want to open the QtComPort download page?"), QMessageBox::Yes | QMessageBox::No)== QMessageBox::Yes) {
+            if (QMessageBox::information(this, tr("Info"), tr("New version available. Do you want to open the QtComPort download page?"), QMessageBox::Yes | QMessageBox::No)== QMessageBox::Yes) {
                 QDesktopServices::openUrl(QUrl("http://www.denisgottardello.it/QtComPort"));
             }
         }
@@ -56,15 +56,15 @@ void QFMainForm::finished(QNetworkReply *reply) {
 }
 
 void QFMainForm::on_QAAuthor_triggered() {
-    QMessageBox::information(this, "Info", "Denis Gottardello\nwww.denisgottardello.it\ninfo@denisgottardello.it", "Ok");
+    QMessageBox::information(this, tr("Info"), "Denis Gottardello\nwww.denisgottardello.it\ninfo@denisgottardello.it", "Ok");
 }
 
 void QFMainForm::on_QAQtVersion_triggered() {
-    QMessageBox::information(this, "Info", tr("Qt version: ")+ QT_VERSION_STR, "Ok");
+    QMessageBox::information(this, tr("Info"), tr("Qt version: ")+ QT_VERSION_STR, "Ok");
 }
 
 void QFMainForm::on_QAVersion_triggered() {
-    QMessageBox::information(this, "Info", tr("QtComPort Version ")+ VERSION, "Ok");
+    QMessageBox::information(this, tr("Info"), tr("QtComPort Version ")+ VERSION, "Ok");
 }
 
 void QFMainForm::on_QPBBridge_clicked() {
@@ -110,7 +110,7 @@ void QFMainForm::on_QPBBridge_clicked() {
 }
 
 void QFMainForm::on_QPBLoadProfile_clicked() {
-    QString ConnectionPath= QFileDialog::getOpenFileName(this, "Open connection file", QDir::currentPath());
+    QString ConnectionPath= QFileDialog::getOpenFileName(this, tr("Open connection file"), QDir::currentPath());
     if (ConnectionPath.length()> 0) {
         ReadConfigurationFile(ConnectionPath);
         if (QVTerminals.count()> 1) ui->QPBBridge->setEnabled(true);
@@ -119,11 +119,12 @@ void QFMainForm::on_QPBLoadProfile_clicked() {
 }
 
 void QFMainForm::on_QPBNewProfile_clicked() {
-    QDOpenComPort QdOpenComPort;
+    QDOpenComPort QdOpenComPort(this);
     foreach (const QSerialPortInfo &SerialPortInfo, QSerialPortInfo::availablePorts()) QdOpenComPort.ui->QCBComPort->addItem(SerialPortInfo.portName());
+    QdOpenComPort.ui->QCBComPort->count()> 0 ? QdOpenComPort.ui->QPBOk->setEnabled(true) : QdOpenComPort.ui->QPBOk->setEnabled(false);
     if (QdOpenComPort.exec()== QDialog::Accepted) {
         QDTerminal *Terminal= new QDTerminal(this, "");
-        Terminal->TabNumber= ui->QTBTerminal->addTab(Terminal, "New");
+        Terminal->TabNumber= ui->QTBTerminal->addTab(Terminal, tr("New"));
         Terminal->QTBTerminal= ui->QTBTerminal;
         switch(QdOpenComPort.ui->QCBParity->currentIndex()) {
             case 0: Terminal->Parity= 'N'; break;
@@ -146,13 +147,15 @@ void QFMainForm::on_QPBNewProfile_clicked() {
         Terminal->ComPort= QdOpenComPort.ui->QCBComPort->currentText();
         Terminal->BaudRate= QdOpenComPort.ui->QCBBaudRate->currentText().toInt();
         Terminal->FlowControl= QdOpenComPort.ui->QCBFlowControl->currentIndex();
+        Terminal->MaxClients= QdOpenComPort.ui->QSBTCPServerMaxClients->value();
         Terminal->ui->QPTELog->setStyleSheet("background-color: black; color: white");
         Terminal->SendBreak= QdOpenComPort.ui->QCBSendBreak->isChecked();
         Terminal->Server= QdOpenComPort.ui->QLEServer->text();
         Terminal->Socket= static_cast<quint16>(QdOpenComPort.ui->QSBSocket->value());
         if (QdOpenComPort.ui->QRBRS232->isChecked()) Terminal->Mode= MODE_RS232;
-        else if (QdOpenComPort.ui->QRBTCP->isChecked()) Terminal->Mode= MODE_TCP;
-        else Terminal->Mode= MODE_TCP_SSL;
+        else if (QdOpenComPort.ui->QRBTCPClient->isChecked()) Terminal->Mode= MODE_TCP_CLIENT;
+        else if (QdOpenComPort.ui->QRBTCPServer->isChecked()) Terminal->Mode= MODE_TCP_SERVER;
+        else Terminal->Mode= MODE_TCP_CLIENT_SSL;
         Terminal->ui->QPBOpen->setEnabled(true);
         Terminal->ui->QPBOpen->click();
         Terminal->QVTerminals= &QVTerminals;

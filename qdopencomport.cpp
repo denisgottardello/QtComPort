@@ -51,10 +51,23 @@ QDOpenComPort::QDOpenComPort(QWidget *parent) : QDialog(parent), ui(new Ui::QDOp
     ui->QCBFlowControl->addItem("RTS/CTS");
     ui->QCBFlowControl->addItem("XON/XOFF");
     ui->QCBFlowControl->setCurrentIndex(0);
+    on_QSBSocket_valueChanged(ui->QSBSocket->value());
+    ui->tabWidget->tabBar()->hide();
+    ui->QSBSocket->installEventFilter(this);
 }
 
 QDOpenComPort::~QDOpenComPort() {
     delete ui;
+}
+
+bool QDOpenComPort::eventFilter(QObject *object, QEvent *event) {
+    if (event->type()== QEvent::KeyPress && object== ui->QSBSocket) {
+        if (static_cast<QKeyEvent*>(event)->key()== Qt::Key_Enter) {
+            ui->QPBOk->click();
+            return true;
+        }
+    }
+    return false;
 }
 
 void QDOpenComPort::on_QPBOk_clicked() {
@@ -66,32 +79,27 @@ void QDOpenComPort::on_QPBCancel_clicked() {
 }
 
 void QDOpenComPort::on_QRBRS232_toggled(bool ) {
-    ui->QCBComPort->setEnabled(true);
-    ui->QCBBaudRate->setEnabled(true);
-    ui->QCBParity->setEnabled(true);
-    ui->QCBDataBits->setEnabled(true);
-    ui->QCBStopBits->setEnabled(true);
-    ui->QCBFlowControl->setEnabled(true);
-    ui->QLEServer->setEnabled(false);
-    ui->QSBSocket->setEnabled(false);
-    ui->QPBOk->setEnabled(true);
+    ui->tabWidget->setCurrentIndex(0);
+    ui->QCBComPort->count()> 0 ? ui->QPBOk->setEnabled(true) : ui->QPBOk->setEnabled(false);
 }
 
-void QDOpenComPort::on_QRBTCP_toggled(bool ) {
-    ui->QCBComPort->setEnabled(false);
-    ui->QCBBaudRate->setEnabled(false);
-    ui->QCBParity->setEnabled(false);
-    ui->QCBDataBits->setEnabled(false);
-    ui->QCBStopBits->setEnabled(false);
-    ui->QCBFlowControl->setEnabled(false);
+void QDOpenComPort::on_QRBTCPClient_toggled(bool ) {
+    ui->tabWidget->setCurrentIndex(1);
     ui->QLEServer->setEnabled(true);
-    ui->QSBSocket->setEnabled(true);
     if (ui->QLEServer->text().length()> 0) ui->QPBOk->setEnabled(true);
     else ui->QPBOk->setEnabled(false);
+    ui->QGBFirewallRule->hide();
+}
+
+void QDOpenComPort::on_QRBTCPServer_toggled(bool ) {
+    ui->tabWidget->setCurrentIndex(1);
+    ui->QLEServer->setEnabled(false);
+    ui->QPBOk->setEnabled(true);
+    ui->QGBFirewallRule->show();
 }
 
 void QDOpenComPort::on_QRBTCPSsl_toggled(bool checked) {
-    on_QRBTCP_toggled(checked);
+    on_QRBTCPClient_toggled(checked);
 }
 
 void QDOpenComPort::on_QLEServer_returnPressed() {
@@ -101,4 +109,13 @@ void QDOpenComPort::on_QLEServer_returnPressed() {
 void QDOpenComPort::on_QLEServer_textChanged(QString ) {
     if (ui->QLEServer->text().length()> 0) ui->QPBOk->setEnabled(true);
     else ui->QPBOk->setEnabled(false);
+}
+
+void QDOpenComPort::on_QSBSocket_valueChanged(int arg1) {
+    ui->QTEFirewallRule->clear();
+    ui->QTEFirewallRule->append(tr("To add"));
+    ui->QTEFirewallRule->append("netsh advfirewall firewall add rule name=\"QtComPort\" dir=in action=allow protocol=TCP localport="+ QString::number(arg1));
+    ui->QTEFirewallRule->append("");
+    ui->QTEFirewallRule->append(tr("To remove"));
+    ui->QTEFirewallRule->append("netsh advfirewall firewall delete rule name=\"QtComPort\" protocol=TCP localport="+ QString::number(arg1));
 }

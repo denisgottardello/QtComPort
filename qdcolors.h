@@ -34,7 +34,7 @@ class QDColors : public QDialog
     Q_OBJECT
 
 public:
-    explicit QDColors(QWidget *parent = 0);
+    explicit QDColors(QWidget *parent = nullptr);
     ~QDColors();
     Ui::QDColors *ui;
 

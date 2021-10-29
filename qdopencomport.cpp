@@ -31,6 +31,11 @@ QDOpenComPort::QDOpenComPort(QWidget *parent) : QDialog(parent), ui(new Ui::QDOp
     ui->QCBBaudRate->addItem("38400");
     ui->QCBBaudRate->addItem("57600");
     ui->QCBBaudRate->addItem("115200");
+    ui->QCBBaudRate->addItem("230400");
+    ui->QCBBaudRate->addItem("460800");
+    ui->QCBBaudRate->addItem("576000");
+    ui->QCBBaudRate->addItem("921600");
+    ui->QCBBaudRate->addItem("2000000");
     ui->QCBBaudRate->setCurrentIndex(3);
     ui->QCBParity->addItem("None");
     ui->QCBParity->addItem("Even");

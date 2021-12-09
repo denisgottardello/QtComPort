@@ -43,6 +43,8 @@ private:
 private slots:
     void on_QPBBackgroundColor_clicked();
     void on_QPBFontColor_clicked();
+    void on_QPBFontColorWarnings_clicked();
+
 };
 
 #endif // QDCOLORS_H

@@ -68,35 +68,35 @@ void QFMainForm::on_QAVersion_triggered() {
 }
 
 void QFMainForm::on_QPBBridge_clicked() {
-    QDBridge *Bridge= new QDBridge(this); {
+    QDBridge *pQDBridge= new QDBridge(this); {
         for (int count= 0; count< QVTerminals.count(); count++) {
             QDBridge::TerminalRadioButton RadioButton1;
-            QListWidgetItem *NewItem1= new QListWidgetItem(Bridge->ui->QLWConnections1);
+            QListWidgetItem *NewItem1= new QListWidgetItem(pQDBridge->ui->QLWConnections1);
             RadioButton1.RadioButton= new QRadioButton();
             RadioButton1.count= count;
             RadioButton1.RadioButton->setText(QVTerminals[count]->ui->QLConnection->text());
             NewItem1->setSizeHint(ui->QPBBridge->size());
-            connect(RadioButton1.RadioButton, SIGNAL(toggled(bool)), Bridge, SLOT(OnTerminalsToggled(bool)));
-            Bridge->ui->QLWConnections1->setItemWidget(NewItem1, RadioButton1.RadioButton);
-            Bridge->QVTerminalRadioButtons1.append(RadioButton1);
+            connect(RadioButton1.RadioButton, SIGNAL(toggled(bool)), pQDBridge, SLOT(OnTerminalsToggled(bool)));
+            pQDBridge->ui->QLWConnections1->setItemWidget(NewItem1, RadioButton1.RadioButton);
+            pQDBridge->QVTerminalRadioButtons1.append(RadioButton1);
 
             QDBridge::TerminalRadioButton RadioButton2;
-            QListWidgetItem *NewItem2= new QListWidgetItem(Bridge->ui->QLWConnections2);
+            QListWidgetItem *NewItem2= new QListWidgetItem(pQDBridge->ui->QLWConnections2);
             RadioButton2.RadioButton= new QRadioButton();
             RadioButton2.count= count;
             RadioButton2.RadioButton->setText(QVTerminals[count]->ui->QLConnection->text());
             NewItem2->setSizeHint(ui->QPBBridge->size());
-            connect(RadioButton2.RadioButton, SIGNAL(toggled(bool)), Bridge, SLOT(OnTerminalsToggled(bool)));
-            Bridge->ui->QLWConnections2->setItemWidget(NewItem2, RadioButton2.RadioButton);
-            Bridge->QVTerminalRadioButtons2.append(RadioButton2);
+            connect(RadioButton2.RadioButton, SIGNAL(toggled(bool)), pQDBridge, SLOT(OnTerminalsToggled(bool)));
+            pQDBridge->ui->QLWConnections2->setItemWidget(NewItem2, RadioButton2.RadioButton);
+            pQDBridge->QVTerminalRadioButtons2.append(RadioButton2);
         }
-        if (Bridge->exec()== QDialog::Accepted) {
-            for (int count= 0; count< Bridge->QVTerminalRadioButtons1.count(); count++) {
-                if (Bridge->QVTerminalRadioButtons1[count].RadioButton->isChecked()) {
-                    for (int count_2= 0; count_2< Bridge->QVTerminalRadioButtons2.count(); count_2++) {
-                        if (Bridge->QVTerminalRadioButtons2[count_2].RadioButton->isChecked()) {
-                            QVTerminals[count]->QdTerminal= QVTerminals[count_2];
-                            QVTerminals[count_2]->QdTerminal= QVTerminals[count];
+        if (pQDBridge->exec()== QDialog::Accepted) {
+            for (int count= 0; count< pQDBridge->QVTerminalRadioButtons1.count(); count++) {
+                if (pQDBridge->QVTerminalRadioButtons1[count].RadioButton->isChecked()) {
+                    for (int count_2= 0; count_2< pQDBridge->QVTerminalRadioButtons2.count(); count_2++) {
+                        if (pQDBridge->QVTerminalRadioButtons2[count_2].RadioButton->isChecked()) {
+                            QVTerminals[count]->pQDTerminal= QVTerminals[count_2];
+                            QVTerminals[count_2]->pQDTerminal= QVTerminals[count];
                             break;
                         }
                     }
@@ -105,56 +105,59 @@ void QFMainForm::on_QPBBridge_clicked() {
             }
         }
     }{
-        delete Bridge;
+        delete pQDBridge;
     }
 }
 
 void QFMainForm::on_QPBLoadProfile_clicked() {
-    QString ConnectionPath= QFileDialog::getOpenFileName(this, tr("Open connection file"), QDir::currentPath());
-    if (ConnectionPath.length()> 0) {
-        ReadConfigurationFile(ConnectionPath);
+    QFileDialog FileDialog(this);
+    FileDialog.setViewMode(QFileDialog::Detail);
+    FileDialog.setFilter(QDir::Files);
+    FileDialog.setNameFilter("Qcp (*.qcp)");
+    if (FileDialog.exec()== QDialog::Accepted) {
+        ReadConfigurationFile(FileDialog.selectedFiles().at(0));
         if (QVTerminals.count()> 1) ui->QPBBridge->setEnabled(true);
         ui->QTBTerminal->setCurrentIndex(ui->QTBTerminal->count()- 1);
     }
 }
 
 void QFMainForm::on_QPBNewProfile_clicked() {
-    QDOpenComPort QdOpenComPort(this);
-    foreach (const QSerialPortInfo &SerialPortInfo, QSerialPortInfo::availablePorts()) QdOpenComPort.ui->QCBComPort->addItem(SerialPortInfo.portName());
-    QdOpenComPort.ui->QCBComPort->count()> 0 ? QdOpenComPort.ui->QPBOk->setEnabled(true) : QdOpenComPort.ui->QPBOk->setEnabled(false);
-    if (QdOpenComPort.exec()== QDialog::Accepted) {
+    QDOpenComPort OpenComPort(this);
+    foreach (const QSerialPortInfo &SerialPortInfo, QSerialPortInfo::availablePorts()) OpenComPort.ui->QCBComPort->addItem(SerialPortInfo.portName());
+    OpenComPort.ui->QCBComPort->count()> 0 ? OpenComPort.ui->QPBOk->setEnabled(true) : OpenComPort.ui->QPBOk->setEnabled(false);
+    if (OpenComPort.exec()== QDialog::Accepted) {
         QDTerminal *Terminal= new QDTerminal(this, "");
         Terminal->TabNumber= ui->QTBTerminal->addTab(Terminal, tr("New"));
         Terminal->QTBTerminal= ui->QTBTerminal;
-        switch(QdOpenComPort.ui->QCBParity->currentIndex()) {
+        switch(OpenComPort.ui->QCBParity->currentIndex()) {
             case 0: Terminal->Parity= 'N'; break;
             case 1: Terminal->Parity= 'E'; break;
             case 2: Terminal->Parity= 'O'; break;
             case 3: Terminal->Parity= 'M'; break;
             case 4: Terminal->Parity= 'S'; break;
         }
-        switch(QdOpenComPort.ui->QCBDataBits->currentIndex()) {
+        switch(OpenComPort.ui->QCBDataBits->currentIndex()) {
             case 0: Terminal->ByteSize= 5; break;
             case 1: Terminal->ByteSize= 6; break;
             case 2: Terminal->ByteSize= 7; break;
             case 3: Terminal->ByteSize= 8; break;
         }
-        switch(QdOpenComPort.ui->QCBStopBits->currentIndex()) {
+        switch(OpenComPort.ui->QCBStopBits->currentIndex()) {
             case 0: Terminal->StopBits= 0; break;
             case 1: Terminal->StopBits= 1; break;
             case 2: Terminal->StopBits= 2; break;
         }
-        Terminal->ComPort= QdOpenComPort.ui->QCBComPort->currentText();
-        Terminal->BaudRate= QdOpenComPort.ui->QCBBaudRate->currentText().toInt();
-        Terminal->FlowControl= QdOpenComPort.ui->QCBFlowControl->currentIndex();
-        Terminal->MaxClients= QdOpenComPort.ui->QSBTCPServerMaxClients->value();
+        Terminal->ComPort= OpenComPort.ui->QCBComPort->currentText();
+        Terminal->BaudRate= OpenComPort.ui->QCBBaudRate->currentText().toInt();
+        Terminal->FlowControl= OpenComPort.ui->QCBFlowControl->currentIndex();
+        Terminal->MaxClients= OpenComPort.ui->QSBTCPServerMaxClients->value();
         Terminal->ui->QPTELog->setStyleSheet("background-color: black; color: white");
-        Terminal->SendBreak= QdOpenComPort.ui->QCBSendBreak->isChecked();
-        Terminal->Server= QdOpenComPort.ui->QLEServer->text();
-        Terminal->Socket= static_cast<quint16>(QdOpenComPort.ui->QSBSocket->value());
-        if (QdOpenComPort.ui->QRBRS232->isChecked()) Terminal->Mode= MODE_RS232;
-        else if (QdOpenComPort.ui->QRBTCPClient->isChecked()) Terminal->Mode= MODE_TCP_CLIENT;
-        else if (QdOpenComPort.ui->QRBTCPServer->isChecked()) Terminal->Mode= MODE_TCP_SERVER;
+        Terminal->SendBreak= OpenComPort.ui->QCBSendBreak->isChecked();
+        Terminal->Server= OpenComPort.ui->QLEServer->text();
+        Terminal->Socket= static_cast<quint16>(OpenComPort.ui->QSBSocket->value());
+        if (OpenComPort.ui->QRBRS232->isChecked()) Terminal->Mode= MODE_RS232;
+        else if (OpenComPort.ui->QRBTCPClient->isChecked()) Terminal->Mode= MODE_TCP_CLIENT;
+        else if (OpenComPort.ui->QRBTCPServer->isChecked()) Terminal->Mode= MODE_TCP_SERVER;
         else Terminal->Mode= MODE_TCP_CLIENT_SSL;
         Terminal->ui->QPBOpen->setEnabled(true);
         Terminal->ui->QPBOpen->click();
@@ -166,10 +169,10 @@ void QFMainForm::on_QPBNewProfile_clicked() {
 }
 
 void QFMainForm::ReadConfigurationFile(QString ConnectionPath) {
-    QDTerminal *Terminal= new QDTerminal(this, ConnectionPath);
-    Terminal->TabNumber= ui->QTBTerminal->addTab(Terminal, ConnectionPath);
-    Terminal->QTBTerminal= ui->QTBTerminal;
-    Terminal->QVTerminals= &QVTerminals;
-    Terminal->ReadConfigurationFile();
-    QVTerminals.append(Terminal);
+    QDTerminal *pQDTerminal= new QDTerminal(this, ConnectionPath);
+    pQDTerminal->TabNumber= ui->QTBTerminal->addTab(pQDTerminal, ConnectionPath);
+    pQDTerminal->QTBTerminal= ui->QTBTerminal;
+    pQDTerminal->QVTerminals= &QVTerminals;
+    pQDTerminal->ReadConfigurationFile();
+    QVTerminals.append(pQDTerminal);
 }

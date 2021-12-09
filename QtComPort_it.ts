@@ -32,28 +32,35 @@
         <translation type="unfinished">Colori</translation>
     </message>
     <message>
-        <location filename="qdcolors.ui" line="47"/>
+        <location filename="qdcolors.ui" line="107"/>
         <source>Background color</source>
         <translation type="unfinished">Colore di sfondo</translation>
     </message>
     <message>
-        <location filename="qdcolors.ui" line="67"/>
+        <location filename="qdcolors.ui" line="47"/>
         <source>Font color</source>
         <translation type="unfinished">Colore font</translation>
     </message>
     <message>
-        <location filename="qdcolors.ui" line="74"/>
-        <location filename="qdcolors.ui" line="81"/>
+        <location filename="qdcolors.ui" line="54"/>
+        <location filename="qdcolors.ui" line="64"/>
+        <location filename="qdcolors.ui" line="71"/>
+        <location filename="qdcolors.ui" line="114"/>
         <source>Preview</source>
         <translation type="unfinished">Anteprima</translation>
     </message>
     <message>
-        <location filename="qdcolors.ui" line="148"/>
+        <location filename="qdcolors.ui" line="121"/>
+        <source>Warnings font color</source>
+        <translation type="unfinished">Colore font warnings</translation>
+    </message>
+    <message>
+        <location filename="qdcolors.ui" line="172"/>
         <source>Cancel</source>
         <translation type="unfinished">Annulla</translation>
     </message>
     <message>
-        <location filename="qdcolors.ui" line="155"/>
+        <location filename="qdcolors.ui" line="179"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
@@ -196,12 +203,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="116"/>
+        <location filename="qdopencomport.cpp" line="121"/>
         <source>To add</source>
         <translation type="unfinished">Per aggiungerla</translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="119"/>
+        <location filename="qdopencomport.cpp" line="124"/>
         <source>To remove</source>
         <translation type="unfinished">Per rimuoverla</translation>
     </message>
@@ -380,7 +387,7 @@
     </message>
     <message>
         <location filename="qdterminal.ui" line="571"/>
-        <location filename="qdterminal.cpp" line="420"/>
+        <location filename="qdterminal.cpp" line="430"/>
         <source>Save to file</source>
         <translation type="unfinished">Salva su file</translation>
     </message>
@@ -390,28 +397,28 @@
         <translation type="unfinished">Invia file</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="94"/>
-        <location filename="qdterminal.cpp" line="144"/>
+        <location filename="qdterminal.cpp" line="99"/>
+        <location filename="qdterminal.cpp" line="156"/>
         <source>Connected</source>
         <translation type="unfinished">Connesso</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="108"/>
+        <location filename="qdterminal.cpp" line="114"/>
         <source>Disconnected</source>
         <translation type="unfinished">Disconnesso</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="140"/>
+        <location filename="qdterminal.cpp" line="151"/>
         <source>Connection from</source>
         <translation type="unfinished">Connessione da</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="408"/>
+        <location filename="qdterminal.cpp" line="418"/>
         <source>Save As</source>
         <translation type="unfinished">Salva come</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="630"/>
+        <location filename="qdterminal.cpp" line="640"/>
         <source>The ComPort is already in use!</source>
         <translation type="unfinished">La porta è già in uso!</translation>
     </message>
@@ -526,12 +533,11 @@
         <translation type="unfinished">QtComPort Versione </translation>
     </message>
     <message>
-        <location filename="qfmainform.cpp" line="113"/>
         <source>Open connection file</source>
-        <translation type="unfinished">Apri file di connessione</translation>
+        <translation type="obsolete">Apri file di connessione</translation>
     </message>
     <message>
-        <location filename="qfmainform.cpp" line="127"/>
+        <location filename="qfmainform.cpp" line="130"/>
         <source>New</source>
         <translation type="unfinished">Nuovo</translation>
     </message>

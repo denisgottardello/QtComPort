@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>975</width>
+    <width>1101</width>
     <height>480</height>
    </rect>
   </property>
@@ -109,7 +109,7 @@
          <item>
           <widget class="QPushButton" name="QPBChangeFont">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="text">
             <string>Change font</string>
@@ -119,7 +119,7 @@
          <item>
           <widget class="QPushButton" name="QPBColors">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="text">
             <string>Colors</string>

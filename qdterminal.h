@@ -70,7 +70,7 @@ public:
     char Parity;
     int TabNumber, BaudRate, ByteSize, StopBits, FlowControl, MaxClients;
     Modes Mode;
-    QDTerminal *QdTerminal= nullptr;
+    QDTerminal *pQDTerminal= nullptr;
     QString ComPort, Server;
     QTabWidget *QTBTerminal;
     QVector<QDTerminal*> *QVTerminals= nullptr;
@@ -85,7 +85,7 @@ private:
     QDateTime QDTLastByteIn;
     QSerialPort SerialPort;
     QSerialPort::PinoutSignals pinoutSignals;
-    QString ConnectionPath, DirectoryPath;
+    QString ConnectionPath, DirectoryPath, FontColor, FontColorWarnings;
     QSslSocket *SslSocketClient= nullptr;
     QTcpServer *TcpServer= nullptr;
     QTcpSocket *TcpSocketClient= nullptr;

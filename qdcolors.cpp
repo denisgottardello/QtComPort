@@ -29,8 +29,20 @@ QDColors::~QDColors() {
     delete ui;
 }
 
+void QDColors::on_QPBBackgroundColor_clicked() {
+    QColorDialog ColorDialog(this);
+    if (ColorDialog.exec()== QDialog::Accepted) {
+        QPalette Palette= ui->QLEPreview->palette();
+        QPalette PaletteWarnings= ui->QLEPreviewWarnings->palette();
+        Palette.setColor(QPalette::Base, ColorDialog.currentColor());
+        PaletteWarnings.setColor(QPalette::Base, ColorDialog.currentColor());
+        ui->QLEPreview->setPalette(Palette);
+        ui->QLEPreviewWarnings->setPalette(PaletteWarnings);
+    }
+}
+
 void QDColors::on_QPBFontColor_clicked() {
-    QColorDialog ColorDialog;
+    QColorDialog ColorDialog(this);
     if (ColorDialog.exec()== QDialog::Accepted) {
         QPalette Palette= ui->QLEPreview->palette();
         Palette.setColor(QPalette::Text, ColorDialog.currentColor());
@@ -38,11 +50,12 @@ void QDColors::on_QPBFontColor_clicked() {
     }
 }
 
-void QDColors::on_QPBBackgroundColor_clicked() {
-    QColorDialog ColorDialog;
+void QDColors::on_QPBFontColorWarnings_clicked() {
+    QColorDialog ColorDialog(this);
     if (ColorDialog.exec()== QDialog::Accepted) {
-        QPalette Palette= ui->QLEPreview->palette();
-        Palette.setColor(QPalette::Base, ColorDialog.currentColor());
-        ui->QLEPreview->setPalette(Palette);
+        QPalette Palette= ui->QLEPreviewWarnings->palette();
+        Palette.setColor(QPalette::Text, ColorDialog.currentColor());
+        ui->QLEPreviewWarnings->setPalette(Palette);
     }
 }
+

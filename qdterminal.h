@@ -99,6 +99,7 @@ private:
     void OpenTcpSslPort();
     void SaveProfile(QString ConnectionPath);
     void ShowBufferIn(QByteArray &QBABufferIn);
+    void TextCursorSet();
 
 private slots:
     void Connected();

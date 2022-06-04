@@ -96,9 +96,11 @@ bool QDTerminal::eventFilter(QObject *object, QEvent *event) {
 }
 
 void QDTerminal::Connected() {
+    int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
     TextCursorSet();
     ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connected")+ "<br></font>");
-    ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
 }
 
 void QDTerminal::Disconnected() {
@@ -111,9 +113,11 @@ void QDTerminal::Disconnected() {
         case MODE_TCP_SERVER: {
             for (int count= 0; count< QVTcpSocketsServer.length(); count++) {
                 if (QVTcpSocketsServer.at(count)== static_cast<QTcpSocket *>(QObject::sender())) {
+                    int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
                     TextCursorSet();
                     ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Disconnected")+ "<br></font>");
-                    ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+                    if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+                    else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
                     QVTcpSocketsServer.removeAt(count);
                     break;
                 }
@@ -125,6 +129,7 @@ void QDTerminal::Disconnected() {
 }
 
 void QDTerminal::Error(QAbstractSocket::SocketError ) {
+    int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
     TextCursorSet();
     switch(Mode) {
         case MODE_TCP_CLIENT: {
@@ -143,11 +148,13 @@ void QDTerminal::Error(QAbstractSocket::SocketError ) {
         }
         default: break;
     }
-    ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
 }
 
 void QDTerminal::OnNewConnection() {
     QVTcpSocketsServer.append(TcpServer->nextPendingConnection());
+    int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
     TextCursorSet();
     ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connection from")+ " "+ QVTcpSocketsServer.last()->peerAddress().toString()+ ":"+ QString::number(QVTcpSocketsServer.last()->peerPort())+ "<br></font>");
     connect(QVTcpSocketsServer.last(), SIGNAL(readyRead()), this, SLOT(ReadyRead()));
@@ -155,7 +162,8 @@ void QDTerminal::OnNewConnection() {
     connect(QVTcpSocketsServer.last(), SIGNAL(disconnected()), this, SLOT(Disconnected()));
     TextCursorSet();
     ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connected")+ "<br></font>");
-    ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
 }
 
 void QDTerminal::OnTimeout() {
@@ -184,11 +192,15 @@ void QDTerminal::OnTimeout() {
     QTControl->start(10);
 }
 
+void QDTerminal::on_QCBAutoScroll_toggled(bool ) {
+    on_QRBPrintableOnly_clicked();
+}
+
 void QDTerminal::on_QCBRowCount_toggled(bool ) {
     on_QRBPrintableOnly_clicked();
 }
 
-void QDTerminal::on_QCBSpecialCharacters_clicked() {
+void QDTerminal::on_QCBSpecialCharacters_toggled(bool ) {
     on_QRBPrintableOnly_clicked();
 }
 
@@ -525,7 +537,6 @@ void QDTerminal::on_QPBColors_clicked() {
     if (Colors.exec()== QDialog::Accepted) {
         FontColor= Colors.ui->QLEPreview->palette().color(QPalette::Text).name();
         FontColorWarnings= Colors.ui->QLEPreviewWarnings->palette().color(QPalette::Text).name();
-        //ui->QPTELog->setPalette(Colors.ui->QLEPreview->palette());
         ui->QPBSaveProfile->setEnabled(true);
     }
 }
@@ -634,9 +645,11 @@ void QDTerminal::OpenComPort() {
             }
             ui->QPBSendFile->setEnabled(true);
         } else {
+            int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
             TextCursorSet();
             ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("The ComPort is already in use!")+ "<br></font>");
-            ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+            if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+            else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
             ui->QPBOpen->setEnabled(true);
             ui->QPBModify->setEnabled(true);
         }
@@ -728,6 +741,7 @@ void QDTerminal::ReadConfigurationFile() {
     else if (Settings.value("ViewMode").toInt()== 2) ui->QRBDec->setChecked(true);
     else if (Settings.value("ViewMode").toInt()== 3) ui->QRBHex->setChecked(true);
     else if (Settings.value("ViewMode").toInt()== 4) ui->QRBBin->setChecked(true);
+    ui->QCBAutoScroll->setChecked(Settings.value("AutoScroll", true).toBool());
     ui->QCBNewLineAfter->setChecked(Settings.value("NewLineAfter", false).toBool());
     ui->QSBNewLineAfterMs->setValue(Settings.value("NewLineAfterMs", 1000).toInt());
     ui->QCBRowCount->setChecked(Settings.value("RowCount", false).toBool());
@@ -771,6 +785,7 @@ void QDTerminal::ReadyRead() {
 void QDTerminal::SaveProfile(QString ConnectionPath) {
     QSettings Settings(ConnectionPath, QSettings::IniFormat);
     Settings.beginGroup("Main");
+    Settings.setValue("AutoScroll", ui->QCBAutoScroll->isChecked());
     Settings.setValue("ComPort", ComPort);
     Settings.setValue("BaudRate", BaudRate);
     Settings.setValue("BackgroundColor", ui->QPTELog->palette().color(QPalette::Base).name());
@@ -984,13 +999,14 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
             }
         }
     }
+    int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
     TextCursorSet();
     QTextCharFormat TextCharFormat= ui->QPTELog->currentCharFormat();
     TextCharFormat.setForeground(QBrush(QColor(FontColor)));
     ui->QPTELog->setCurrentCharFormat(TextCharFormat);
     ui->QPTELog->insertPlainText(BufferIn);
-    //ui->QPTELog->textCursor().insertHtml("<font color="+ FontColor+ ">"+ BufferIn+ "</font>");
-    ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
     QDTLastByteIn= QDateTime::currentDateTime();
 }
 

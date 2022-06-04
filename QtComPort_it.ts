@@ -302,8 +302,9 @@
     </message>
     <message>
         <location filename="qdterminal.ui" line="341"/>
-        <source>Show special characters</source>
-        <translation type="unfinished">Mostra caratteri speciali</translation>
+        <source>Special characters</source>
+        <oldsource>Show special characters</oldsource>
+        <translation type="unfinished">Caratteri speciali</translation>
     </message>
     <message>
         <location filename="qdterminal.ui" line="379"/>
@@ -366,59 +367,64 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="525"/>
+        <location filename="qdterminal.ui" line="465"/>
+        <source>Autoscroll</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdterminal.ui" line="532"/>
         <source>Send</source>
         <translation type="unfinished">Invia</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="550"/>
+        <location filename="qdterminal.ui" line="557"/>
         <source>Clear</source>
         <translation type="unfinished">Pulisci</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="557"/>
+        <location filename="qdterminal.ui" line="564"/>
         <source>Select all</source>
         <translation type="unfinished">Seleziona tutto</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="564"/>
+        <location filename="qdterminal.ui" line="571"/>
         <source>Copy</source>
         <translation type="unfinished">Copia</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="571"/>
-        <location filename="qdterminal.cpp" line="430"/>
+        <location filename="qdterminal.ui" line="578"/>
+        <location filename="qdterminal.cpp" line="423"/>
         <source>Save to file</source>
         <translation type="unfinished">Salva su file</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="581"/>
+        <location filename="qdterminal.ui" line="588"/>
         <source>Send file</source>
         <translation type="unfinished">Invia file</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="99"/>
-        <location filename="qdterminal.cpp" line="156"/>
+        <location filename="qdterminal.cpp" line="100"/>
+        <location filename="qdterminal.cpp" line="157"/>
         <source>Connected</source>
         <translation type="unfinished">Connesso</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="114"/>
+        <location filename="qdterminal.cpp" line="115"/>
         <source>Disconnected</source>
         <translation type="unfinished">Disconnesso</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="151"/>
+        <location filename="qdterminal.cpp" line="152"/>
         <source>Connection from</source>
         <translation type="unfinished">Connessione da</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="418"/>
+        <location filename="qdterminal.cpp" line="411"/>
         <source>Save As</source>
         <translation type="unfinished">Salva come</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="640"/>
+        <location filename="qdterminal.cpp" line="638"/>
         <source>The ComPort is already in use!</source>
         <translation type="unfinished">La porta è già in uso!</translation>
     </message>

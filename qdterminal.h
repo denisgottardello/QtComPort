@@ -105,9 +105,10 @@ private slots:
     void Connected();
     void Disconnected();
     void Error(QAbstractSocket::SocketError socketError);
+    void on_QCBAutoScroll_toggled(bool checked);
     void on_QCBNewLineAfter_clicked();
     void on_QCBRowCount_toggled(bool checked);
-    void on_QCBSpecialCharacters_clicked();
+    void on_QCBSpecialCharacters_toggled(bool checked);
     void on_QCBTimestamp_toggled(bool checked);
     void on_QLESend_returnPressed();
     void on_QPBChangeFont_clicked();

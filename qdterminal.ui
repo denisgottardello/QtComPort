@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1101</width>
+    <width>1157</width>
     <height>480</height>
    </rect>
   </property>
@@ -338,7 +338,7 @@
                   <bool>false</bool>
                  </property>
                  <property name="text">
-                  <string>Show special characters</string>
+                  <string>Special characters</string>
                  </property>
                 </widget>
                </item>
@@ -456,6 +456,16 @@
              <widget class="QCheckBox" name="QCBTimestamp">
               <property name="text">
                <string>Timestamp</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="QCBAutoScroll">
+              <property name="text">
+               <string>Autoscroll</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>

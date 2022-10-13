@@ -16,6 +16,7 @@ unix:!mac {
 }
 
 SOURCES += main.cpp\
+    qcsslserver.cpp \
     qdterminallogformats.cpp \
         qfmainform.cpp \
     qdopencomport.cpp \
@@ -25,6 +26,7 @@ SOURCES += main.cpp\
     qdcolors.cpp
 
 HEADERS  += qfmainform.h \
+    qcsslserver.h \
     qdopencomport.h \
     qdfontdialog.h \
     qdterminal.h \

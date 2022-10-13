@@ -13,4 +13,8 @@
         <file>QtComPort_it.qm</file>
         <file>qt_it.qm</file>
     </qresource>
+    <qresource prefix="/certs">
+        <file>certs/sslserver.key</file>
+        <file>certs/sslserver.pem</file>
+    </qresource>
 </RCC>

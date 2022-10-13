@@ -22,20 +22,18 @@
 #define QDTERMINAL_H
 
 #include "QDateTime"
-#include "qdcolors.h"
-#include "qdfontdialog.h"
-#include "qdopencomport.h"
 #include "QFileDialog"
 #include "QScrollBar"
 #include "QSerialPortInfo"
 #include "QSettings"
-#include "QSslSocket"
-#include "QTcpServer"
-#include "QTcpSocket"
 #include "QTimer"
-#include "ui_qdterminal.h"
+#include "qcsslserver.h"
+#include "qdcolors.h"
+#include "qdfontdialog.h"
+#include "qdopencomport.h"
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
+#include "ui_qdterminal.h"
 #ifndef QDTERMINALLOGFORMATS_H
     class QDTerminal;
     #include "qdterminallogformats.h"
@@ -45,7 +43,8 @@ enum Modes {
     MODE_RS232= 0,
     MODE_TCP_CLIENT= 1,
     MODE_TCP_CLIENT_SSL= 2,
-    MODE_TCP_SERVER= 3
+    MODE_TCP_SERVER= 3,
+    MODE_TCP_SERVER_SSL= 4,
 };
 
 enum TerminalLogFormats {
@@ -72,8 +71,8 @@ public:
     Modes Mode;
     QDTerminal *pQDTerminal= nullptr;
     QString ComPort, Server;
-    QTabWidget *QTBTerminal;
-    QVector<QDTerminal*> *QVTerminals= nullptr;
+    QTabWidget *pQTBTerminal= nullptr;
+    QVector<QDTerminal*> *pQVTerminals= nullptr;
     quint16 Socket;
     void ReadConfigurationFile();
     void SendByteArray(QByteArray QBABufferIn);
@@ -82,21 +81,24 @@ private:
     bool IsNewConnection;
     int RowCount;
     QByteArray QBAByteIn;
+    QcSSLServer *pQcSSLServer= nullptr;
     QDateTime QDTLastByteIn;
     QSerialPort SerialPort;
     QSerialPort::PinoutSignals pinoutSignals;
     QString ConnectionPath, DirectoryPath, FontColor, FontColorWarnings;
-    QSslSocket *SslSocketClient= nullptr;
-    QTcpServer *TcpServer= nullptr;
-    QTcpSocket *TcpSocketClient= nullptr;
-    QTimer *QTControl;
+    QSslSocket *pQSslSocketClient= nullptr;
+    QTcpServer *pQTcpServer= nullptr;
+    QTcpSocket *pQTcpSocketClient= nullptr;
+    QTimer QTControl;
     QVector<QTcpSocket*> QVTcpSocketsServer;
+    QVector<QSslSocket*> QVSslSocketsServer;
     TerminalLogFormats TerminalLogFormat= TERMINAL_LOG_FORMAT_FULL;
     bool eventFilter(QObject *object, QEvent *event);
     void OpenComPort();
     void OpenTcpClientPort();
+    void OpenTcpClientSslPort();
     void OpenTcpServerPort();
-    void OpenTcpSslPort();
+    void OpenTcpServerSslPort();
     void SaveProfile(QString ConnectionPath);
     void ShowBufferIn(QByteArray &QBABufferIn);
     void TextCursorSet();

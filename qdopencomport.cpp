@@ -96,6 +96,10 @@ void QDOpenComPort::on_QRBTCPClient_toggled(bool ) {
     ui->QGBFirewallRule->hide();
 }
 
+void QDOpenComPort::on_QRBTCPClientSsl_toggled(bool checked) {
+    on_QRBTCPClient_toggled(checked);
+}
+
 void QDOpenComPort::on_QRBTCPServer_toggled(bool ) {
     ui->tabWidget->setCurrentIndex(1);
     ui->QLEServer->setEnabled(false);
@@ -103,8 +107,11 @@ void QDOpenComPort::on_QRBTCPServer_toggled(bool ) {
     ui->QGBFirewallRule->show();
 }
 
-void QDOpenComPort::on_QRBTCPSsl_toggled(bool checked) {
-    on_QRBTCPClient_toggled(checked);
+void QDOpenComPort::on_QRBTCPServerSsl_toggled(bool ) {
+    ui->tabWidget->setCurrentIndex(1);
+    ui->QLEServer->setEnabled(false);
+    ui->QPBOk->setEnabled(true);
+    ui->QGBFirewallRule->show();
 }
 
 void QDOpenComPort::on_QLEServer_returnPressed() {

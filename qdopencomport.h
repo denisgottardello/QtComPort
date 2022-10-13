@@ -45,13 +45,13 @@ private slots:
     void on_QLEServer_returnPressed();
     void on_QLEServer_textChanged(QString );
     void on_QRBTCPClient_toggled(bool checked);
+    void on_QRBTCPClientSsl_toggled(bool checked);
     void on_QRBTCPServer_toggled(bool checked);
-    void on_QRBTCPSsl_toggled(bool checked);
+    void on_QRBTCPServerSsl_toggled(bool checked);
     void on_QRBRS232_toggled(bool checked);
     void on_QPBCancel_clicked();
     void on_QPBOk_clicked();
     void on_QSBSocket_valueChanged(int arg1);
-
 };
 
 #endif // QDOPENCOMPORT_H

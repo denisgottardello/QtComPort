@@ -128,7 +128,7 @@ void QFMainForm::on_QPBNewProfile_clicked() {
     if (OpenComPort.exec()== QDialog::Accepted) {
         QDTerminal *Terminal= new QDTerminal(this, "");
         Terminal->TabNumber= ui->QTBTerminal->addTab(Terminal, tr("New"));
-        Terminal->QTBTerminal= ui->QTBTerminal;
+        Terminal->pQTBTerminal= ui->QTBTerminal;
         switch(OpenComPort.ui->QCBParity->currentIndex()) {
             case 0: Terminal->Parity= 'N'; break;
             case 1: Terminal->Parity= 'E'; break;
@@ -157,11 +157,12 @@ void QFMainForm::on_QPBNewProfile_clicked() {
         Terminal->Socket= static_cast<quint16>(OpenComPort.ui->QSBSocket->value());
         if (OpenComPort.ui->QRBRS232->isChecked()) Terminal->Mode= MODE_RS232;
         else if (OpenComPort.ui->QRBTCPClient->isChecked()) Terminal->Mode= MODE_TCP_CLIENT;
+        else if (OpenComPort.ui->QRBTCPClientSsl->isChecked()) Terminal->Mode= MODE_TCP_CLIENT_SSL;
         else if (OpenComPort.ui->QRBTCPServer->isChecked()) Terminal->Mode= MODE_TCP_SERVER;
-        else Terminal->Mode= MODE_TCP_CLIENT_SSL;
+        else if (OpenComPort.ui->QRBTCPServerSsl->isChecked()) Terminal->Mode= MODE_TCP_SERVER_SSL;
         Terminal->ui->QPBOpen->setEnabled(true);
         Terminal->ui->QPBOpen->click();
-        Terminal->QVTerminals= &QVTerminals;
+        Terminal->pQVTerminals= &QVTerminals;
         ui->QTBTerminal->setCurrentIndex(ui->QTBTerminal->count()- 1);
         QVTerminals.append(Terminal);
         if (QVTerminals.count()> 1) ui->QPBBridge->setEnabled(true);
@@ -171,8 +172,8 @@ void QFMainForm::on_QPBNewProfile_clicked() {
 void QFMainForm::ReadConfigurationFile(QString ConnectionPath) {
     QDTerminal *pQDTerminal= new QDTerminal(this, ConnectionPath);
     pQDTerminal->TabNumber= ui->QTBTerminal->addTab(pQDTerminal, ConnectionPath);
-    pQDTerminal->QTBTerminal= ui->QTBTerminal;
-    pQDTerminal->QVTerminals= &QVTerminals;
+    pQDTerminal->pQTBTerminal= ui->QTBTerminal;
+    pQDTerminal->pQVTerminals= &QVTerminals;
     pQDTerminal->ReadConfigurationFile();
     QVTerminals.append(pQDTerminal);
 }

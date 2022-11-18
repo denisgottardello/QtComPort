@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1157</width>
-    <height>480</height>
+    <width>1206</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -422,27 +422,53 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="QCBNewLineAfter">
-              <property name="text">
+             <widget class="QGroupBox" name="QGBNewLineAfter">
+              <property name="title">
                <string>New line after</string>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="QSBNewLineAfterMs">
-              <property name="maximum">
-               <number>999999</number>
+              <property name="checkable">
+               <bool>true</bool>
               </property>
-              <property name="value">
-               <number>1000</number>
+              <property name="checked">
+               <bool>false</bool>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>ms</string>
-              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <property name="leftMargin">
+                <number>1</number>
+               </property>
+               <property name="topMargin">
+                <number>1</number>
+               </property>
+               <property name="rightMargin">
+                <number>1</number>
+               </property>
+               <property name="bottomMargin">
+                <number>1</number>
+               </property>
+               <item>
+                <widget class="QSpinBox" name="QSBNewLineAfterMs">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="maximum">
+                  <number>999999</number>
+                 </property>
+                 <property name="value">
+                  <number>1000</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>ms</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -453,10 +479,63 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="QCBTimestamp">
-              <property name="text">
+             <widget class="QGroupBox" name="QGBTimestamp">
+              <property name="title">
                <string>Timestamp</string>
               </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_10">
+               <property name="leftMargin">
+                <number>1</number>
+               </property>
+               <property name="topMargin">
+                <number>1</number>
+               </property>
+               <property name="rightMargin">
+                <number>1</number>
+               </property>
+               <property name="bottomMargin">
+                <number>1</number>
+               </property>
+               <item>
+                <widget class="QCheckBox" name="QCBTimestampAuto">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Auto</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="QCBTimestampAfterCR">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>After CR</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="QCBTimestampAfterLF">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>After LF</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -630,10 +709,14 @@
   <tabstop>QTBTerminalLogFormats</tabstop>
   <tabstop>QRBCR</tabstop>
   <tabstop>QRBLF</tabstop>
-  <tabstop>QCBNewLineAfter</tabstop>
+  <tabstop>QGBNewLineAfter</tabstop>
   <tabstop>QSBNewLineAfterMs</tabstop>
   <tabstop>QCBRowCount</tabstop>
-  <tabstop>QCBTimestamp</tabstop>
+  <tabstop>QGBTimestamp</tabstop>
+  <tabstop>QCBTimestampAuto</tabstop>
+  <tabstop>QCBTimestampAfterCR</tabstop>
+  <tabstop>QCBTimestampAfterLF</tabstop>
+  <tabstop>QCBAutoScroll</tabstop>
   <tabstop>QPTELog</tabstop>
   <tabstop>QLESend</tabstop>
   <tabstop>QPBSend</tabstop>

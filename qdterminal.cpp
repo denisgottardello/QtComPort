@@ -252,15 +252,36 @@ void QDTerminal::on_QCBRowCount_toggled(bool ) {
     on_QRBPrintableOnly_clicked();
 }
 
+void QDTerminal::on_QCBTimestampAfterCR_toggled(bool ) {
+    if (ui->QCBTimestampAfterCR->isChecked()) {
+        ui->QCBTimestampAfterLF->setChecked(false);
+        ui->QCBTimestampAuto->setChecked(false);
+    }
+}
+
+void QDTerminal::on_QCBTimestampAfterLF_toggled(bool ) {
+    if (ui->QCBTimestampAfterLF->isChecked()) {
+        ui->QCBTimestampAfterCR->setChecked(false);
+        ui->QCBTimestampAuto->setChecked(false);
+    }
+}
+
+void QDTerminal::on_QCBTimestampAuto_toggled(bool ) {
+    if (ui->QCBTimestampAuto->isChecked()) {
+        ui->QCBTimestampAfterCR->setChecked(false);
+        ui->QCBTimestampAfterLF->setChecked(false);
+    }
+}
+
 void QDTerminal::on_QCBSpecialCharacters_toggled(bool ) {
     on_QRBPrintableOnly_clicked();
 }
 
-void QDTerminal::on_QCBTimestamp_toggled(bool ) {
+void QDTerminal::on_QGBNewLineAfter_toggled(bool ) {
     on_QRBPrintableOnly_clicked();
 }
 
-void QDTerminal::on_QCBNewLineAfter_clicked() {
+void QDTerminal::on_QGBTimestamp_toggled(bool ) {
     on_QRBPrintableOnly_clicked();
 }
 
@@ -833,11 +854,14 @@ void QDTerminal::ReadConfigurationFile() {
     else if (Settings.value("ViewMode").toInt()== 3) ui->QRBHex->setChecked(true);
     else if (Settings.value("ViewMode").toInt()== 4) ui->QRBBin->setChecked(true);
     ui->QCBAutoScroll->setChecked(Settings.value("AutoScroll", true).toBool());
-    ui->QCBNewLineAfter->setChecked(Settings.value("NewLineAfter", false).toBool());
+    ui->QGBNewLineAfter->setChecked(Settings.value("NewLineAfter", false).toBool());
     ui->QSBNewLineAfterMs->setValue(Settings.value("NewLineAfterMs", 1000).toInt());
+    ui->QCBTimestampAfterCR->setChecked(Settings.value("TimestampCR", false).toBool());
+    ui->QCBTimestampAfterLF->setChecked(Settings.value("TimestampLR", false).toBool());
+    ui->QCBTimestampAuto->setChecked(Settings.value("TimestampAuto", false).toBool());
     ui->QCBRowCount->setChecked(Settings.value("RowCount", false).toBool());
     ui->QCBSpecialCharacters->setChecked(Settings.value("SpecialCharacters", false).toBool());
-    ui->QCBTimestamp->setChecked(Settings.value("Timestamp", false).toBool());
+    ui->QGBTimestamp->setChecked(Settings.value("Timestamp", false).toBool());
     ui->QRBCR->setChecked(Settings.value("NewLineWidth", "lf").toString().compare("cr")== 0);
     ui->QRBLF->setChecked(Settings.value("NewLineWidth", "lf").toString().compare("lf")== 0);
     switch(Mode) {
@@ -880,7 +904,7 @@ void QDTerminal::SaveProfile(QString ConnectionPath) {
     Settings.setValue("FontColorWarnings", FontColorWarnings);
     Settings.setValue("MaxClients", MaxClients);
     Settings.setValue("Mode", Mode);
-    Settings.setValue("NewLineAfter", ui->QCBNewLineAfter->isChecked());
+    Settings.setValue("NewLineAfter", ui->QGBNewLineAfter->isChecked());
     Settings.setValue("NewLineAfterMs", ui->QSBNewLineAfterMs->value());
     Settings.setValue("NewLineWidth", ui->QRBCR->isChecked() ? "cr" : "lf");
     Settings.setValue("Parity", QString(Parity));
@@ -890,7 +914,10 @@ void QDTerminal::SaveProfile(QString ConnectionPath) {
     Settings.setValue("Socket", Socket);
     Settings.setValue("SpecialCharacters", ui->QCBSpecialCharacters->isChecked());
     Settings.setValue("TerminalLogFormat", TerminalLogFormat);
-    Settings.setValue("Timestamp", ui->QCBTimestamp->isChecked());
+    Settings.setValue("Timestamp", ui->QGBTimestamp->isChecked());
+    Settings.setValue("TimestampAuto", ui->QCBTimestampAuto->isChecked());
+    Settings.setValue("TimestampCR", ui->QCBTimestampAfterCR->isChecked());
+    Settings.setValue("TimestampLF", ui->QCBTimestampAfterLF->isChecked());
     if (ui->QRBPrintableOnly->isChecked()) Settings.setValue("ViewMode", 0);
     else if (ui->QRBSym->isChecked()) Settings.setValue("ViewMode", 1);
     else if (ui->QRBDec->isChecked()) Settings.setValue("ViewMode", 2);
@@ -901,7 +928,7 @@ void QDTerminal::SaveProfile(QString ConnectionPath) {
 void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
     QString BufferIn;
     if (ui->QRBPrintableOnly->isChecked()) {
-        if (ui->QCBNewLineAfter->isChecked()) {
+        if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
                     BufferIn+= "\n";
@@ -912,8 +939,9 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
             RowCount++;
         }
-        if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+        if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAuto->isChecked()) TimestampPrint= true;
         for (int count= 0; count< QBABufferIn.size(); count++) {
+            TimestampPrintEvaluation(BufferIn);
             switch(QBABufferIn.at(count)) {
                 case 1: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[SOH]"; break;
                 case 2: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[STX]"; break;
@@ -929,8 +957,8 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
                             RowCount++;
                         }
-                        if (ui->QCBTimestamp->isChecked() && count< QBABufferIn.size()- 1) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
                     }
+                    if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAfterLF->isChecked()) TimestampPrint= true;
                     break;
                 }
                 case 13: {
@@ -940,8 +968,8 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
                             RowCount++;
                         }
-                        if (ui->QCBTimestamp->isChecked() && count< QBABufferIn.size()- 1) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
                     }
+                    if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAfterCR->isChecked()) TimestampPrint= true;
                     break;
                 }
                 case 21: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[NACK]"; break;
@@ -954,7 +982,7 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
             }
         }
     } else if (ui->QRBSym->isChecked()) {
-        if (ui->QCBNewLineAfter->isChecked()) {
+        if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
                     BufferIn+= "\n";
@@ -965,8 +993,9 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
             RowCount++;
         }
-        if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+        if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAuto->isChecked()) TimestampPrint= true;
         for (int count= 0; count< QBABufferIn.size(); count++) {
+            TimestampPrintEvaluation(BufferIn);
             switch(QBABufferIn.at(count)) {
                 case 0: BufferIn+= "[NUL]"; break;
                 case 1: BufferIn+= "[SOH]"; break;
@@ -984,7 +1013,8 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                         BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
                         RowCount++;
                     }
-                    if (ui->QCBTimestamp->isChecked() && count< QBABufferIn.size()- 1) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+                    if ((ui->QGBTimestamp->isChecked() && ui->QCBTimestampAuto->isChecked()) && count< QBABufferIn.size()- 1) TimestampPrint= true;
+                    else if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAfterLF->isChecked()) TimestampPrint= true;
                     break;
                 }
                 case 11: BufferIn+= "[VT]"; break;
@@ -995,7 +1025,8 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                         BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
                         RowCount++;
                     }
-                    if (ui->QCBTimestamp->isChecked() && count< QBABufferIn.size()- 1) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+                    if ((ui->QGBTimestamp->isChecked() && ui->QCBTimestampAuto->isChecked()) && count< QBABufferIn.size()- 1) TimestampPrint= true;
+                    else if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAfterCR->isChecked()) TimestampPrint= true;
                     break;
                 }
                 case 14: BufferIn+= "[SO]"; break;
@@ -1021,7 +1052,7 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
         }
 
     } else if (ui->QRBDec->isChecked()) {
-        if (ui->QCBNewLineAfter->isChecked()) {
+        if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
                     BufferIn+= "\n";
@@ -1032,8 +1063,9 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
             RowCount++;
         }
-        if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+        if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAuto->isChecked()) TimestampPrint= true;
         for (int count= 0; count< QBABufferIn.size(); count++) {
+            TimestampPrintEvaluation(BufferIn);
             switch (TerminalLogFormat) {
                 case TERMINAL_LOG_FORMAT_COMPACT: BufferIn+= QString::number(uchar(QBABufferIn.at(count))).rightJustified(3, '0'); break;
                 case TERMINAL_LOG_FORMAT_FULL: BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count))).rightJustified(3, '0')+ "]"; break;
@@ -1042,7 +1074,7 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
 
         }
     } else if (ui->QRBBin->isChecked()) {
-        if (ui->QCBNewLineAfter->isChecked()) {
+        if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
                     BufferIn+= "\n";
@@ -1053,8 +1085,9 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
             RowCount++;
         }
-        if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+        if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAuto->isChecked()) TimestampPrint= true;
         for (int count= 0; count< QBABufferIn.size(); count++) {
+            TimestampPrintEvaluation(BufferIn);
             switch (TerminalLogFormat) {
                 case TERMINAL_LOG_FORMAT_COMPACT: BufferIn+= QString::number(uchar(QBABufferIn.at(count)), 2).rightJustified(8, '0'); break;
                 case TERMINAL_LOG_FORMAT_FULL: BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count)), 2).rightJustified(8, '0')+ "]"; break;
@@ -1062,7 +1095,7 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
             }
         }
     } else {
-        if (ui->QCBNewLineAfter->isChecked()) {
+        if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
                     BufferIn+= "\n";
@@ -1073,8 +1106,9 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
             RowCount++;
         }
-        if (ui->QCBTimestamp->isChecked()) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+        if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAuto->isChecked()) TimestampPrint= true;
         for (int count= 0; count< QBABufferIn.size(); count++) {
+            TimestampPrintEvaluation(BufferIn);
             switch (TerminalLogFormat) {
                 case TERMINAL_LOG_FORMAT_COMPACT: BufferIn+= QString::number(uchar(QBABufferIn.at(count)), 16).rightJustified(2, '0').toUpper(); break;
                 case TERMINAL_LOG_FORMAT_FULL: BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(count)), 16).rightJustified(2, '0').toUpper()+ "]"; break;
@@ -1135,4 +1169,17 @@ void QDTerminal::TextCursorSet() {
     QTextCursor Cursor= QTextCursor(ui->QPTELog->document());
     Cursor.movePosition(QTextCursor::End);
     ui->QPTELog->setTextCursor(Cursor);
+}
+
+void QDTerminal::TimestampPrintEvaluation(QString &BufferIn) {
+    if (TimestampPrint) {
+        if (BufferIn.length()> 0) {
+            if (BufferIn.at(BufferIn.length()- 1)== '\r' || BufferIn.at(BufferIn.length()- 1)== '\n') BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+            else BufferIn+= "\n->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+        } else {
+            if (ui->QPTELog->toPlainText().endsWith('\r') || ui->QPTELog->toPlainText().endsWith('\n')) BufferIn+= "->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+            else BufferIn+= "\n->"+ QDateTime::currentDateTime().toString("hh:mm:ss.zzz")+ "<-";
+        }
+        TimestampPrint= false;
+    }
 }

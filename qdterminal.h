@@ -78,7 +78,7 @@ public:
     void SendByteArray(QByteArray QBABufferIn);
 
 private:
-    bool IsNewConnection;
+    bool IsNewConnection, TimestampPrint= false;
     int RowCount;
     QByteArray QBAByteIn;
     QcSSLServer *pQcSSLServer= nullptr;
@@ -102,16 +102,20 @@ private:
     void SaveProfile(QString ConnectionPath);
     void ShowBufferIn(QByteArray &QBABufferIn);
     void TextCursorSet();
+    void TimestampPrintEvaluation(QString &BufferIn);
 
 private slots:
     void Connected();
     void Disconnected();
     void Error(QAbstractSocket::SocketError socketError);
     void on_QCBAutoScroll_toggled(bool checked);
-    void on_QCBNewLineAfter_clicked();
     void on_QCBRowCount_toggled(bool checked);
     void on_QCBSpecialCharacters_toggled(bool checked);
-    void on_QCBTimestamp_toggled(bool checked);
+    void on_QCBTimestampAfterCR_toggled(bool checked);
+    void on_QCBTimestampAfterLF_toggled(bool checked);
+    void on_QCBTimestampAuto_toggled(bool checked);
+    void on_QGBNewLineAfter_toggled(bool arg1);
+    void on_QGBTimestamp_toggled(bool arg1);
     void on_QLESend_returnPressed();
     void on_QPBChangeFont_clicked();
     void on_QPBClear_clicked();
@@ -140,7 +144,6 @@ private slots:
     void OnNewConnection();
     void OnTimeout();
     void ReadyRead();
-
 };
 
 #endif // QDTERMINAL_H

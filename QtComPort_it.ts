@@ -112,54 +112,59 @@
         <translation type="unfinished">Apri Com Port</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="61"/>
-        <location filename="qdopencomport.ui" line="102"/>
+        <location filename="qdopencomport.ui" line="54"/>
+        <location filename="qdopencomport.ui" line="109"/>
         <source>RS232</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="201"/>
+        <location filename="qdopencomport.ui" line="208"/>
         <source>TCP IP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="126"/>
+        <location filename="qdopencomport.ui" line="133"/>
         <source>ComPort</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="qdopencomport.ui" line="47"/>
+        <source>TCP Client SSL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="74"/>
         <source>TCP Client</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="54"/>
+        <location filename="qdopencomport.ui" line="81"/>
         <source>TCP Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="153"/>
-        <source>Baud rate</source>
+        <location filename="qdopencomport.ui" line="95"/>
+        <source>TCP Server SSL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="qdopencomport.ui" line="160"/>
+        <source>Baud rate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="167"/>
         <source>Parity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="180"/>
+        <location filename="qdopencomport.ui" line="187"/>
         <source>Data bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="146"/>
+        <location filename="qdopencomport.ui" line="153"/>
         <source>Stop bits</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="qdopencomport.ui" line="71"/>
-        <source>SSL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -168,47 +173,47 @@
         <translation type="unfinished">Connessioni client max</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="167"/>
+        <location filename="qdopencomport.ui" line="174"/>
         <source>Flow control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="139"/>
+        <location filename="qdopencomport.ui" line="146"/>
         <source>Send break</source>
         <translation type="unfinished">Invia break</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="290"/>
+        <location filename="qdopencomport.ui" line="297"/>
         <source>Socket</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="276"/>
+        <location filename="qdopencomport.ui" line="283"/>
         <source>Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="248"/>
+        <location filename="qdopencomport.ui" line="255"/>
         <source>Windows firewall rule</source>
         <translation type="unfinished">Regola firewall per Windows</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="355"/>
+        <location filename="qdopencomport.ui" line="362"/>
         <source>Cancel</source>
         <translation type="unfinished">Annulla</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="362"/>
+        <location filename="qdopencomport.ui" line="369"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="121"/>
+        <location filename="qdopencomport.cpp" line="128"/>
         <source>To add</source>
         <translation type="unfinished">Per aggiungerla</translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="124"/>
+        <location filename="qdopencomport.cpp" line="131"/>
         <source>To remove</source>
         <translation type="unfinished">Per rimuoverla</translation>
     </message>
@@ -352,79 +357,97 @@
         <translation type="unfinished">Caporiga dopo</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="444"/>
+        <location filename="qdterminal.ui" line="467"/>
         <source>ms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="451"/>
+        <location filename="qdterminal.ui" line="477"/>
         <source>Row count</source>
         <translation type="unfinished">Numero riga</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="458"/>
+        <location filename="qdterminal.ui" line="484"/>
         <source>Timestamp</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="465"/>
+        <location filename="qdterminal.ui" line="511"/>
+        <source>Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdterminal.ui" line="524"/>
+        <source>After CR</source>
+        <translation type="unfinished">Dopo CR</translation>
+    </message>
+    <message>
+        <location filename="qdterminal.ui" line="534"/>
+        <source>After LF</source>
+        <translation type="unfinished">Dopo LF</translation>
+    </message>
+    <message>
+        <location filename="qdterminal.ui" line="544"/>
         <source>Autoscroll</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="532"/>
+        <location filename="qdterminal.ui" line="614"/>
         <source>Send</source>
         <translation type="unfinished">Invia</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="557"/>
+        <location filename="qdterminal.ui" line="639"/>
         <source>Clear</source>
         <translation type="unfinished">Pulisci</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="564"/>
+        <location filename="qdterminal.ui" line="646"/>
         <source>Select all</source>
         <translation type="unfinished">Seleziona tutto</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="571"/>
+        <location filename="qdterminal.ui" line="653"/>
         <source>Copy</source>
         <translation type="unfinished">Copia</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="578"/>
-        <location filename="qdterminal.cpp" line="423"/>
+        <location filename="qdterminal.ui" line="660"/>
+        <location filename="qdterminal.cpp" line="523"/>
         <source>Save to file</source>
         <translation type="unfinished">Salva su file</translation>
     </message>
     <message>
-        <location filename="qdterminal.ui" line="588"/>
+        <location filename="qdterminal.ui" line="670"/>
         <source>Send file</source>
         <translation type="unfinished">Invia file</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="100"/>
-        <location filename="qdterminal.cpp" line="157"/>
+        <location filename="qdterminal.cpp" line="108"/>
+        <location filename="qdterminal.cpp" line="191"/>
+        <location filename="qdterminal.cpp" line="205"/>
         <source>Connected</source>
         <translation type="unfinished">Connesso</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="115"/>
+        <location filename="qdterminal.cpp" line="126"/>
+        <location filename="qdterminal.cpp" line="140"/>
         <source>Disconnected</source>
         <translation type="unfinished">Disconnesso</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="152"/>
+        <location filename="qdterminal.cpp" line="186"/>
+        <location filename="qdterminal.cpp" line="200"/>
         <source>Connection from</source>
         <translation type="unfinished">Connessione da</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="411"/>
+        <location filename="qdterminal.cpp" line="511"/>
         <source>Save As</source>
         <translation type="unfinished">Salva come</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="638"/>
+        <location filename="qdterminal.cpp" line="747"/>
         <source>The ComPort is already in use!</source>
         <translation type="unfinished">La porta è già in uso!</translation>
     </message>

@@ -22,7 +22,9 @@
 #define QDOPENCOMPORT_H
 
 #include <QDialog>
+#include "QFileDialog"
 #include "QKeyEvent"
+#include "QMessageBox"
 #include "ui_qdopencomport.h"
 
 namespace Ui {
@@ -42,16 +44,24 @@ private:
 
 private slots:
     bool eventFilter(QObject *object, QEvent *event);
+    void on_QCBComPort_currentIndexChanged(int index);
     void on_QLEServer_returnPressed();
     void on_QLEServer_textChanged(QString );
+    void on_QLESslCertificate_textChanged(const QString &arg1);
+    void on_QLESslKeyPrivate_textChanged(const QString &arg1);
+    void on_QRBSslKeyCertificateEmbedded_toggled(bool checked);
     void on_QRBTCPClient_toggled(bool checked);
     void on_QRBTCPClientSsl_toggled(bool checked);
     void on_QRBTCPServer_toggled(bool checked);
     void on_QRBTCPServerSsl_toggled(bool checked);
     void on_QRBRS232_toggled(bool checked);
     void on_QPBCancel_clicked();
+    void on_QPBHelp_clicked();
     void on_QPBOk_clicked();
     void on_QSBSocket_valueChanged(int arg1);
+    void on_QTBSslKeyPrivate_clicked();
+    void on_QTBSslCertificate_clicked();
+
 };
 
 #endif // QDOPENCOMPORT_H

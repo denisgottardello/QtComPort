@@ -5,6 +5,7 @@
         <file>Icons/new.png</file>
         <file>Icons/ok.png</file>
         <file>Icons/QtComPort.png</file>
+        <file>Icons/Info.png</file>
     </qresource>
     <qresource prefix="/qt/etc">
         <file>qt.conf</file>
@@ -14,7 +15,8 @@
         <file>qt_it.qm</file>
     </qresource>
     <qresource prefix="/certs">
-        <file>certs/sslserver.key</file>
-        <file>certs/sslserver.pem</file>
+        <file>certs/Certificate.crt</file>
+        <file>certs/KeyPublic.key</file>
+        <file>certs/KeyPrivate.key</file>
     </qresource>
 </RCC>

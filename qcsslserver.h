@@ -12,6 +12,11 @@ class QcSSLServer : public QTcpServer
 
 public:
     QcSSLServer(QObject *parent = nullptr);
+    bool SslKeyCertificateEmbedded;
+    QString SslKeyPrivate, SslCertificate;
+
+signals:
+    void GenericError(QString Description);
 
 protected:
     void incomingConnection(qintptr socketDescriptor);

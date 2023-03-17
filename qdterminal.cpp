@@ -43,7 +43,10 @@ QDTerminal::QDTerminal(QWidget *parent, QString ConnectionPath) : QDialog(parent
     pQSslSocketClient= new QSslSocket();
     pQTcpServer= new QTcpServer();
     pQTcpSocketClient= new QTcpSocket();
+    connect(pQcSSLServer, SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(AcceptError(QAbstractSocket::SocketError)));
     connect(pQcSSLServer, SIGNAL(newConnection()), this, SLOT(OnNewConnection()));
+    connect(pQcSSLServer, SIGNAL(GenericError(QString)), this, SLOT(GenericError(QString)), Qt::QueuedConnection);
+    connect(pQTcpServer, SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(AcceptError(QAbstractSocket::SocketError)));
     connect(pQTcpServer, SIGNAL(newConnection()), this, SLOT(OnNewConnection()));
     QDTLastByteIn= QDateTime::currentDateTime();
     RowCount= 0;
@@ -58,6 +61,29 @@ QDTerminal::~QDTerminal() {
     delete pQTcpServer;
     delete pQTcpSocketClient;
     delete ui;
+}
+
+void QDTerminal::AcceptError(QAbstractSocket::SocketError ) {
+    switch(Mode) {
+        case MODE_TCP_SERVER: {
+            int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
+            TextCursorSet();
+            ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ pQTcpServer->errorString()+ "<br></font>");
+            if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+            else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
+            break;
+        }
+        case MODE_TCP_SERVER_SSL: {
+            int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
+            TextCursorSet();
+            ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ pQcSSLServer->errorString()+ "<br></font>");
+            if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+            else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 bool QDTerminal::eventFilter(QObject *object, QEvent *event) {
@@ -177,34 +203,48 @@ void QDTerminal::Error(QAbstractSocket::SocketError ) {
     else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
 }
 
+void QDTerminal::GenericError(QString Description) {
+    int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
+    TextCursorSet();
+    ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ Description+ "<br></font>");
+    if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+    else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
+}
+
 void QDTerminal::OnNewConnection() {
     switch(Mode) {
         case MODE_TCP_SERVER: {
-            QVTcpSocketsServer.append(pQTcpServer->nextPendingConnection());
-            int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
-            TextCursorSet();
-            ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connection from")+ " "+ QVTcpSocketsServer.last()->peerAddress().toString()+ ":"+ QString::number(QVTcpSocketsServer.last()->peerPort())+ "<br></font>");
-            connect(QVTcpSocketsServer.last(), SIGNAL(readyRead()), this, SLOT(ReadyRead()));
-            connect(QVTcpSocketsServer.last(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
-            connect(QVTcpSocketsServer.last(), SIGNAL(disconnected()), this, SLOT(Disconnected()));
-            TextCursorSet();
-            ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connected")+ "<br></font>");
-            if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
-            else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
+            if (pQTcpServer->hasPendingConnections()) {
+                QVTcpSocketsServer.append(pQTcpServer->nextPendingConnection());
+                int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
+                TextCursorSet();
+                ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connection from")+ " "+ QVTcpSocketsServer.last()->peerAddress().toString()+ ":"+ QString::number(QVTcpSocketsServer.last()->peerPort())+ "<br></font>");
+                connect(QVTcpSocketsServer.last(), SIGNAL(readyRead()), this, SLOT(ReadyRead()));
+                connect(QVTcpSocketsServer.last(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+                connect(QVTcpSocketsServer.last(), SIGNAL(disconnected()), this, SLOT(Disconnected()));
+                TextCursorSet();
+                ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connected")+ "<br></font>");
+                if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+                else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
+            }
             break;
         }
         case MODE_TCP_SERVER_SSL: {
-            QVSslSocketsServer.append(dynamic_cast<QSslSocket*>(pQcSSLServer->nextPendingConnection()));
-            int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
-            TextCursorSet();
-            ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connection from")+ " "+ QVSslSocketsServer.last()->peerAddress().toString()+ ":"+ QString::number(QVSslSocketsServer.last()->peerPort())+ "<br></font>");
-            connect(QVSslSocketsServer.last(), SIGNAL(readyRead()), this, SLOT(ReadyRead()));
-            connect(QVSslSocketsServer.last(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
-            connect(QVSslSocketsServer.last(), SIGNAL(disconnected()), this, SLOT(Disconnected()));
-            TextCursorSet();
-            ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connected")+ "<br></font>");
-            if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
-            else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
+            if (pQcSSLServer->hasPendingConnections()) {
+                QVSslSocketsServer.append(dynamic_cast<QSslSocket*>(pQcSSLServer->nextPendingConnection()));
+                int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
+                TextCursorSet();
+                ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connection from")+ " "+ QVSslSocketsServer.last()->peerAddress().toString()+ ":"+ QString::number(QVSslSocketsServer.last()->peerPort())+ "<br></font>");
+                connect(QVSslSocketsServer.last(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+                connect(QVSslSocketsServer.last(), SIGNAL(disconnected()), this, SLOT(Disconnected()));
+                connect(QVSslSocketsServer.last(), SIGNAL(peerVerifyError(QSslError)), this, SLOT(PeerVerifyError(QSslError)));
+                connect(QVSslSocketsServer.last(), SIGNAL(readyRead()), this, SLOT(ReadyRead()));
+                connect(QVSslSocketsServer.last(), SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(SslErrors(QList<QSslError>)));
+                TextCursorSet();
+                ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connected")+ "<br></font>");
+                if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
+                else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
+            }
             break;
         }
         default:
@@ -234,12 +274,6 @@ void QDTerminal::OnTimeout() {
         if (pQDTerminal) pQDTerminal->SendByteArray(QBABufferIn);
         ShowBufferIn(QBABufferIn);
         QBAByteIn.append(QBABufferIn);
-    }
-    for (int count= 0; count< QVSslSocketsServer.length(); count++) {
-        qDebug() << QVSslSocketsServer.at(count)->bytesAvailable();
-        if (QVSslSocketsServer.at(count)->bytesAvailable()> 0) {
-            qDebug() << QVSslSocketsServer.at(count)->readAll();
-        }
     }
     QTControl.start(10);
 }
@@ -286,6 +320,13 @@ void QDTerminal::on_QGBTimestamp_toggled(bool ) {
 }
 
 void QDTerminal::on_QLESend_returnPressed() {
+    QSLHistory.insert(0, ui->QLESend->text());
+    if (QSLHistory.length()> 1) {
+        if (QSLHistory.at(0).compare(QSLHistory.at(1))== 0) QSLHistory.removeAt(0);
+    }
+    while (QSLHistory.length()> 32) QSLHistory.removeLast();
+    ui->QCBHistory->clear();
+    ui->QCBHistory->addItems(QSLHistory);
     switch(Mode) {
         case MODE_RS232: {
             if (SerialPort.write(QString(ui->QLESend->text()+ "\r\n").toLatin1())) ui->QLESend->setText("");
@@ -441,6 +482,13 @@ void QDTerminal::on_QPBModify_clicked() {
     _OpenComPort.ui->QCBFlowControl->setCurrentIndex(FlowControl);
     _OpenComPort.ui->QCBSendBreak->setChecked(SendBreak);
     _OpenComPort.ui->QLEServer->setText(Server);
+    _OpenComPort.ui->QLESslCertificate->setText(SslCertificate);
+    _OpenComPort.ui->QLESslKeyPrivate->setText(SslKeyPrivate);
+    if (SslKeyCertificateEmbedded) _OpenComPort.ui->QRBSslKeyCertificateEmbedded->setChecked(SslKeyCertificateEmbedded);
+    else {
+        _OpenComPort.ui->QRBSslKeyCertificateCustom->setChecked(true);
+        _OpenComPort.ui->QRBSslKeyCertificateEmbedded->setChecked(false);
+    }
     _OpenComPort.ui->QSBSocket->setValue(Socket);
     _OpenComPort.ui->QSBTCPServerMaxClients->setValue(MaxClients);
     switch(Mode) {
@@ -450,6 +498,7 @@ void QDTerminal::on_QPBModify_clicked() {
         case MODE_TCP_SERVER: _OpenComPort.ui->QRBTCPServer->setChecked(true); break;
         case MODE_TCP_SERVER_SSL: _OpenComPort.ui->QRBTCPServerSsl->setChecked(true); break;
     }
+    _OpenComPort.ui->QPBOk->setEnabled(false);
     if (_OpenComPort.exec()== QDialog::Accepted) {
         switch(_OpenComPort.ui->QCBParity->currentIndex()) {
             case 0: Parity= 'N'; break;
@@ -476,6 +525,9 @@ void QDTerminal::on_QPBModify_clicked() {
         SendBreak= _OpenComPort.ui->QCBSendBreak->isChecked();
         Server= _OpenComPort.ui->QLEServer->text();
         Socket= static_cast<quint16>(_OpenComPort.ui->QSBSocket->value());
+        SslCertificate= _OpenComPort.ui->QLESslCertificate->text();
+        SslKeyPrivate= _OpenComPort.ui->QLESslKeyPrivate->text();
+        SslKeyCertificateEmbedded= _OpenComPort.ui->QRBSslKeyCertificateEmbedded->isChecked();
         if (_OpenComPort.ui->QRBRS232->isChecked()) Mode= MODE_RS232;
         else if (_OpenComPort.ui->QRBTCPClient->isChecked()) Mode= MODE_TCP_CLIENT;
         else if (_OpenComPort.ui->QRBTCPClientSsl->isChecked()) Mode= MODE_TCP_CLIENT_SSL;
@@ -570,6 +622,13 @@ void QDTerminal::on_QPBSend_clicked() {
             for (int count= 0; count< QVSslSocketsServer.length(); count++) QVSslSocketsServer.at(count)->waitForBytesWritten(2000);
             break;
         }
+    }
+}
+
+void QDTerminal::on_QPBSendHistory_clicked() {
+    if (ui->QCBHistory->currentIndex()> -1) {
+        ui->QLESend->setText(ui->QCBHistory->currentText());
+        on_QLESend_returnPressed();
     }
 }
 
@@ -781,11 +840,29 @@ void QDTerminal::OpenTcpClientSslPort() {
     ui->QPBSaveProfileAs->setEnabled(true);
     ui->QLConnection->setText("TCP SSL Client: "+ Server+ ":"+ QString::number(Socket));
     ui->QPBSendFile->setEnabled(true);
-    connect(pQSslSocketClient, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
-    connect(pQSslSocketClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
     connect(pQSslSocketClient, SIGNAL(connected()), this, SLOT(Connected()));
+    connect(pQSslSocketClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
     connect(pQSslSocketClient, SIGNAL(disconnected()), this, SLOT(Disconnected()));
-    pQSslSocketClient->setPeerVerifyMode(QSslSocket::VerifyNone);
+    connect(pQSslSocketClient, SIGNAL(peerVerifyError(QSslError)), this, SLOT(PeerVerifyError(QSslError)));
+    connect(pQSslSocketClient, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
+    connect(pQSslSocketClient, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(SslErrors(QList<QSslError>)));
+    pQSslSocketClient->setPeerVerifyMode(QSslSocket::VerifyPeer);
+    pQSslSocketClient->setProtocol(QSsl::AnyProtocol);
+    QFile FileIn(SslKeyCertificateEmbedded ? ":/certs/certs/KeyPrivate.key" : SslKeyPrivate);
+    if (FileIn.open(QIODevice::ReadOnly)) {
+        QSslKey SslKey(FileIn.readAll(), QSsl::Rsa);
+        FileIn.close();
+        pQSslSocketClient->setPrivateKey(SslKey);
+        FileIn.setFileName(SslKeyCertificateEmbedded ? ":/certs/certs/Certificate.crt" : SslCertificate);
+        if (FileIn.open(QIODevice::ReadOnly)) {
+            QSslCertificate SslLocalCertificate(FileIn.readAll());
+            FileIn.close();
+            pQSslSocketClient->setLocalCertificate(SslLocalCertificate);
+            QList<QSslError> QSLQSslErrors;
+            QSLQSslErrors.append(QSslError(QSslError::SelfSignedCertificate, SslLocalCertificate));
+            pQSslSocketClient->ignoreSslErrors(QSLQSslErrors);
+        } else GenericError(FileIn.errorString());
+    } else GenericError(FileIn.errorString());
     pQSslSocketClient->connectToHostEncrypted(Server, Socket);
     if (pQSslSocketClient->waitForConnected()) {
         pQSslSocketClient->waitForEncrypted();
@@ -809,6 +886,9 @@ void QDTerminal::OpenTcpServerPort() {
 
 void QDTerminal::OpenTcpServerSslPort() {
     pQcSSLServer->setMaxPendingConnections(1);
+    pQcSSLServer->SslCertificate= SslCertificate;
+    pQcSSLServer->SslKeyCertificateEmbedded= SslKeyCertificateEmbedded;
+    pQcSSLServer->SslKeyPrivate= SslKeyPrivate;
     if (pQcSSLServer->listen(QHostAddress::Any, Socket)) {
         ui->QPBOpen->setEnabled(false);
         ui->QPBModify->setEnabled(false);
@@ -820,6 +900,10 @@ void QDTerminal::OpenTcpServerSslPort() {
         ui->QLConnection->setText("TCP SSL Server: "+ QString::number(Socket));
         ui->QPBSendFile->setEnabled(true);
     }
+}
+
+void QDTerminal::PeerVerifyError(const QSslError &error) {
+    GenericError(error.errorString());
 }
 
 void QDTerminal::ReadConfigurationFile() {
@@ -836,6 +920,9 @@ void QDTerminal::ReadConfigurationFile() {
     SendBreak= Settings.value("SendBreak", false).toBool();
     Server= Settings.value("Server").toString();
     Socket= static_cast<quint16>(Settings.value("Socket").toInt());
+    SslCertificate= Settings.value("SslCertificate", "").toString();
+    SslKeyPrivate= Settings.value("SslKeyPrivate", "").toString();
+    SslKeyCertificateEmbedded= Settings.value("SslKeyCertificateEmbedded", true).toBool();
     StopBits= Settings.value("StopBits", 0).toInt();
     TerminalLogFormat= static_cast<TerminalLogFormats>(Settings.value("TerminalLogFormat", TERMINAL_LOG_FORMAT_FULL).toInt());
     if (Settings.value("Parity", 'N').toString().length()> 0) Parity= Settings.value("Parity", 'N').toString().toLatin1()[0];
@@ -913,6 +1000,9 @@ void QDTerminal::SaveProfile(QString ConnectionPath) {
     Settings.setValue("Server", Server);
     Settings.setValue("Socket", Socket);
     Settings.setValue("SpecialCharacters", ui->QCBSpecialCharacters->isChecked());
+    Settings.setValue("SslCertificate", SslCertificate);
+    Settings.setValue("SslKeyPrivate", SslKeyPrivate);
+    Settings.setValue("SslKeyCertificateEmbedded", SslKeyCertificateEmbedded);
     Settings.setValue("TerminalLogFormat", TerminalLogFormat);
     Settings.setValue("Timestamp", ui->QGBTimestamp->isChecked());
     Settings.setValue("TimestampAuto", ui->QCBTimestampAuto->isChecked());
@@ -1163,6 +1253,10 @@ void QDTerminal::SendByteArray(QByteArray QBABufferIn) {
             break;
         }
     }
+}
+
+void QDTerminal::SslErrors(const QList<QSslError> &errors) {
+    for (int count= 0; count< errors.count(); count++) GenericError(errors.at(count).errorString());
 }
 
 void QDTerminal::TextCursorSet() {

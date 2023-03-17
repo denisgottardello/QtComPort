@@ -65,12 +65,12 @@ public:
     explicit QDTerminal(QWidget *parent = nullptr, QString ConnectionPath= "");
     ~QDTerminal();
     Ui::QDTerminal *ui;
-    bool SendBreak;
+    bool SendBreak, SslKeyCertificateEmbedded;
     char Parity;
     int TabNumber, BaudRate, ByteSize, StopBits, FlowControl, MaxClients;
     Modes Mode;
     QDTerminal *pQDTerminal= nullptr;
-    QString ComPort, Server;
+    QString ComPort, Server, SslKeyPrivate, SslCertificate;
     QTabWidget *pQTBTerminal= nullptr;
     QVector<QDTerminal*> *pQVTerminals= nullptr;
     quint16 Socket;
@@ -86,6 +86,7 @@ private:
     QSerialPort SerialPort;
     QSerialPort::PinoutSignals pinoutSignals;
     QString ConnectionPath, DirectoryPath, FontColor, FontColorWarnings;
+    QStringList QSLHistory;
     QSslSocket *pQSslSocketClient= nullptr;
     QTcpServer *pQTcpServer= nullptr;
     QTcpSocket *pQTcpSocketClient= nullptr;
@@ -105,9 +106,11 @@ private:
     void TimestampPrintEvaluation(QString &BufferIn);
 
 private slots:
+    void AcceptError(QAbstractSocket::SocketError socketError);
     void Connected();
     void Disconnected();
     void Error(QAbstractSocket::SocketError socketError);
+    void GenericError(QString Description);
     void on_QCBAutoScroll_toggled(bool checked);
     void on_QCBRowCount_toggled(bool checked);
     void on_QCBSpecialCharacters_toggled(bool checked);
@@ -127,23 +130,26 @@ private slots:
     void on_QPBModify_clicked();
     void on_QPBOpen_clicked();
     void on_QPBRTS_clicked();
-    void on_QPBSaveProfile_clicked();
-    void on_QPBSaveProfileAs_clicked();
-    void on_QPBSaveToFile_clicked();
-    void on_QPBSend_clicked();
-    void on_QPBSendFile_clicked();
     void on_QRBBin_clicked();
     void on_QRBDec_clicked();
     void on_QRBHex_clicked();
     void on_QRBPrintableOnly_clicked();
     void on_QRBPrintableOnly_toggled(bool checked);
+    void on_QPBSaveProfile_clicked();
+    void on_QPBSaveProfileAs_clicked();
+    void on_QPBSaveToFile_clicked();
     void on_QPBSelectAll_clicked();
+    void on_QPBSend_clicked();
+    void on_QPBSendFile_clicked();
+    void on_QPBSendHistory_clicked();
     void on_QRBSym_clicked();
     void on_QSBNewLineAfterMs_valueChanged(int arg1);
     void on_QTBTerminalLogFormats_clicked();
     void OnNewConnection();
     void OnTimeout();
+    void PeerVerifyError(const QSslError &error);
     void ReadyRead();
+    void SslErrors(const QList<QSslError> &errors);
 };
 
 #endif // QDTERMINAL_H

@@ -448,7 +448,7 @@
                <item>
                 <widget class="QSpinBox" name="QSBNewLineAfterMs">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="maximum">
                   <number>999999</number>
@@ -461,7 +461,7 @@
                <item>
                 <widget class="QLabel" name="label">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="text">
                   <string>ms</string>
@@ -505,7 +505,7 @@
                <item>
                 <widget class="QCheckBox" name="QCBTimestampAuto">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="text">
                   <string>Auto</string>
@@ -518,7 +518,7 @@
                <item>
                 <widget class="QCheckBox" name="QCBTimestampAfterCR">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="text">
                   <string>After CR</string>
@@ -528,7 +528,7 @@
                <item>
                 <widget class="QCheckBox" name="QCBTimestampAfterLF">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="text">
                   <string>After LF</string>
@@ -602,6 +602,32 @@
        <widget class="QLineEdit" name="QLESend">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="QCBHistory">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContents</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="QPBSendHistory">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Send history</string>
         </property>
        </widget>
       </item>
@@ -719,6 +745,8 @@
   <tabstop>QCBAutoScroll</tabstop>
   <tabstop>QPTELog</tabstop>
   <tabstop>QLESend</tabstop>
+  <tabstop>QCBHistory</tabstop>
+  <tabstop>QPBSendHistory</tabstop>
   <tabstop>QPBSend</tabstop>
   <tabstop>QPBClear</tabstop>
   <tabstop>QPBSelectAll</tabstop>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>392</height>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,36 +121,10 @@
        <property name="bottomMargin">
         <number>1</number>
        </property>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="QCBParity"/>
-       </item>
-       <item row="4" column="1">
-        <widget class="QComboBox" name="QCBStopBits"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>ComPort</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="QCBDataBits"/>
-       </item>
-       <item row="5" column="1">
-        <widget class="QComboBox" name="QCBFlowControl"/>
-       </item>
-       <item row="6" column="0">
-        <widget class="QCheckBox" name="QCBSendBreak">
-         <property name="text">
-          <string>Send break</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Stop bits</string>
+          <string>Parity</string>
          </property>
         </widget>
        </item>
@@ -161,10 +135,20 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_3">
+       <item row="6" column="0">
+        <widget class="QCheckBox" name="QCBSendBreak">
          <property name="text">
-          <string>Parity</string>
+          <string>Send break</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="QCBBaudRate"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Stop bits</string>
          </property>
         </widget>
        </item>
@@ -175,8 +159,11 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="QCBBaudRate"/>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="QCBStopBits"/>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="QCBDataBits"/>
        </item>
        <item row="0" column="1">
         <widget class="QComboBox" name="QCBComPort"/>
@@ -187,6 +174,19 @@
           <string>Data bits</string>
          </property>
         </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="QCBFlowControl"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>ComPort</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="QCBParity"/>
        </item>
        <item row="7" column="0">
         <spacer name="verticalSpacer_2">
@@ -207,7 +207,7 @@
       <attribute name="title">
        <string>TCP IP</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="leftMargin">
         <number>1</number>
        </property>
@@ -220,36 +220,161 @@
        <property name="bottomMargin">
         <number>1</number>
        </property>
-       <item row="1" column="1">
-        <widget class="QSpinBox" name="QSBSocket">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>999999</number>
-         </property>
-         <property name="value">
-          <number>23</number>
-         </property>
+       <item>
+        <widget class="QWidget" name="widget_3" native="true">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <property name="leftMargin">
+           <number>1</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
+           <number>1</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Socket</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Server</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="QSBSocket">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>999999</number>
+            </property>
+            <property name="value">
+             <number>23</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="1" colspan="2">
+           <widget class="QLineEdit" name="QLEServer">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item row="1" column="2">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+       <item>
+        <widget class="QWidget" name="QWKeyAndCertificate" native="true">
+         <layout class="QGridLayout" name="gridLayout">
+          <property name="leftMargin">
+           <number>1</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
+           <number>1</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="QRBSslKeyCertificateCustom">
+            <property name="text">
+             <string>Use custom</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QToolButton" name="QTBSslCertificate">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Certificate</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QToolButton" name="QTBSslKeyPrivate">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Private key</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLineEdit" name="QLESslKeyPrivate"/>
+          </item>
+          <item row="2" column="3">
+           <widget class="QLineEdit" name="QLESslCertificate"/>
+          </item>
+          <item row="0" column="0" colspan="4">
+           <widget class="QRadioButton" name="QRBSslKeyCertificateEmbedded">
+            <property name="text">
+             <string>Use embedded key and certificate</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="QPBHelp">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="Resources.qrc">
+              <normaloff>:/Icons/Icons/Info.png</normaloff>:/Icons/Icons/Info.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
-       <item row="3" column="0" colspan="3">
+       <item>
         <widget class="QGroupBox" name="QGBFirewallRule">
          <property name="title">
           <string>Windows firewall rule</string>
@@ -277,28 +402,7 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Server</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" colspan="2">
-        <widget class="QLineEdit" name="QLEServer">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Socket</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
+       <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -396,6 +500,13 @@
   <tabstop>QCBSendBreak</tabstop>
   <tabstop>QLEServer</tabstop>
   <tabstop>QSBSocket</tabstop>
+  <tabstop>QRBSslKeyCertificateEmbedded</tabstop>
+  <tabstop>QRBSslKeyCertificateCustom</tabstop>
+  <tabstop>QTBSslKeyPrivate</tabstop>
+  <tabstop>QLESslKeyPrivate</tabstop>
+  <tabstop>QPBHelp</tabstop>
+  <tabstop>QTBSslCertificate</tabstop>
+  <tabstop>QLESslCertificate</tabstop>
   <tabstop>QTEFirewallRule</tabstop>
   <tabstop>QPBCancel</tabstop>
   <tabstop>QPBOk</tabstop>

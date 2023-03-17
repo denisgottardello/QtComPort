@@ -59,6 +59,7 @@ QDOpenComPort::QDOpenComPort(QWidget *parent) : QDialog(parent), ui(new Ui::QDOp
     on_QSBSocket_valueChanged(ui->QSBSocket->value());
     ui->tabWidget->tabBar()->hide();
     ui->QSBSocket->installEventFilter(this);
+    ui->QWKeyAndCertificate->hide();
 }
 
 QDOpenComPort::~QDOpenComPort() {
@@ -75,43 +76,16 @@ bool QDOpenComPort::eventFilter(QObject *object, QEvent *event) {
     return false;
 }
 
-void QDOpenComPort::on_QPBOk_clicked() {
-    this->accept();
+void QDOpenComPort::on_QCBComPort_currentIndexChanged(int index) {
+    if (index> -1) ui->QPBOk->setEnabled(true);
 }
 
-void QDOpenComPort::on_QPBCancel_clicked() {
-    this->reject();
+void QDOpenComPort::on_QLESslCertificate_textChanged(const QString &arg1) {
+    on_QLEServer_textChanged(arg1);
 }
 
-void QDOpenComPort::on_QRBRS232_toggled(bool ) {
-    ui->tabWidget->setCurrentIndex(0);
-    ui->QCBComPort->count()> 0 ? ui->QPBOk->setEnabled(true) : ui->QPBOk->setEnabled(false);
-}
-
-void QDOpenComPort::on_QRBTCPClient_toggled(bool ) {
-    ui->tabWidget->setCurrentIndex(1);
-    ui->QLEServer->setEnabled(true);
-    if (ui->QLEServer->text().length()> 0) ui->QPBOk->setEnabled(true);
-    else ui->QPBOk->setEnabled(false);
-    ui->QGBFirewallRule->hide();
-}
-
-void QDOpenComPort::on_QRBTCPClientSsl_toggled(bool checked) {
-    on_QRBTCPClient_toggled(checked);
-}
-
-void QDOpenComPort::on_QRBTCPServer_toggled(bool ) {
-    ui->tabWidget->setCurrentIndex(1);
-    ui->QLEServer->setEnabled(false);
-    ui->QPBOk->setEnabled(true);
-    ui->QGBFirewallRule->show();
-}
-
-void QDOpenComPort::on_QRBTCPServerSsl_toggled(bool ) {
-    ui->tabWidget->setCurrentIndex(1);
-    ui->QLEServer->setEnabled(false);
-    ui->QPBOk->setEnabled(true);
-    ui->QGBFirewallRule->show();
+void QDOpenComPort::on_QLESslKeyPrivate_textChanged(const QString &arg1) {
+    on_QLEServer_textChanged(arg1);
 }
 
 void QDOpenComPort::on_QLEServer_returnPressed() {
@@ -123,6 +97,58 @@ void QDOpenComPort::on_QLEServer_textChanged(QString ) {
     else ui->QPBOk->setEnabled(false);
 }
 
+void QDOpenComPort::on_QPBOk_clicked() {
+    this->accept();
+}
+
+void QDOpenComPort::on_QPBCancel_clicked() {
+    this->reject();
+}
+
+void QDOpenComPort::on_QPBHelp_clicked() {
+    QMessageBox::information(this, tr("How to generate self signed keys and certifcate"), "<br><br>"
+                                                   "<b>" + tr("Private key")+ "</b><br>openssl genrsa -out KeyPrivate.key 2048<br><br>"
+                                                   "<b>" + tr("Public key")+ "</b><br>openssl rsa -in KeyPrivate.key -pubout -out KeyPublic.key<br><br>"
+                                                   "<b>" + tr("Certificate")+ "</b><br>openssl req -new -x509 -key KeyPrivate.key -out Certificate.crt -days 360<br><br>"
+                                                   "<b>" + tr("Extract the certificate from remote server")+ "</b><br>openssl s_client -showcerts -connect smtp.gmail.com:465 &lt;/dev/null | sed -n -e '/-.BEGIN/,/-.END/ p' &gt; gmail.crt<br><br>"
+                                                   "<b>" + tr("Notes")+ "</b><br>"+ tr("Generating certificate it is important to define a Common name (e.g. server FQDN or YOUR name)"), "Ok");
+}
+
+void QDOpenComPort::on_QRBRS232_toggled(bool ) {
+    ui->tabWidget->setCurrentIndex(0);
+    ui->QCBComPort->count()> 0 ? ui->QPBOk->setEnabled(true) : ui->QPBOk->setEnabled(true);
+}
+
+void QDOpenComPort::on_QRBTCPClient_toggled(bool ) {
+    ui->tabWidget->setCurrentIndex(1);
+    ui->QLEServer->setEnabled(true);
+    if (ui->QLEServer->text().length()> 0) ui->QPBOk->setEnabled(true);
+    else ui->QPBOk->setEnabled(false);
+    ui->QGBFirewallRule->hide();
+}
+
+void QDOpenComPort::on_QRBTCPClientSsl_toggled(bool checked) {
+    if (ui->QRBTCPServerSsl->isChecked() || ui->QRBTCPClientSsl->isChecked()) ui->QWKeyAndCertificate->show();
+    else ui->QWKeyAndCertificate->hide();
+    on_QRBTCPClient_toggled(checked);
+}
+
+void QDOpenComPort::on_QRBTCPServer_toggled(bool ) {
+    ui->tabWidget->setCurrentIndex(1);
+    ui->QLEServer->setEnabled(false);
+    ui->QPBOk->setEnabled(true);
+    ui->QGBFirewallRule->show();
+}
+
+void QDOpenComPort::on_QRBTCPServerSsl_toggled(bool ) {
+    if (ui->QRBTCPServerSsl->isChecked() || ui->QRBTCPClientSsl->isChecked()) ui->QWKeyAndCertificate->show();
+    else ui->QWKeyAndCertificate->hide();
+    ui->tabWidget->setCurrentIndex(1);
+    ui->QLEServer->setEnabled(false);
+    ui->QPBOk->setEnabled(true);
+    ui->QGBFirewallRule->show();
+}
+
 void QDOpenComPort::on_QSBSocket_valueChanged(int arg1) {
     ui->QTEFirewallRule->clear();
     ui->QTEFirewallRule->append(tr("To add"));
@@ -130,4 +156,29 @@ void QDOpenComPort::on_QSBSocket_valueChanged(int arg1) {
     ui->QTEFirewallRule->append("");
     ui->QTEFirewallRule->append(tr("To remove"));
     ui->QTEFirewallRule->append("netsh advfirewall firewall delete rule name=\"QtComPort\" protocol=TCP localport="+ QString::number(arg1));
+    ui->QPBOk->setEnabled(true);
+}
+
+void QDOpenComPort::on_QRBSslKeyCertificateEmbedded_toggled(bool ) {
+    ui->QPBOk->setEnabled(true);
+}
+
+void QDOpenComPort::on_QTBSslCertificate_clicked() {
+    QFileDialog FileDialog(this);
+    FileDialog.setViewMode(QFileDialog::Detail);
+    FileDialog.setFileMode(QFileDialog::ExistingFile);
+    if (FileDialog.exec()== QDialog::Accepted) {
+        ui->QLESslCertificate->setText(FileDialog.selectedFiles().at(0));
+        ui->QPBOk->setEnabled(true);
+    }
+}
+
+void QDOpenComPort::on_QTBSslKeyPrivate_clicked() {
+    QFileDialog FileDialog(this);
+    FileDialog.setViewMode(QFileDialog::Detail);
+    FileDialog.setFileMode(QFileDialog::ExistingFile);
+    if (FileDialog.exec()== QDialog::Accepted) {
+        ui->QLESslKeyPrivate->setText(FileDialog.selectedFiles().at(0));
+        ui->QPBOk->setEnabled(true);
+    }
 }

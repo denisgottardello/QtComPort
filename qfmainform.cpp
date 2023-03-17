@@ -155,6 +155,9 @@ void QFMainForm::on_QPBNewProfile_clicked() {
         Terminal->SendBreak= OpenComPort.ui->QCBSendBreak->isChecked();
         Terminal->Server= OpenComPort.ui->QLEServer->text();
         Terminal->Socket= static_cast<quint16>(OpenComPort.ui->QSBSocket->value());
+        Terminal->SslCertificate= OpenComPort.ui->QLESslCertificate->text();
+        Terminal->SslKeyPrivate= OpenComPort.ui->QLESslKeyPrivate->text();
+        Terminal->SslKeyCertificateEmbedded= OpenComPort.ui->QRBSslKeyCertificateEmbedded->isChecked();
         if (OpenComPort.ui->QRBRS232->isChecked()) Terminal->Mode= MODE_RS232;
         else if (OpenComPort.ui->QRBTCPClient->isChecked()) Terminal->Mode= MODE_TCP_CLIENT;
         else if (OpenComPort.ui->QRBTCPClientSsl->isChecked()) Terminal->Mode= MODE_TCP_CLIENT_SSL;

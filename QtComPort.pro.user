@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 8.0.1, 2022-11-18T15:16:27. -->
+<!-- Written by QtCreator 9.0.83, 2023-03-15T10:37:57. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -54,6 +54,7 @@
    <value type="QString" key="EditorConfiguration.ignoreFileTypes">*.md, *.MD, Makefile</value>
    <value type="bool" key="EditorConfiguration.inEntireDocument">false</value>
    <value type="bool" key="EditorConfiguration.skipTrailingWhitespace">true</value>
+   <value type="bool" key="EditorConfiguration.tintMarginArea">true</value>
   </valuemap>
  </data>
  <data>

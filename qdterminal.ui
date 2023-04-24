@@ -448,7 +448,7 @@
                <item>
                 <widget class="QSpinBox" name="QSBNewLineAfterMs">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="maximum">
                   <number>999999</number>
@@ -461,7 +461,7 @@
                <item>
                 <widget class="QLabel" name="label">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
                   <string>ms</string>
@@ -505,7 +505,7 @@
                <item>
                 <widget class="QCheckBox" name="QCBTimestampAuto">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
                   <string>Auto</string>
@@ -518,7 +518,7 @@
                <item>
                 <widget class="QCheckBox" name="QCBTimestampAfterCR">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
                   <string>After CR</string>
@@ -528,7 +528,7 @@
                <item>
                 <widget class="QCheckBox" name="QCBTimestampAfterLF">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
                   <string>After LF</string>

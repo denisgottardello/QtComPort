@@ -34,7 +34,7 @@
 #include "QSerialPortInfo"
 #include <QMainWindow>
 
-#define VERSION QString("0.0.25.0")
+#define VERSION QString("0.0.26.0")
 
 namespace Ui {
     class QFMainForm;

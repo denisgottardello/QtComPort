@@ -102,11 +102,11 @@ void QDOpenComPort::LowEnergyCharacteristicsParse(Service &service) {
     }
 }
 
-void QDOpenComPort::BluetoothLowEnergyCharacteristicRead(const QLowEnergyCharacteristic &characteristic, const QByteArray &value) {
+void QDOpenComPort::BluetoothLowEnergyCharacteristicRead(const QLowEnergyCharacteristic &, const QByteArray &value) {
     qDebug() << "BluetoothLowEnergyCharacteristicRead()" << value;
 }
 
-void QDOpenComPort::BluetoothLowEnergyCharacteristicWritten(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue) {
+void QDOpenComPort::BluetoothLowEnergyCharacteristicWritten(const QLowEnergyCharacteristic &, const QByteArray &newValue) {
     qDebug() << "BluetoothLowEnergyCharacteristicWritten()" << newValue;
 }
 

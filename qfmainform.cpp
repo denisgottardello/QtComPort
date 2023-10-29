@@ -147,6 +147,8 @@ void QFMainForm::on_QPBNewProfile_clicked() {
             case 1: Terminal->StopBits= 1; break;
             case 2: Terminal->StopBits= 2; break;
         }
+        Terminal->BluetoothLowEnergyDevice= OpenComPort.ui->QCBBluetoothLowEnergyDevices->currentText();
+        Terminal->BluetoothLowEnergyReadPolling= OpenComPort.ui->QSBBluetoothLowEnergyReadPolling->value();
         Terminal->ComPort= OpenComPort.ui->QCBComPort->currentText();
         Terminal->BaudRate= OpenComPort.ui->QCBBaudRate->currentText().toInt();
         Terminal->FlowControl= OpenComPort.ui->QCBFlowControl->currentIndex();
@@ -158,7 +160,8 @@ void QFMainForm::on_QPBNewProfile_clicked() {
         Terminal->SslCertificate= OpenComPort.ui->QLESslCertificate->text();
         Terminal->SslKeyPrivate= OpenComPort.ui->QLESslKeyPrivate->text();
         Terminal->SslKeyCertificateEmbedded= OpenComPort.ui->QRBSslKeyCertificateEmbedded->isChecked();
-        if (OpenComPort.ui->QRBRS232->isChecked()) Terminal->Mode= MODE_RS232;
+        if (OpenComPort.ui->QRBBluetoothLowEnergy->isChecked()) Terminal->Mode= MODE_BLUETOOTH_LOW_ENERGY;
+        else if (OpenComPort.ui->QRBRS232->isChecked()) Terminal->Mode= MODE_RS232;
         else if (OpenComPort.ui->QRBTCPClient->isChecked()) Terminal->Mode= MODE_TCP_CLIENT;
         else if (OpenComPort.ui->QRBTCPClientSsl->isChecked()) Terminal->Mode= MODE_TCP_CLIENT_SSL;
         else if (OpenComPort.ui->QRBTCPServer->isChecked()) Terminal->Mode= MODE_TCP_SERVER;

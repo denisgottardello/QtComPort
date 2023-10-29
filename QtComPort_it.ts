@@ -112,166 +112,207 @@
         <translation type="unfinished">Apri Com Port</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="54"/>
-        <location filename="qdopencomport.ui" line="109"/>
+        <location filename="qdopencomport.ui" line="71"/>
+        <location filename="qdopencomport.ui" line="116"/>
         <source>RS232</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="208"/>
+        <location filename="qdopencomport.ui" line="215"/>
         <source>TCP IP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="184"/>
+        <location filename="qdopencomport.ui" line="191"/>
         <source>ComPort</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="47"/>
+        <location filename="qdopencomport.ui" line="81"/>
         <source>TCP Client SSL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="74"/>
+        <location filename="qdopencomport.ui" line="57"/>
         <source>TCP Client</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="81"/>
+        <location filename="qdopencomport.ui" line="95"/>
         <source>TCP Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="95"/>
+        <location filename="qdopencomport.ui" line="88"/>
         <source>TCP Server SSL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="134"/>
+        <location filename="qdopencomport.ui" line="141"/>
         <source>Baud rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="127"/>
+        <location filename="qdopencomport.ui" line="134"/>
         <source>Parity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="174"/>
+        <location filename="qdopencomport.ui" line="181"/>
         <source>Data bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="151"/>
+        <location filename="qdopencomport.ui" line="158"/>
         <source>Stop bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="88"/>
+        <location filename="qdopencomport.ui" line="64"/>
         <source>Max clients</source>
         <translation type="unfinished">Connessioni client max</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="158"/>
+        <location filename="qdopencomport.ui" line="165"/>
         <source>Flow control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="141"/>
+        <location filename="qdopencomport.ui" line="148"/>
         <source>Send break</source>
         <translation type="unfinished">Invia break</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="241"/>
-        <source>Socket</source>
+        <location filename="qdopencomport.ui" line="102"/>
+        <location filename="qdopencomport.ui" line="429"/>
+        <source>Bluetooth low energy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="qdopencomport.ui" line="248"/>
+        <source>Socket</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="255"/>
         <source>Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="309"/>
+        <location filename="qdopencomport.ui" line="316"/>
         <source>Use custom</source>
         <translation type="unfinished">Usa custom</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="316"/>
-        <location filename="qdopencomport.ui" line="333"/>
+        <location filename="qdopencomport.ui" line="323"/>
+        <location filename="qdopencomport.ui" line="340"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="326"/>
-        <location filename="qdopencomport.cpp" line="112"/>
+        <location filename="qdopencomport.ui" line="333"/>
+        <location filename="qdopencomport.cpp" line="260"/>
         <source>Certificate</source>
         <translation type="unfinished">Certificato</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="343"/>
-        <location filename="qdopencomport.cpp" line="110"/>
+        <location filename="qdopencomport.ui" line="350"/>
+        <location filename="qdopencomport.cpp" line="258"/>
         <source>Private key</source>
         <translation type="unfinished">Chiave privata</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="356"/>
+        <location filename="qdopencomport.ui" line="363"/>
         <source>Use embedded key and certificate</source>
         <translation type="unfinished">Usa chiave e certificato interni</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="366"/>
-        <source>?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="qdopencomport.ui" line="376"/>
+        <location filename="qdopencomport.ui" line="387"/>
         <source>Windows firewall rule</source>
         <translation type="unfinished">Regola firewall per Windows</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="462"/>
+        <location filename="qdopencomport.ui" line="505"/>
+        <source>Scan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="512"/>
+        <source>Services</source>
+        <translation type="unfinished">Servizi</translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="539"/>
+        <source>Read polling (ms)</source>
+        <translation type="unfinished">Polling lettura (ms)</translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="482"/>
+        <source>Connect</source>
+        <translation type="unfinished">Connetti</translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="472"/>
+        <source>Get characteristics</source>
+        <translation type="unfinished">Ottieni caratteristiche</translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="495"/>
+        <source>Write</source>
+        <translation type="unfinished">Scrittura</translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="529"/>
+        <source>Read</source>
+        <translation type="unfinished">Lettura</translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="519"/>
+        <source>Characteristics</source>
+        <translation type="unfinished">Caratteristiche</translation>
+    </message>
+    <message>
+        <location filename="qdopencomport.ui" line="623"/>
         <source>Cancel</source>
         <translation type="unfinished">Annulla</translation>
     </message>
     <message>
-        <location filename="qdopencomport.ui" line="469"/>
+        <location filename="qdopencomport.ui" line="630"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="109"/>
+        <location filename="qdopencomport.cpp" line="257"/>
         <source>How to generate self signed keys and certifcate</source>
         <translation type="unfinished">Generare chiavi privata, pubblica e certificato</translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="111"/>
+        <location filename="qdopencomport.cpp" line="259"/>
         <source>Public key</source>
         <translation type="unfinished">Chiave pubblica</translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="113"/>
+        <location filename="qdopencomport.cpp" line="261"/>
         <source>Extract the certificate from remote server</source>
         <translation type="unfinished">Estrarre il certificato dal server remoto</translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="114"/>
+        <location filename="qdopencomport.cpp" line="262"/>
         <source>Generating certificate it is important to define a Common name (e.g. server FQDN or YOUR name)</source>
         <translation type="unfinished">Durante la generazione del certificato è importante definire il Common name (e.g. server FQDN or YOUR name)</translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="114"/>
+        <location filename="qdopencomport.cpp" line="262"/>
         <source>Notes</source>
         <translation type="unfinished">Note</translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="154"/>
+        <location filename="qdopencomport.cpp" line="306"/>
         <source>To add</source>
         <translation type="unfinished">Per aggiungerla</translation>
     </message>
     <message>
-        <location filename="qdopencomport.cpp" line="157"/>
+        <location filename="qdopencomport.cpp" line="309"/>
         <source>To remove</source>
         <translation type="unfinished">Per rimuoverla</translation>
     </message>
@@ -476,7 +517,7 @@
     </message>
     <message>
         <location filename="qdterminal.ui" line="686"/>
-        <location filename="qdterminal.cpp" line="581"/>
+        <location filename="qdterminal.cpp" line="713"/>
         <source>Save to file</source>
         <translation type="unfinished">Salva su file</translation>
     </message>
@@ -486,31 +527,76 @@
         <translation type="unfinished">Invia file</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="134"/>
-        <location filename="qdterminal.cpp" line="226"/>
-        <location filename="qdterminal.cpp" line="244"/>
+        <location filename="qdterminal.cpp" line="164"/>
+        <source>Bluetooth low energy disconnected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qdterminal.cpp" line="171"/>
+        <source>Service </source>
+        <translation type="unfinished">Servizio </translation>
+    </message>
+    <message>
+        <location filename="qdterminal.cpp" line="173"/>
+        <source>Services discovery finished</source>
+        <translation type="unfinished">Ricerca servizi terminato</translation>
+    </message>
+    <message>
+        <location filename="qdterminal.cpp" line="193"/>
+        <source>Device found, trying to connect and discover services...</source>
+        <translation type="unfinished">Dispositivo trovato, connessione e ricerca servizi...</translation>
+    </message>
+    <message>
+        <location filename="qdterminal.cpp" line="208"/>
+        <source>Device not found</source>
+        <translation type="unfinished">Dispositivo non trovato</translation>
+    </message>
+    <message>
+        <location filename="qdterminal.cpp" line="230"/>
+        <source>Write characteristic found (WriteWithoutResponse)</source>
+        <translation type="unfinished">Attributo di scrittura trovato (WriteWithoutResponse)</translation>
+    </message>
+    <message>
+        <location filename="qdterminal.cpp" line="238"/>
+        <source>Read characteristic found</source>
+        <translation type="unfinished">Attributo di lettura trovato</translation>
+    </message>
+    <message>
+        <location filename="qdterminal.cpp" line="253"/>
+        <location filename="qdterminal.cpp" line="347"/>
+        <location filename="qdterminal.cpp" line="365"/>
         <source>Connected</source>
         <translation type="unfinished">Connesso</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="152"/>
-        <location filename="qdterminal.cpp" line="166"/>
+        <location filename="qdterminal.cpp" line="272"/>
+        <location filename="qdterminal.cpp" line="286"/>
         <source>Disconnected</source>
         <translation type="unfinished">Disconnesso</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="221"/>
-        <location filename="qdterminal.cpp" line="237"/>
+        <location filename="qdterminal.cpp" line="342"/>
+        <location filename="qdterminal.cpp" line="358"/>
         <source>Connection from</source>
         <translation type="unfinished">Connessione da</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="569"/>
+        <location filename="qdterminal.cpp" line="701"/>
         <source>Save As</source>
         <translation type="unfinished">Salva come</translation>
     </message>
     <message>
-        <location filename="qdterminal.cpp" line="812"/>
+        <location filename="qdterminal.cpp" line="900"/>
+        <source>Bluetooth low energy, device: </source>
+        <translation type="unfinished">Bluetooth low energy, dispositivo: </translation>
+    </message>
+    <message>
+        <location filename="qdterminal.cpp" line="901"/>
+        <source> device discovery...</source>
+        <translation type="unfinished"> ricerca dispositivo...</translation>
+    </message>
+    <message>
+        <location filename="qdterminal.cpp" line="967"/>
         <source>The ComPort is already in use!</source>
         <translation type="unfinished">La porta è già in uso!</translation>
     </message>

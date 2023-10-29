@@ -40,6 +40,7 @@
 #endif
 
 enum Modes {
+    MODE_BLUETOOTH_LOW_ENERGY= 5,
     MODE_RS232= 0,
     MODE_TCP_CLIENT= 1,
     MODE_TCP_CLIENT_SSL= 2,
@@ -67,46 +68,27 @@ public:
     Ui::QDTerminal *ui;
     bool SendBreak, SslKeyCertificateEmbedded;
     char Parity;
-    int TabNumber, BaudRate, ByteSize, StopBits, FlowControl, MaxClients;
+    int TabNumber, BaudRate, ByteSize, StopBits, FlowControl, MaxClients, BluetoothLowEnergyReadPolling;
     Modes Mode;
     QDTerminal *pQDTerminal= nullptr;
-    QString ComPort, Server, SslKeyPrivate, SslCertificate;
+    QString BluetoothLowEnergyDevice, ComPort, Server, SslKeyPrivate, SslCertificate;
     QTabWidget *pQTBTerminal= nullptr;
     QVector<QDTerminal*> *pQVTerminals= nullptr;
     quint16 Socket;
     void ReadConfigurationFile();
     void SendByteArray(QByteArray QBABufferIn);
 
-private:
-    bool IsNewConnection, TimestampPrint= false;
-    int RowCount;
-    QByteArray QBAByteIn;
-    QcSSLServer *pQcSSLServer= nullptr;
-    QDateTime QDTLastByteIn;
-    QSerialPort SerialPort;
-    QSerialPort::PinoutSignals pinoutSignals;
-    QString ConnectionPath, DirectoryPath, FontColor, FontColorWarnings;
-    QStringList QSLHistory;
-    QSslSocket *pQSslSocketClient= nullptr;
-    QTcpServer *pQTcpServer= nullptr;
-    QTcpSocket *pQTcpSocketClient= nullptr;
-    QTimer QTControl;
-    QVector<QTcpSocket*> QVTcpSocketsServer;
-    QVector<QSslSocket*> QVSslSocketsServer;
-    TerminalLogFormats TerminalLogFormat= TERMINAL_LOG_FORMAT_FULL;
-    bool eventFilter(QObject *object, QEvent *event);
-    void OpenComPort();
-    void OpenTcpClientPort();
-    void OpenTcpClientSslPort();
-    void OpenTcpServerPort();
-    void OpenTcpServerSslPort();
-    void SaveProfile(QString ConnectionPath);
-    void ShowBufferIn(QByteArray &QBABufferIn);
-    void TextCursorSet();
-    void TimestampPrintEvaluation(QString &BufferIn);
-
 private slots:
     void AcceptError(QAbstractSocket::SocketError socketError);
+    void BluetoothLowEnergyCharacteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
+    void BluetoothLowEnergyConnected();
+    void BluetoothLowEnergyCharacteristicRead(const QLowEnergyCharacteristic &characteristic, const QByteArray &value);
+    void BluetoothLowEnergyCharacteristicWritten(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
+    void BluetoothLowEnergyDisconnected();
+    void BluetoothLowEnergyDiscoveryFinished();
+    void BluetoothLowEnergyFinished();
+    void BluetoothLowEnergyRead();
+    void BluetoothLowEnergyStateChanged(QLowEnergyService::ServiceState newState);
     void Connected();
     void Disconnected();
     void Error(QAbstractSocket::SocketError socketError);
@@ -150,6 +132,43 @@ private slots:
     void PeerVerifyError(const QSslError &error);
     void ReadyRead();
     void SslErrors(const QList<QSslError> &errors);
+
+private:
+    bool IsNewConnection, TimestampPrint= false;
+    int RowCount;
+    QBluetoothDeviceDiscoveryAgent *pQBluetoothDeviceDiscoveryAgent= nullptr;
+    QByteArray QBAByteIn;
+    QcSSLServer *pQcSSLServer= nullptr;
+    QDateTime QDTLastByteIn;
+    QList<QBluetoothUuid> QLBluetoothUuids;
+    QLowEnergyCharacteristic LowEnergyCharacteristicRead;
+    QLowEnergyCharacteristic LowEnergyCharacteristicWrite;
+    QLowEnergyController *pQLowEnergyController= nullptr;
+    QLowEnergyService *pQLowEnergyService= nullptr;
+    QLowEnergyService::WriteMode LowEnergyServiceWriteMode;
+    QSerialPort SerialPort;
+    QSerialPort::PinoutSignals pinoutSignals;
+    QString ConnectionPath, DirectoryPath, FontColor, FontColorWarnings;
+    QStringList QSLHistory;
+    QSslSocket *pQSslSocketClient= nullptr;
+    QTcpServer *pQTcpServer= nullptr;
+    QTcpSocket *pQTcpSocketClient= nullptr;
+    QTimer QTControl, QTBluetoothLowEnergyRead;
+    QVector<QTcpSocket*> QVTcpSocketsServer;
+    QVector<QSslSocket*> QVSslSocketsServer;
+    TerminalLogFormats TerminalLogFormat= TERMINAL_LOG_FORMAT_FULL;
+    bool eventFilter(QObject *object, QEvent *event);
+    void OpenBluetoothLowEnergy();
+    void OpenComPort();
+    void OpenTcpClientPort();
+    void OpenTcpClientSslPort();
+    void OpenTcpServerPort();
+    void OpenTcpServerSslPort();
+    void SaveProfile(QString ConnectionPath);
+    void ShowBufferIn(QByteArray &QBABufferIn);
+    void TextCursorSet();
+    void TimestampPrintEvaluation(QString &BufferIn);
+
 };
 
 #endif // QDTERMINAL_H

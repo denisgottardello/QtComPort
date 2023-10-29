@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>451</height>
+    <height>517</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,24 +41,7 @@
       <property name="bottomMargin">
        <number>1</number>
       </property>
-      <item row="3" column="0">
-       <widget class="QRadioButton" name="QRBTCPClientSsl">
-        <property name="text">
-         <string>TCP Client SSL</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QRadioButton" name="QRBRS232">
-        <property name="text">
-         <string>RS232</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
+      <item row="3" column="2">
        <widget class="QSpinBox" name="QSBTCPServerMaxClients">
         <property name="minimum">
          <number>1</number>
@@ -68,31 +51,55 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QRadioButton" name="QRBTCPClient">
         <property name="text">
          <string>TCP Client</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QRadioButton" name="QRBTCPServer">
-        <property name="text">
-         <string>TCP Server</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QLabel" name="label_9">
         <property name="text">
          <string>Max clients</string>
         </property>
        </widget>
       </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="QRBRS232">
+        <property name="text">
+         <string>RS232</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="4" column="0">
+       <widget class="QRadioButton" name="QRBTCPClientSsl">
+        <property name="text">
+         <string>TCP Client SSL</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
        <widget class="QRadioButton" name="QRBTCPServerSsl">
         <property name="text">
          <string>TCP Server SSL</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QRadioButton" name="QRBTCPServer">
+        <property name="text">
+         <string>TCP Server</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="QRBBluetoothLowEnergy">
+        <property name="text">
+         <string>Bluetooth low energy</string>
         </property>
        </widget>
       </item>
@@ -417,6 +424,156 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Bluetooth low energy</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>1</number>
+       </property>
+       <property name="topMargin">
+        <number>1</number>
+       </property>
+       <property name="rightMargin">
+        <number>1</number>
+       </property>
+       <property name="bottomMargin">
+        <number>1</number>
+       </property>
+       <item>
+        <widget class="QWidget" name="widget_4" native="true">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="leftMargin">
+           <number>1</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
+           <number>1</number>
+          </property>
+          <item row="3" column="1" colspan="2">
+           <widget class="QComboBox" name="QCBBluetoothLowEnergyServices">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QPushButton" name="QPBBluetoothLowEnergyConnectCharacteristicsGet">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Get characteristics</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="QPBBluetoothLowEnergyConnect">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Connect</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="2">
+           <widget class="QComboBox" name="QCBBluetoothLowEnergyDevices"/>
+          </item>
+          <item row="4" column="1">
+           <widget class="QCheckBox" name="QCBCharacteristicWrite">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Write</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="QPBBluetoothLowEnergyScan">
+            <property name="text">
+             <string>Scan</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Services</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Characteristics</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QCheckBox" name="QCBCharacteristicRead">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Read</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Read polling (ms)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="QSBBluetoothLowEnergyReadPolling">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>999999</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_5" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -484,6 +641,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>QRBBluetoothLowEnergy</tabstop>
   <tabstop>QRBRS232</tabstop>
   <tabstop>QRBTCPClient</tabstop>
   <tabstop>QRBTCPServer</tabstop>
@@ -508,6 +666,14 @@
   <tabstop>QTBSslCertificate</tabstop>
   <tabstop>QLESslCertificate</tabstop>
   <tabstop>QTEFirewallRule</tabstop>
+  <tabstop>QPBBluetoothLowEnergyScan</tabstop>
+  <tabstop>QCBBluetoothLowEnergyDevices</tabstop>
+  <tabstop>QPBBluetoothLowEnergyConnect</tabstop>
+  <tabstop>QCBBluetoothLowEnergyServices</tabstop>
+  <tabstop>QPBBluetoothLowEnergyConnectCharacteristicsGet</tabstop>
+  <tabstop>QCBCharacteristicWrite</tabstop>
+  <tabstop>QCBCharacteristicRead</tabstop>
+  <tabstop>QSBBluetoothLowEnergyReadPolling</tabstop>
   <tabstop>QPBCancel</tabstop>
   <tabstop>QPBOk</tabstop>
  </tabstops>

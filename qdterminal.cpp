@@ -54,6 +54,9 @@ QDTerminal::QDTerminal(QWidget *parent, QString ConnectionPath) : QDialog(parent
 }
 
 QDTerminal::~QDTerminal() {
+    if (pQLowEnergyService) delete pQLowEnergyService;
+    if (pQLowEnergyController) delete pQLowEnergyController;
+    if (pQBluetoothDeviceDiscoveryAgent) delete pQBluetoothDeviceDiscoveryAgent;
     delete pQcSSLServer;
     delete pQSslSocketClient;
     for (int count= 0; count< QVTcpSocketsServer.length(); count++) delete QVTcpSocketsServer.at(count);
@@ -109,6 +112,12 @@ bool QDTerminal::eventFilter(QObject *object, QEvent *event) {
             default: KeyPressed= keyEvent->text(); break;
         }
         switch(Mode) {
+            case MODE_BLUETOOTH_LOW_ENERGY: {
+                if (LowEnergyCharacteristicWrite.isValid()) {
+                    pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, KeyPressed.toLocal8Bit(), LowEnergyServiceWriteMode);
+                }
+                break;
+            }
             case MODE_RS232: SerialPort.write(KeyPressed.toLatin1()); break;
             case MODE_TCP_CLIENT: {
                 if (pQTcpSocketClient) pQTcpSocketClient->write(KeyPressed.toLatin1());
@@ -128,6 +137,116 @@ bool QDTerminal::eventFilter(QObject *object, QEvent *event) {
     } else return QObject::eventFilter(object, event);
 }
 
+void QDTerminal::BluetoothLowEnergyCharacteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue) {
+    qDebug() << characteristic.uuid().toString() << newValue << pQLowEnergyService->state() << characteristic.name();
+    if (pQLowEnergyService->state()== QLowEnergyService::ServiceDiscovered) {
+        QByteArray QBATemp(newValue);
+        if (pQDTerminal) pQDTerminal->SendByteArray(QBATemp);
+        ShowBufferIn(QBATemp);
+    } else if (pQLowEnergyService->state()== QLowEnergyService::DiscoveringServices) {
+        ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorWarnings+ ">Characteristic: "+ characteristic.uuid().toString()+ "<br></font>");
+    }
+}
+
+void QDTerminal::BluetoothLowEnergyCharacteristicRead(const QLowEnergyCharacteristic &, const QByteArray &value) {
+    qDebug() << "BluetoothLowEnergyCharacteristicRead()" << value;
+}
+
+void QDTerminal::BluetoothLowEnergyCharacteristicWritten(const QLowEnergyCharacteristic &, const QByteArray &newValue) {
+    qDebug() << "BluetoothLowEnergyCharacteristicWritten()" << newValue;
+}
+
+void QDTerminal::BluetoothLowEnergyConnected() {
+    pQLowEnergyController->discoverServices();
+}
+
+void QDTerminal::BluetoothLowEnergyDisconnected() {
+    ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Bluetooth low energy disconnected")+ "<br></font>");
+    ui->QPBClose->click();
+}
+
+void QDTerminal::BluetoothLowEnergyDiscoveryFinished() {
+    QLBluetoothUuids= pQLowEnergyController->services();
+    foreach (auto BluetoothUuid, QLBluetoothUuids) {
+        ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorWarnings+ ">"+ tr("Service ")+ BluetoothUuid.toString()+ "<br></font>");
+    }
+    ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorWarnings+ ">"+ tr("Services discovery finished")+ "<br></font>");
+    foreach (auto BluetoothUuid, QLBluetoothUuids) {
+        if (pQLowEnergyService) delete pQLowEnergyService;
+        pQLowEnergyService= pQLowEnergyController->createServiceObject(BluetoothUuid);
+        if (pQLowEnergyService) {
+            connect(pQLowEnergyService, SIGNAL(characteristicChanged(QLowEnergyCharacteristic,QByteArray)), this, SLOT(BluetoothLowEnergyCharacteristicChanged(QLowEnergyCharacteristic,QByteArray)));
+            connect(pQLowEnergyService, SIGNAL(characteristicRead(QLowEnergyCharacteristic,QByteArray)), this, SLOT(BluetoothLowEnergyCharacteristicRead(QLowEnergyCharacteristic,QByteArray)));
+            connect(pQLowEnergyService, SIGNAL(characteristicWritten(QLowEnergyCharacteristic,QByteArray)), this, SLOT(BluetoothLowEnergyCharacteristicWritten(QLowEnergyCharacteristic,QByteArray)));
+            connect(pQLowEnergyService, SIGNAL(stateChanged(QLowEnergyService::ServiceState)), this, SLOT(BluetoothLowEnergyStateChanged(QLowEnergyService::ServiceState)));
+            if (pQLowEnergyService->state()== QLowEnergyService::DiscoveryRequired) pQLowEnergyService->discoverDetails();
+        }
+    }
+}
+
+void QDTerminal::BluetoothLowEnergyFinished() {
+    ui->QPBSaveProfileAs->setEnabled(true);
+    QList<QBluetoothDeviceInfo> QLBluetoothDevices= pQBluetoothDeviceDiscoveryAgent->discoveredDevices();
+    for (int count= 0; count< QLBluetoothDevices.length(); count++) {
+        if (QLBluetoothDevices.at(count).coreConfigurations() & QBluetoothDeviceInfo::LowEnergyCoreConfiguration) {
+            if (QLBluetoothDevices.at(count).name().compare(BluetoothLowEnergyDevice)== 0) {
+                ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorWarnings+ ">"+ tr("Device found, trying to connect and discover services...")+ "<br></font>");
+                if (pQLowEnergyController) delete pQLowEnergyController;
+                pQLowEnergyController= QLowEnergyController::createCentral(QLBluetoothDevices.at(count));
+                connect(pQLowEnergyController, SIGNAL(connected()), this, SLOT(BluetoothLowEnergyConnected()));
+                //connect(pQLowEnergyController, SIGNAL(error(QLowEnergyController::Error)), this, SLOT(BluetoothLowEnergyError(QLowEnergyController::Error)));
+                connect(pQLowEnergyController, SIGNAL(disconnected()), this, SLOT(BluetoothLowEnergyDisconnected()));
+                //connect(pQLowEnergyController, SIGNAL(serviceDiscovered(QBluetoothUuid)), this, SLOT(BluetoothLowEnergyServiceDiscovered(QBluetoothUuid)));
+                connect(pQLowEnergyController, SIGNAL(discoveryFinished()), this, SLOT(BluetoothLowEnergyDiscoveryFinished()));
+                pQLowEnergyController->setRemoteAddressType(QLowEnergyController::PublicAddress);
+                pQLowEnergyController->connectToDevice();
+                ui->QPBClose->setEnabled(true);
+                return;
+            }
+        }
+    }
+    ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorWarnings+ ">"+ tr("Device not found")+ "<br></font>");
+    ui->QPBOpen->setEnabled(true);
+}
+
+void QDTerminal::BluetoothLowEnergyRead() {
+    qDebug() << "BluetoothLowEnergyRead()";
+    if (pQLowEnergyService && LowEnergyCharacteristicRead.isValid()) {
+        pQLowEnergyService->readCharacteristic(LowEnergyCharacteristicRead);
+        qDebug() << "BluetoothLowEnergyRead() valid";
+    }
+}
+
+void QDTerminal::BluetoothLowEnergyStateChanged(QLowEnergyService::ServiceState newState) {
+    qDebug() << "BluetoothLowEnergyStateChanged()" << newState;
+    if (newState== QLowEnergyService::ServiceDiscovered) {
+        foreach (QLowEnergyCharacteristic LowEnergyCharacteristic, pQLowEnergyService->characteristics()) {
+            if (LowEnergyCharacteristic.isValid()) {
+                if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::WriteNoResponse || LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::Write) {
+                    if (!LowEnergyCharacteristicWrite.isValid()) {
+                        LowEnergyCharacteristicWrite= LowEnergyCharacteristic;
+                        if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::WriteNoResponse) LowEnergyServiceWriteMode= QLowEnergyService::WriteWithoutResponse;
+                        else LowEnergyServiceWriteMode= QLowEnergyService::WriteWithResponse;
+                        ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorWarnings+ ">"+ tr("Write characteristic found (WriteWithoutResponse)")+ "<br></font>");
+                        ui->QLESend->setEnabled(true);
+                        ui->QPBSend->setEnabled(true);
+                    }
+                }
+                if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::Read) {
+                    if (!LowEnergyCharacteristicRead.isValid()) {
+                        LowEnergyCharacteristicRead= LowEnergyCharacteristic;
+                        ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorWarnings+ ">"+ tr("Read characteristic found")+ "<br></font>");
+                    }
+                }
+                QLowEnergyDescriptor LowEnergyDescriptor= LowEnergyCharacteristic.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
+                if (LowEnergyDescriptor.isValid()) {
+                    pQLowEnergyService->writeDescriptor(LowEnergyDescriptor, QByteArray::fromHex("0100"));
+                }
+            }
+        }
+    }
+}
+
 void QDTerminal::Connected() {
     int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
     TextCursorSet();
@@ -138,6 +257,7 @@ void QDTerminal::Connected() {
 
 void QDTerminal::Disconnected() {
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: break;
         case MODE_RS232: break;
         case MODE_TCP_CLIENT:
         case MODE_TCP_CLIENT_SSL: {
@@ -179,6 +299,7 @@ void QDTerminal::Error(QAbstractSocket::SocketError ) {
     int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
     TextCursorSet();
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: break;
         case MODE_RS232: break;
         case MODE_TCP_CLIENT: {
             ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ pQTcpSocketClient->errorString()+ "<br></font>");
@@ -328,6 +449,13 @@ void QDTerminal::on_QLESend_returnPressed() {
     ui->QCBHistory->clear();
     ui->QCBHistory->addItems(QSLHistory);
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: {
+            if (LowEnergyCharacteristicWrite.isValid()) {
+                pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, ui->QLESend->text().toLatin1(), LowEnergyServiceWriteMode);
+                pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, QString("\r\n").toLatin1(), LowEnergyServiceWriteMode);
+            }
+            break;
+        }
         case MODE_RS232: {
             if (SerialPort.write(QString(ui->QLESend->text()+ "\r\n").toLatin1())) ui->QLESend->setText("");
             break;
@@ -395,6 +523,11 @@ void QDTerminal::on_QPBClose_clicked() {
     ui->QPTELog->removeEventFilter(this);
     ui->QLConnection->setText("");
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: {
+            QTBluetoothLowEnergyRead.stop();
+            /*if (pQLowEnergyController->state() & QLowEnergyController::ConnectedState) */pQLowEnergyController->disconnectFromDevice();
+            break;
+        }
         case MODE_RS232: {
             disconnect(&QTControl, SIGNAL(timeout()), this, SLOT(OnTimeout()));
             ui->QPBRTS->setEnabled(false);
@@ -492,12 +625,14 @@ void QDTerminal::on_QPBModify_clicked() {
     _OpenComPort.ui->QSBSocket->setValue(Socket);
     _OpenComPort.ui->QSBTCPServerMaxClients->setValue(MaxClients);
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: _OpenComPort.ui->QRBBluetoothLowEnergy->setChecked(true); break;
         case MODE_RS232: _OpenComPort.ui->QRBRS232->setChecked(true); break;
         case MODE_TCP_CLIENT: _OpenComPort.ui->QRBTCPClient->setChecked(true); break;
         case MODE_TCP_CLIENT_SSL: _OpenComPort.ui->QRBTCPClientSsl->setChecked(true); break;
         case MODE_TCP_SERVER: _OpenComPort.ui->QRBTCPServer->setChecked(true); break;
         case MODE_TCP_SERVER_SSL: _OpenComPort.ui->QRBTCPServerSsl->setChecked(true); break;
     }
+    _OpenComPort.ui->QSBBluetoothLowEnergyReadPolling->setValue(BluetoothLowEnergyReadPolling);
     _OpenComPort.ui->QPBOk->setEnabled(false);
     if (_OpenComPort.exec()== QDialog::Accepted) {
         switch(_OpenComPort.ui->QCBParity->currentIndex()) {
@@ -518,6 +653,8 @@ void QDTerminal::on_QPBModify_clicked() {
             case 1: StopBits= 1; break;
             case 2: StopBits= 2; break;
         }
+        BluetoothLowEnergyDevice= _OpenComPort.ui->QCBBluetoothLowEnergyDevices->currentText();
+        BluetoothLowEnergyReadPolling= _OpenComPort.ui->QSBBluetoothLowEnergyReadPolling->value();
         ComPort= _OpenComPort.ui->QCBComPort->currentText();
         BaudRate= _OpenComPort.ui->QCBBaudRate->currentText().toInt();
         FlowControl= _OpenComPort.ui->QCBFlowControl->currentIndex();
@@ -539,6 +676,7 @@ void QDTerminal::on_QPBModify_clicked() {
 
 void QDTerminal::on_QPBOpen_clicked() {
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: OpenBluetoothLowEnergy(); break;
         case MODE_RS232: OpenComPort(); break;
         case MODE_TCP_CLIENT: OpenTcpClientPort(); break;
         case MODE_TCP_CLIENT_SSL: OpenTcpClientSslPort(); break;
@@ -589,6 +727,12 @@ void QDTerminal::on_QPBSend_clicked() {
     a+= char(7);
     a+= "#";
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: {
+            if (LowEnergyCharacteristicWrite.isValid()) {
+                pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, a.toLocal8Bit(), LowEnergyServiceWriteMode);
+            }
+            break;
+        }
         case MODE_RS232: {
             if (SerialPort.isOpen()) {
                 if (SendBreak) {
@@ -645,6 +789,12 @@ void QDTerminal::on_QPBSendFile_clicked() {
         if (FileIn.open(QIODevice::ReadOnly)) {
             QByteArray QBABufferIn= FileIn.readAll();
             switch(Mode) {
+                case MODE_BLUETOOTH_LOW_ENERGY: {
+                    if (LowEnergyCharacteristicWrite.isValid()) {
+                        pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, QBABufferIn, LowEnergyServiceWriteMode);
+                    }
+                    break;
+                }
                 case MODE_RS232: {
                     if (SerialPort.isOpen()) {
                         if (SendBreak) {
@@ -745,6 +895,17 @@ void QDTerminal::on_QTBTerminalLogFormats_clicked() {
     }
 }
 
+void QDTerminal::OpenBluetoothLowEnergy() {
+    ui->QPBOpen->setEnabled(false);
+    ui->QLConnection->setText(tr("Bluetooth low energy, device: ")+ BluetoothLowEnergyDevice);
+    ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ BluetoothLowEnergyDevice+ tr(" device discovery...")+ "<br></font>");
+    if (pQBluetoothDeviceDiscoveryAgent) delete pQBluetoothDeviceDiscoveryAgent;
+    pQBluetoothDeviceDiscoveryAgent= new QBluetoothDeviceDiscoveryAgent();
+    pQBluetoothDeviceDiscoveryAgent->setLowEnergyDiscoveryTimeout(5000);
+    connect(pQBluetoothDeviceDiscoveryAgent, SIGNAL(finished()), this, SLOT(BluetoothLowEnergyFinished()));
+    pQBluetoothDeviceDiscoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
+}
+
 void QDTerminal::OpenComPort() {
     SerialPort.setPortName(ComPort);
     if (SerialPort.open(QIODevice::ReadWrite)) {
@@ -832,6 +993,7 @@ void QDTerminal::OpenTcpClientPort() {
 
 void QDTerminal::OpenTcpClientSslPort() {
     ui->QPBOpen->setEnabled(false);
+    ui->QLConnection->setText("TCP SSL Client: "+ Server+ ":"+ QString::number(Socket));
     ui->QPBModify->setEnabled(false);
     ui->QPBClose->setEnabled(true);
     ui->QLESend->setEnabled(true);
@@ -909,6 +1071,8 @@ void QDTerminal::PeerVerifyError(const QSslError &error) {
 void QDTerminal::ReadConfigurationFile() {
     QSettings Settings(ConnectionPath, QSettings::IniFormat);
     Settings.beginGroup("Main");
+    BluetoothLowEnergyDevice= Settings.value("BluetoothLowEnergyDevice", "").toString();
+    BluetoothLowEnergyReadPolling= Settings.value("BluetoothLowEnergyReadPolling", "100").toInt();
     ComPort= Settings.value("ComPort", "/dev/ttyS0").toString();
     BaudRate= Settings.value("BaudRate", 9600).toInt();
     ByteSize= Settings.value("ByteSize", 8).toInt();
@@ -952,6 +1116,7 @@ void QDTerminal::ReadConfigurationFile() {
     ui->QRBCR->setChecked(Settings.value("NewLineWidth", "lf").toString().compare("cr")== 0);
     ui->QRBLF->setChecked(Settings.value("NewLineWidth", "lf").toString().compare("lf")== 0);
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: OpenBluetoothLowEnergy(); break;
         case MODE_RS232: OpenComPort(); break;
         case MODE_TCP_CLIENT: OpenTcpClientPort(); break;
         case MODE_TCP_CLIENT_SSL: OpenTcpClientSslPort(); break;
@@ -963,6 +1128,7 @@ void QDTerminal::ReadConfigurationFile() {
 void QDTerminal::ReadyRead() {
     QByteArray QBABufferIn;
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: break;
         case MODE_RS232: break;
         case MODE_TCP_CLIENT: QBABufferIn= pQTcpSocketClient->readAll(); break;
         case MODE_TCP_CLIENT_SSL: QBABufferIn= pQSslSocketClient->readAll(); break;
@@ -980,6 +1146,8 @@ void QDTerminal::SaveProfile(QString ConnectionPath) {
     QSettings Settings(ConnectionPath, QSettings::IniFormat);
     Settings.beginGroup("Main");
     Settings.setValue("AutoScroll", ui->QCBAutoScroll->isChecked());
+    Settings.setValue("BluetoothLowEnergyDevice", BluetoothLowEnergyDevice);
+    Settings.setValue("BluetoothLowEnergyReadPolling", BluetoothLowEnergyReadPolling);
     Settings.setValue("ComPort", ComPort);
     Settings.setValue("BaudRate", BaudRate);
     Settings.setValue("BackgroundColor", ui->QPTELog->palette().color(QPalette::Base).name());
@@ -1219,6 +1387,12 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
 
 void QDTerminal::SendByteArray(QByteArray QBABufferIn) {
     switch(Mode) {
+        case MODE_BLUETOOTH_LOW_ENERGY: {
+            if (LowEnergyCharacteristicWrite.isValid()) {
+                pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, QBABufferIn, LowEnergyServiceWriteMode);
+            }
+            break;
+        }
         case MODE_RS232: {
             if (SerialPort.isOpen()) {
                 if (SendBreak) {

@@ -6,6 +6,7 @@
         <file>Icons/ok.png</file>
         <file>Icons/QtComPort.png</file>
         <file>Icons/Info.png</file>
+        <file>Icons/Loader16.gif</file>
     </qresource>
     <qresource prefix="/qt/etc">
         <file>qt.conf</file>

@@ -60,6 +60,10 @@ QDOpenComPort::QDOpenComPort(QWidget *parent) : QDialog(parent), ui(new Ui::QDOp
     ui->tabWidget->tabBar()->hide();
     ui->QSBSocket->installEventFilter(this);
     ui->QWKeyAndCertificate->hide();
+    QMGif= new QMovie(":/Icons/Icons/Loader16.gif");
+    ui->QLBluetoothLowEnergyLoader->setMovie(QMGif);
+    QMGif->start();
+    ui->QLBluetoothLowEnergyLoader->hide();
     pQBluetoothDeviceDiscoveryAgent= new QBluetoothDeviceDiscoveryAgent();
     pQBluetoothDeviceDiscoveryAgent->setLowEnergyDiscoveryTimeout(5000);
     connect(pQBluetoothDeviceDiscoveryAgent, SIGNAL(deviceDiscovered(QBluetoothDeviceInfo)), this, SLOT(BluetoothLowEnergyDeviceDiscovered(QBluetoothDeviceInfo)));
@@ -71,6 +75,7 @@ QDOpenComPort::~QDOpenComPort() {
     if (pQLowEnergyController) delete pQLowEnergyController;
     if (pQLowEnergyService) delete pQLowEnergyService;
     if (pQBluetoothDeviceDiscoveryAgent) delete pQBluetoothDeviceDiscoveryAgent;
+    delete QMGif;
     delete ui;
 }
 
@@ -87,18 +92,8 @@ void QDOpenComPort::LowEnergyCharacteristicsParse(Service &service) {
             if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::Indicate) qDebug() << "QLowEnergyCharacteristic::Indicate";
             if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::WriteSigned) qDebug() << "QLowEnergyCharacteristic::WriteSigned";
         }
-        if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::WriteNoResponse || LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::Write) {
-            /*LowEnergyCharacteristicWrite= LowEnergyCharacteristic;
-                if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::WriteNoResponse) LowEnergyServiceWriteMode= QLowEnergyService::WriteWithoutResponse;
-                else LowEnergyServiceWriteMode= QLowEnergyService::WriteWithResponse;*/
-            ui->QCBCharacteristicWrite->setChecked(true);
-        }
-        if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::Read) {
-            //LowEnergyCharacteristicRead= LowEnergyCharacteristic;
-            /*connect(&Timer, SIGNAL(timeout()), this, SLOT(BluetoothLowEnergyOnRead()));
-                Timer.start(1000);*/
-            ui->QCBCharacteristicRead->setChecked(true);
-        }
+        if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::WriteNoResponse || LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::Write) ui->QCBCharacteristicWrite->setChecked(true);
+        if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::Read) ui->QCBCharacteristicRead->setChecked(true);
     }
 }
 
@@ -150,11 +145,8 @@ void QDOpenComPort::BluetoothLowEnergyFinished() {
         }
     }
     ui->QPBBluetoothLowEnergyConnect->setEnabled(QLDevices.length()> 0);
+    ui->QLBluetoothLowEnergyLoader->hide();
 }
-
-/*void QDOpenComPort::BluetoothLowEnergyOnRead() {
-    if (pQLowEnergyService && LowEnergyCharacteristicRead.isValid()) pQLowEnergyService->readCharacteristic(LowEnergyCharacteristicRead);
-}*/
 
 void QDOpenComPort::BluetoothLowEnergyServiceDiscovered(const QBluetoothUuid &) {
     qDebug() << "ServiceDiscovered()";
@@ -199,7 +191,6 @@ void QDOpenComPort::on_QLEServer_returnPressed() {
 
 void QDOpenComPort::on_QLEServer_textChanged(QString ) {
     if (ui->QLEServer->text().length()> 0) ui->QPBOk->setEnabled(true);
-    //else ui->QPBOk->setEnabled(false);
 }
 
 void QDOpenComPort::on_QPBOk_clicked() {
@@ -240,6 +231,7 @@ void QDOpenComPort::on_QPBBluetoothLowEnergyConnect_clicked() {
 }
 
 void QDOpenComPort::on_QPBBluetoothLowEnergyScan_clicked() {
+    ui->QLBluetoothLowEnergyLoader->show();
     ui->QPBBluetoothLowEnergyConnect->setEnabled(false);
     ui->QCBBluetoothLowEnergyDevices->clear();
     ui->QCBBluetoothLowEnergyServices->clear();
@@ -268,14 +260,12 @@ void QDOpenComPort::on_QRBBluetoothLowEnergy_toggled(bool ) {
 
 void QDOpenComPort::on_QRBRS232_toggled(bool ) {
     ui->tabWidget->setCurrentIndex(0);
-    //ui->QCBComPort->count()> 0 ? ui->QPBOk->setEnabled(true) : ui->QPBOk->setEnabled(false);
 }
 
 void QDOpenComPort::on_QRBTCPClient_toggled(bool ) {
     ui->tabWidget->setCurrentIndex(1);
     ui->QLEServer->setEnabled(true);
     if (ui->QLEServer->text().length()> 0) ui->QPBOk->setEnabled(true);
-    //else ui->QPBOk->setEnabled(false);
     ui->QGBFirewallRule->hide();
 }
 
@@ -334,10 +324,3 @@ void QDOpenComPort::on_QTBSslKeyPrivate_clicked() {
         ui->QPBOk->setEnabled(true);
     }
 }
-
-/*void QDOpenComPort::on_pushButton_clicked() {
-    if (pQLowEnergyService && LowEnergyCharacteristicWrite.isValid()) {
-        pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, "abcdf", LowEnergyServiceWriteMode);
-    }
-}*/
-

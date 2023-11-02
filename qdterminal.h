@@ -148,7 +148,7 @@ private:
     QLowEnergyService::WriteMode LowEnergyServiceWriteMode;
     QSerialPort SerialPort;
     QSerialPort::PinoutSignals pinoutSignals;
-    QString ConnectionPath, DirectoryPath, FontColor, FontColorWarnings;
+    QString ConnectionPath, DirectoryPath, FontColor, FontColorWarnings, FontColorTemp;
     QStringList QSLHistory;
     QSslSocket *pQSslSocketClient= nullptr;
     QTcpServer *pQTcpServer= nullptr;

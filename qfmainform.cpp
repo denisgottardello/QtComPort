@@ -124,7 +124,6 @@ void QFMainForm::on_QPBLoadProfile_clicked() {
 void QFMainForm::on_QPBNewProfile_clicked() {
     QDOpenComPort OpenComPort(this);
     foreach (const QSerialPortInfo &SerialPortInfo, QSerialPortInfo::availablePorts()) OpenComPort.ui->QCBComPort->addItem(SerialPortInfo.portName());
-    OpenComPort.ui->QCBComPort->count()> 0 ? OpenComPort.ui->QPBOk->setEnabled(true) : OpenComPort.ui->QPBOk->setEnabled(false);
     if (OpenComPort.exec()== QDialog::Accepted) {
         QDTerminal *Terminal= new QDTerminal(this, "");
         Terminal->TabNumber= ui->QTBTerminal->addTab(Terminal, tr("New"));

@@ -28,6 +28,7 @@
 #include "QLowEnergyController"
 #include "QMessageBox"
 #include "QMetaEnum"
+#include "QMovie"
 #include "QTimer"
 #include "ui_qdopencomport.h"
 
@@ -59,7 +60,6 @@ private slots:
     void BluetoothLowEnergyError(QLowEnergyController::Error newError);
     void BluetoothLowEnergyDisconnected();
     void BluetoothLowEnergyDiscoveryFinished();
-    //void BluetoothLowEnergyOnRead();
     void BluetoothLowEnergyServiceDiscovered(const QBluetoothUuid &newService);
     void BluetoothLowEnergyStateChanged(QLowEnergyService::ServiceState newState);
     bool eventFilter(QObject *object, QEvent *event);
@@ -85,20 +85,15 @@ private slots:
     void on_QTBSslKeyPrivate_clicked();
     void on_QTBSslCertificate_clicked();
 
-    //void on_pushButton_clicked();
-
 private:
     QBluetoothDeviceDiscoveryAgent *pQBluetoothDeviceDiscoveryAgent= nullptr;
     QList<QBluetoothDeviceInfo> QLDevices;
     QList<QBluetoothUuid> QLBluetoothUuids;
     QList<QLowEnergyService*> QLServices;
-    /*QLowEnergyCharacteristic LowEnergyCharacteristicRead;
-    QLowEnergyCharacteristic LowEnergyCharacteristicWrite;*/
     QLowEnergyController *pQLowEnergyController= nullptr;
     QLowEnergyService *pQLowEnergyService= nullptr;
+    QMovie *QMGif;
     QVector<Service> QVServices;
-    //QLowEnergyService::WriteMode LowEnergyServiceWriteMode;
-    //QTimer Timer;
     void LowEnergyCharacteristicsParse(Service &service);
 
 };

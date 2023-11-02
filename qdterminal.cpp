@@ -393,8 +393,8 @@ void QDTerminal::OnTimeout() {
     QByteArray QBABufferIn= SerialPort.readAll();
     if (QBABufferIn.size()> 0) {
         if (pQDTerminal) pQDTerminal->SendByteArray(QBABufferIn);
-        ShowBufferIn(QBABufferIn);
         QBAByteIn.append(QBABufferIn);
+        ShowBufferIn(QBABufferIn);
     }
     QTControl.start(10);
 }
@@ -453,6 +453,7 @@ void QDTerminal::on_QLESend_returnPressed() {
             if (LowEnergyCharacteristicWrite.isValid()) {
                 pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, ui->QLESend->text().toLatin1(), LowEnergyServiceWriteMode);
                 pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, QString("\r\n").toLatin1(), LowEnergyServiceWriteMode);
+                ui->QLESend->setText("");
             }
             break;
         }
@@ -633,7 +634,6 @@ void QDTerminal::on_QPBModify_clicked() {
         case MODE_TCP_SERVER_SSL: _OpenComPort.ui->QRBTCPServerSsl->setChecked(true); break;
     }
     _OpenComPort.ui->QSBBluetoothLowEnergyReadPolling->setValue(BluetoothLowEnergyReadPolling);
-    _OpenComPort.ui->QPBOk->setEnabled(false);
     if (_OpenComPort.exec()== QDialog::Accepted) {
         switch(_OpenComPort.ui->QCBParity->currentIndex()) {
             case 0: Parity= 'N'; break;
@@ -836,11 +836,14 @@ void QDTerminal::on_QPBSendFile_clicked() {
 
 void QDTerminal::on_QPBColors_clicked() {
     QDColors Colors(this);
-    Colors.ui->QLEPreview->setPalette(ui->QPTELog->palette());
-    Colors.ui->QLEPreviewWarnings->setPalette(ui->QPTELog->palette());
-    QPalette Palette= Colors.ui->QLEPreviewWarnings->palette();
-    Palette.setColor(QPalette::Text, QColor(FontColorWarnings));
-    Colors.ui->QLEPreviewWarnings->setPalette(Palette);
+    QPalette Palette= Colors.ui->QLEPreview->palette();
+    QPalette PaletteWarnings= Colors.ui->QLEPreviewWarnings->palette();
+    Palette.setColor(QPalette::Base, ui->QPTELog->palette().color(QPalette::Base).name());
+    Palette.setColor(QPalette::Text, QColor(FontColor));
+    PaletteWarnings.setColor(QPalette::Text, QColor(FontColorWarnings));
+    PaletteWarnings.setColor(QPalette::Base, ui->QPTELog->palette().color(QPalette::Base).name());
+    Colors.ui->QLEPreview->setPalette(Palette);
+    Colors.ui->QLEPreviewWarnings->setPalette(PaletteWarnings);
     if (Colors.exec()== QDialog::Accepted) {
         FontColor= Colors.ui->QLEPreview->palette().color(QPalette::Text).name();
         FontColorWarnings= Colors.ui->QLEPreviewWarnings->palette().color(QPalette::Text).name();
@@ -970,7 +973,7 @@ void QDTerminal::OpenComPort() {
             ui->QPBOpen->setEnabled(true);
             ui->QPBModify->setEnabled(true);
         }
-    }
+    } else ui->QPBOpen->setEnabled(true);
 }
 
 void QDTerminal::OpenTcpClientPort() {
@@ -1137,8 +1140,8 @@ void QDTerminal::ReadyRead() {
     }
     if (QBABufferIn.length()> 0) {
         if (pQDTerminal) pQDTerminal->SendByteArray(QBABufferIn);
-        ShowBufferIn(QBABufferIn);
         QBAByteIn.append(QBABufferIn);
+        ShowBufferIn(QBABufferIn);
     }
 }
 
@@ -1184,23 +1187,24 @@ void QDTerminal::SaveProfile(QString ConnectionPath) {
 }
 
 void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
+    int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
+    TextCursorSet();
     QString BufferIn;
     if (ui->QRBPrintableOnly->isChecked()) {
         if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
-                    BufferIn+= "\n";
+                    if (FontColorTemp.length()> 0) ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorTemp+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    else ui->QPTELog->textCursor().insertHtml("<font color="+ FontColor+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    BufferIn.clear();
                 }
             }
         }
-        if (ui->QCBRowCount->isChecked()) {
-            BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
-            RowCount++;
-        }
         if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAuto->isChecked()) TimestampPrint= true;
-        for (int count= 0; count< QBABufferIn.size(); count++) {
+        while (QBABufferIn.size()> 0) {
             TimestampPrintEvaluation(BufferIn);
-            switch(QBABufferIn.at(count)) {
+            switch(QBABufferIn.at(0)) {
+                case 0: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[NULL]"; break;
                 case 1: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[SOH]"; break;
                 case 2: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[STX]"; break;
                 case 3: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[ETX]"; break;
@@ -1210,8 +1214,10 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                 case 9: BufferIn+= "\t"; break;
                 case 10: {
                     if (ui->QRBLF->isChecked()) {
-                        BufferIn+= "\n";
-                        if (ui->QCBRowCount->isChecked() && count< QBABufferIn.size()- 1) {
+                        if (FontColorTemp.length()> 0) ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorTemp+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                        else ui->QPTELog->textCursor().insertHtml("<font color="+ FontColor+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                        BufferIn.clear();
+                        if (ui->QCBRowCount->isChecked() && QBABufferIn.size()> 0) {
                             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
                             RowCount++;
                         }
@@ -1219,10 +1225,14 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                     if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAfterLF->isChecked()) TimestampPrint= true;
                     break;
                 }
+                case 11: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[VT]"; break;
+                case 12: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[FF]"; break;
                 case 13: {
                     if (ui->QRBCR->isChecked()) {
-                        BufferIn+= "\n";
-                        if (ui->QCBRowCount->isChecked() && count< QBABufferIn.size()- 1) {
+                        if (FontColorTemp.length()> 0) ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorTemp+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                        else ui->QPTELog->textCursor().insertHtml("<font color="+ FontColor+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                        BufferIn.clear();
+                        if (ui->QCBRowCount->isChecked() && QBABufferIn.size()> 0) {
                             BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
                             RowCount++;
                         }
@@ -1230,26 +1240,80 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                     if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAfterCR->isChecked()) TimestampPrint= true;
                     break;
                 }
+                case 14: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[SO]"; break;
+                case 15: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[SI]"; break;
+                case 16: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[DLE]"; break;
+                case 17: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[DC1]"; break;
+                case 18: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[DC2]"; break;
+                case 19: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[DC3]"; break;
+                case 20: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[DC4]"; break;
                 case 21: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[NACK]"; break;
+                case 22: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[SYN]"; break;
+                case 23: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[ETB]"; break;
+                case 24: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[CAN]"; break;
+                case 25: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[EM]"; break;
+                case 26: if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[SUB]"; break;
+                case 27: {
+                    if (ui->QCBSpecialCharacters->isChecked()) BufferIn+= "[ESC]";
+                    else {
+                        for (int count= 0; count< QBABufferIn.size(); count++) {
+                            if (QBABufferIn.at(count)== 0x6d && count< 16) {
+                                QString Value= QString(QBABufferIn).midRef(1, count- 1).toString();
+                                if (Value.startsWith("[")) {
+                                    Value.remove(0, 1);
+                                    QStringList QSLParameters= Value.split(";");
+                                    QString Color= "0";
+                                    if (QSLParameters.length()> 1) {
+                                        Color= QSLParameters.at(1);
+                                        bool Ok= false;
+                                        switch(Color.toInt(&Ok)) {
+                                            case 30: FontColorTemp= ""; break;
+                                            case 31: FontColorTemp= "red"; break;
+                                            case 32: FontColorTemp= "green"; break;
+                                            case 33: FontColorTemp= "yellow"; break;
+                                            case 34: FontColorTemp= "blue"; break;
+                                            case 35: FontColorTemp= "magenta"; break;
+                                            case 36: FontColorTemp= "cyan"; break;
+                                            case 37: FontColorTemp= "white"; break;
+                                            case 90: FontColorTemp= "brigh black"; break;
+                                            case 91: FontColorTemp= "brigh red"; break;
+                                            case 92: FontColorTemp= "brigh green"; break;
+                                            case 93: FontColorTemp= "brigh yellow"; break;
+                                            case 94: FontColorTemp= "brigh blue"; break;
+                                            case 95: FontColorTemp= "brigh magenta"; break;
+                                            case 96: FontColorTemp= "brigh cyan"; break;
+                                            case 97: FontColorTemp= "brigh white"; break;
+                                            default: FontColorTemp= ""; break;
+                                        }
+                                        if (!Ok) FontColorTemp= "";
+                                    }
+                                    QBABufferIn.remove(0, count);
+                                }
+                                //qDebug() << Value << FontColorTemp << QBABufferIn.mid(0, 20) << count;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
                 default: {
-                    if ((uchar(QBABufferIn.at(count))>= 32 && uchar(QBABufferIn.at(count))<= 126) ||
-                            (uchar(QBABufferIn.at(count))>= 128 && uchar(QBABufferIn.at(count))<= 254)) BufferIn+= char(QBABufferIn.at(count));
-                    else BufferIn+= "[?]";
+                    if ((uchar(QBABufferIn.at(0))>= 32 && uchar(QBABufferIn.at(0))<= 126) ||
+                            (uchar(QBABufferIn.at(0))>= 128 && uchar(QBABufferIn.at(0))<= 254)) BufferIn+= char(QBABufferIn.at(0));
+                    else BufferIn+= "["+ QString::number(uchar(QBABufferIn.at(0))).rightJustified(3, '0')+ "]";
                     break;
                 }
             }
+            QBABufferIn.remove(0, 1);
         }
     } else if (ui->QRBSym->isChecked()) {
         if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
-                    BufferIn+= "\n";
+                    if (FontColorTemp.length()> 0) ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorTemp+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    else ui->QPTELog->textCursor().insertHtml("<font color="+ FontColor+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    BufferIn.clear();
                 }
             }
-        }
-        if (ui->QCBRowCount->isChecked()) {
-            BufferIn+= "->"+ QString::number(RowCount).rightJustified(3, '0')+ "<-";
-            RowCount++;
         }
         if (ui->QGBTimestamp->isChecked() && ui->QCBTimestampAuto->isChecked()) TimestampPrint= true;
         for (int count= 0; count< QBABufferIn.size(); count++) {
@@ -1308,12 +1372,13 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                 default: BufferIn+= QString(char(QBABufferIn.at(count))); break;
             }
         }
-
     } else if (ui->QRBDec->isChecked()) {
         if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
-                    BufferIn+= "\n";
+                    if (FontColorTemp.length()> 0) ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorTemp+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    else ui->QPTELog->textCursor().insertHtml("<font color="+ FontColor+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    BufferIn.clear();
                 }
             }
         }
@@ -1335,7 +1400,9 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
         if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
-                    BufferIn+= "\n";
+                    if (FontColorTemp.length()> 0) ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorTemp+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    else ui->QPTELog->textCursor().insertHtml("<font color="+ FontColor+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    BufferIn.clear();
                 }
             }
         }
@@ -1356,7 +1423,9 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
         if (ui->QGBNewLineAfter->isChecked()) {
             if (ui->QPTELog->toPlainText().length()> 0) {
                 if (QDTLastByteIn.msecsTo(QDateTime::currentDateTime())>= ui->QSBNewLineAfterMs->value()) {
-                    BufferIn+= "\n";
+                    if (FontColorTemp.length()> 0) ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorTemp+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    else ui->QPTELog->textCursor().insertHtml("<font color="+ FontColor+ ">"+ BufferIn.toHtmlEscaped()+ "<br></font>");
+                    BufferIn.clear();
                 }
             }
         }
@@ -1374,12 +1443,11 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
             }
         }
     }
-    int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
-    TextCursorSet();
-    QTextCharFormat TextCharFormat= ui->QPTELog->currentCharFormat();
+    /*QTextCharFormat TextCharFormat= ui->QPTELog->currentCharFormat();
     TextCharFormat.setForeground(QBrush(QColor(FontColor)));
-    ui->QPTELog->setCurrentCharFormat(TextCharFormat);
-    ui->QPTELog->insertPlainText(BufferIn);
+    ui->QPTELog->setCurrentCharFormat(TextCharFormat);*/
+    if (FontColorTemp.length()> 0) ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorTemp+ ">"+ BufferIn.toHtmlEscaped()+ "</font>");
+    else ui->QPTELog->textCursor().insertHtml("<font color="+ FontColor+ ">"+ BufferIn.toHtmlEscaped()+ "</font>");
     if (ui->QCBAutoScroll->isChecked()) ui->QPTELog->verticalScrollBar()->setValue(ui->QPTELog->verticalScrollBar()->maximum());
     else ui->QPTELog->verticalScrollBar()->setValue(VerticalScrollBarValue);
     QDTLastByteIn= QDateTime::currentDateTime();

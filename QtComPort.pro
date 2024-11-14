@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network serialport bluetooth
+QT       += core gui network serialport bluetooth xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,6 +17,7 @@ unix:!mac {
 
 SOURCES += main.cpp\
     qcsslserver.cpp \
+    qdcommandssequence.cpp \
     qdterminallogformats.cpp \
         qfmainform.cpp \
     qdopencomport.cpp \
@@ -27,6 +28,7 @@ SOURCES += main.cpp\
 
 HEADERS  += qfmainform.h \
     qcsslserver.h \
+    qdcommandssequence.h \
     qdopencomport.h \
     qdfontdialog.h \
     qdterminal.h \
@@ -35,6 +37,7 @@ HEADERS  += qfmainform.h \
     qdterminallogformats.h
 
 FORMS    += qfmainform.ui \
+    qdcommandssequence.ui \
     qdopencomport.ui \
     qdfontdialog.ui \
     qdterminal.ui \

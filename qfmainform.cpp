@@ -175,10 +175,12 @@ void QFMainForm::on_QPBNewProfile_clicked() {
 }
 
 void QFMainForm::ReadConfigurationFile(QString ConnectionPath) {
-    QDTerminal *pQDTerminal= new QDTerminal(this, ConnectionPath);
-    pQDTerminal->TabNumber= ui->QTBTerminal->addTab(pQDTerminal, ConnectionPath);
-    pQDTerminal->pQTBTerminal= ui->QTBTerminal;
-    pQDTerminal->pQVTerminals= &QVTerminals;
-    pQDTerminal->ReadConfigurationFile();
-    QVTerminals.append(pQDTerminal);
+    if (QFile(ConnectionPath).exists()) {
+        QDTerminal *pQDTerminal= new QDTerminal(this, ConnectionPath);
+        pQDTerminal->TabNumber= ui->QTBTerminal->addTab(pQDTerminal, ConnectionPath);
+        pQDTerminal->pQTBTerminal= ui->QTBTerminal;
+        pQDTerminal->pQVTerminals= &QVTerminals;
+        pQDTerminal->ReadConfigurationFile();
+        QVTerminals.append(pQDTerminal);
+    }
 }

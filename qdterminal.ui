@@ -448,7 +448,7 @@
                <item>
                 <widget class="QSpinBox" name="QSBNewLineAfterMs">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="maximum">
                   <number>999999</number>
@@ -461,7 +461,7 @@
                <item>
                 <widget class="QLabel" name="label">
                  <property name="enabled">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="text">
                   <string>ms</string>
@@ -479,63 +479,16 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="QGBTimestamp">
-              <property name="title">
-               <string>Timestamp</string>
-              </property>
-              <property name="checkable">
+             <widget class="QCheckBox" name="QCBTimestamp">
+              <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Timestamp</string>
               </property>
               <property name="checked">
                <bool>false</bool>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_10">
-               <property name="leftMargin">
-                <number>1</number>
-               </property>
-               <property name="topMargin">
-                <number>1</number>
-               </property>
-               <property name="rightMargin">
-                <number>1</number>
-               </property>
-               <property name="bottomMargin">
-                <number>1</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="QCBTimestampAuto">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>Auto</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="QCBTimestampAfterCR">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>After CR</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="QCBTimestampAfterLF">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>After LF</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
              </widget>
             </item>
             <item>
@@ -598,6 +551,16 @@
       <property name="bottomMargin">
        <number>1</number>
       </property>
+      <item>
+       <widget class="QPushButton" name="QPBCommandsSequence">
+        <property name="text">
+         <string>Commands sequence</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QLineEdit" name="QLESend">
         <property name="enabled">
@@ -738,12 +701,10 @@
   <tabstop>QGBNewLineAfter</tabstop>
   <tabstop>QSBNewLineAfterMs</tabstop>
   <tabstop>QCBRowCount</tabstop>
-  <tabstop>QGBTimestamp</tabstop>
-  <tabstop>QCBTimestampAuto</tabstop>
-  <tabstop>QCBTimestampAfterCR</tabstop>
-  <tabstop>QCBTimestampAfterLF</tabstop>
+  <tabstop>QCBTimestamp</tabstop>
   <tabstop>QCBAutoScroll</tabstop>
   <tabstop>QPTELog</tabstop>
+  <tabstop>QPBCommandsSequence</tabstop>
   <tabstop>QLESend</tabstop>
   <tabstop>QCBHistory</tabstop>
   <tabstop>QPBSendHistory</tabstop>

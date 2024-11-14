@@ -34,6 +34,10 @@
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
 #include "ui_qdterminal.h"
+#ifndef QDCOMMANDSSEQUENCE_H
+    class QDTerminal;
+    #include "qdcommandssequence.h"
+#endif
 #ifndef QDTERMINALLOGFORMATS_H
     class QDTerminal;
     #include "qdterminallogformats.h"
@@ -47,11 +51,17 @@ enum Modes {
     MODE_TCP_SERVER= 3,
     MODE_TCP_SERVER_SSL= 4,
 };
-
 enum TerminalLogFormats {
     TERMINAL_LOG_FORMAT_COMPACT= 1,
     TERMINAL_LOG_FORMAT_FULL= 0,
     TERMINAL_LOG_FORMAT_SEPARATOR= 2,
+};
+struct Row {
+    int RowCount;
+    QByteArray QBAValue;
+    QDateTime QDTRow;
+    QString Color, Value;
+    Row() : RowCount(0) {}
 };
 
 namespace Ui {
@@ -96,17 +106,14 @@ private slots:
     void on_QCBAutoScroll_toggled(bool checked);
     void on_QCBRowCount_toggled(bool checked);
     void on_QCBSpecialCharacters_toggled(bool checked);
-    void on_QCBTimestampAfterCR_toggled(bool checked);
-    void on_QCBTimestampAfterLF_toggled(bool checked);
-    void on_QCBTimestampAuto_toggled(bool checked);
     void on_QGBNewLineAfter_toggled(bool arg1);
-    void on_QGBTimestamp_toggled(bool arg1);
     void on_QLESend_returnPressed();
     void on_QPBChangeFont_clicked();
     void on_QPBClear_clicked();
     void on_QPBClose_clicked();
     void on_QPBCloseProfile_clicked();
     void on_QPBColors_clicked();
+    void on_QPBCommandsSequence_clicked();
     void on_QPBCopy_clicked();
     void on_QPBDTR_clicked();
     void on_QPBModify_clicked();
@@ -127,6 +134,7 @@ private slots:
     void on_QRBSym_clicked();
     void on_QSBNewLineAfterMs_valueChanged(int arg1);
     void on_QTBTerminalLogFormats_clicked();
+    void OnCloseCommandsSequence();
     void OnNewConnection();
     void OnTimeout();
     void PeerVerifyError(const QSslError &error);
@@ -135,11 +143,12 @@ private slots:
 
 private:
     bool IsNewConnection, TimestampPrint= false;
-    int RowCount;
+    int RowCount= 1;
     QBluetoothDeviceDiscoveryAgent *pQBluetoothDeviceDiscoveryAgent= nullptr;
     QByteArray QBAByteIn;
     QcSSLServer *pQcSSLServer= nullptr;
     QDateTime QDTLastByteIn;
+    QDCommandsSequence *pQDCommandsSequence= nullptr;
     QList<QBluetoothUuid> QLBluetoothUuids;
     QLowEnergyCharacteristic LowEnergyCharacteristicRead;
     QLowEnergyCharacteristic LowEnergyCharacteristicWrite;
@@ -148,7 +157,7 @@ private:
     QLowEnergyService::WriteMode LowEnergyServiceWriteMode;
     QSerialPort SerialPort;
     QSerialPort::PinoutSignals pinoutSignals;
-    QString ConnectionPath, DirectoryPath, FontColor, FontColorWarnings, FontColorTemp;
+    QString ConnectionPath, DirectoryPath, FontColor, FontColorWarnings;
     QStringList QSLHistory;
     QSslSocket *pQSslSocketClient= nullptr;
     QTcpServer *pQTcpServer= nullptr;
@@ -156,6 +165,7 @@ private:
     QTimer QTControl, QTBluetoothLowEnergyRead;
     QVector<QTcpSocket*> QVTcpSocketsServer;
     QVector<QSslSocket*> QVSslSocketsServer;
+    QVector<Row> QVRows;
     TerminalLogFormats TerminalLogFormat= TERMINAL_LOG_FORMAT_FULL;
     bool eventFilter(QObject *object, QEvent *event);
     void OpenBluetoothLowEnergy();
@@ -166,8 +176,8 @@ private:
     void OpenTcpServerSslPort();
     void SaveProfile(QString ConnectionPath);
     void ShowBufferIn(QByteArray &QBABufferIn);
+    void showEvent(QShowEvent* event);
     void TextCursorSet();
-    void TimestampPrintEvaluation(QString &BufferIn);
 
 };
 

@@ -15,7 +15,7 @@ Written in C++ with Qt framework. It is similar to the old Windows HyperTerminal
 
 ## Commands list
 
-How to see in the above image ist is possible to create a list of commands, as text or hex format, to send. It is possible to setup a delay between commands and to send the commands list in a infinite loop.
+How to see in the above image it is possible to create a list of commands, as text or hex format, to send. It is possible to setup a delay between commands and to send the commands list in a infinite loop.
 
 ![](QtComPortScreenshot02.png)
 

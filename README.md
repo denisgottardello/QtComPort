@@ -3,13 +3,13 @@ Written in C++ with Qt framework. It is similar to the old Windows HyperTerminal
 
 ## Features
 
-Bridge between RS232 and tcp connections
-Bluetooth low energy connections
-RS232 connections
-TCP client connections
-TCP server connections
-Commands list (both hex and text), QtComPort can send in loop commands taken from a list
-TCP SSL connections
+- Bridge between RS232 and tcp connections
+- Bluetooth low energy connections
+- RS232 connections
+- TCP client connections
+- TCP server connections
+- Commands list (both hex and text), QtComPort can send in loop commands taken from a list
+- TCP SSL connections
 
 ![](QtComPortScreenshot01.png)
 

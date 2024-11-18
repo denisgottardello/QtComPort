@@ -698,50 +698,7 @@ void QDTerminal::on_QPBSaveToFile_clicked() {
 }
 
 void QDTerminal::on_QPBSend_clicked() {
-    QString a("**");
-    a+= char(7);
-    a+= "#";
-    switch(Mode) {
-        case MODE_BLUETOOTH_LOW_ENERGY: {
-            if (LowEnergyCharacteristicWrite.isValid()) {
-                pQLowEnergyService->writeCharacteristic(LowEnergyCharacteristicWrite, a.toLocal8Bit(), LowEnergyServiceWriteMode);
-            }
-            break;
-        }
-        case MODE_RS232: {
-            if (SerialPort.isOpen()) {
-                if (SendBreak) {
-                    SerialPort.setBreakEnabled(true);
-                    SerialPort.setBreakEnabled(false);
-                }
-                SerialPort.write(a.toLocal8Bit());
-                SerialPort.waitForBytesWritten(2000);
-            }
-            break;
-        }
-        case MODE_TCP_CLIENT: {
-            if (ui->QPBOpen->isEnabled()) ui->QPBOpen->click();
-            pQTcpSocketClient->write(a.toLocal8Bit());
-            pQTcpSocketClient->waitForBytesWritten(2000);
-            break;
-        }
-        case MODE_TCP_CLIENT_SSL: {
-            if (ui->QPBOpen->isEnabled()) ui->QPBOpen->click();
-            pQSslSocketClient->write(a.toLocal8Bit());
-            pQSslSocketClient->waitForBytesWritten(2000);
-            break;
-        }
-        case MODE_TCP_SERVER: {
-            for (int count= 0; count< QVTcpSocketsServer.length(); count++) QVTcpSocketsServer.at(count)->write(a.toLocal8Bit());
-            for (int count= 0; count< QVTcpSocketsServer.length(); count++) QVTcpSocketsServer.at(count)->waitForBytesWritten(2000);
-            break;
-        }
-        case MODE_TCP_SERVER_SSL: {
-            for (int count= 0; count< QVSslSocketsServer.length(); count++) QVSslSocketsServer.at(count)->write(a.toLocal8Bit());
-            for (int count= 0; count< QVSslSocketsServer.length(); count++) QVSslSocketsServer.at(count)->waitForBytesWritten(2000);
-            break;
-        }
-    }
+    on_QLESend_returnPressed();
 }
 
 void QDTerminal::on_QPBSendHistory_clicked() {

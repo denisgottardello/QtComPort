@@ -139,11 +139,11 @@ bool QDTerminal::eventFilter(QObject *object, QEvent *event) {
 
 void QDTerminal::BluetoothLowEnergyCharacteristicChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue) {
     qDebug() << characteristic.uuid().toString() << newValue << pQLowEnergyService->state() << characteristic.name();
-    if (pQLowEnergyService->state()== QLowEnergyService::ServiceDiscovered) {
+    if (pQLowEnergyService->state()== QLowEnergyService::RemoteServiceDiscovered) {
         QByteArray QBATemp(newValue);
         if (pQDTerminal) pQDTerminal->SendByteArray(QBATemp);
         ShowBufferIn(QBATemp);
-    } else if (pQLowEnergyService->state()== QLowEnergyService::DiscoveringServices) {
+    } else if (pQLowEnergyService->state()== QLowEnergyService::RemoteServiceDiscovering) {
         ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorWarnings+ ">Characteristic: "+ characteristic.uuid().toString()+ "<br></font>");
     }
 }
@@ -179,7 +179,7 @@ void QDTerminal::BluetoothLowEnergyDiscoveryFinished() {
             connect(pQLowEnergyService, SIGNAL(characteristicRead(QLowEnergyCharacteristic,QByteArray)), this, SLOT(BluetoothLowEnergyCharacteristicRead(QLowEnergyCharacteristic,QByteArray)));
             connect(pQLowEnergyService, SIGNAL(characteristicWritten(QLowEnergyCharacteristic,QByteArray)), this, SLOT(BluetoothLowEnergyCharacteristicWritten(QLowEnergyCharacteristic,QByteArray)));
             connect(pQLowEnergyService, SIGNAL(stateChanged(QLowEnergyService::ServiceState)), this, SLOT(BluetoothLowEnergyStateChanged(QLowEnergyService::ServiceState)));
-            if (pQLowEnergyService->state()== QLowEnergyService::DiscoveryRequired) pQLowEnergyService->discoverDetails();
+            if (pQLowEnergyService->state()== QLowEnergyService::RemoteService) pQLowEnergyService->discoverDetails();
         }
     }
 }
@@ -218,7 +218,7 @@ void QDTerminal::BluetoothLowEnergyRead() {
 
 void QDTerminal::BluetoothLowEnergyStateChanged(QLowEnergyService::ServiceState newState) {
     qDebug() << "BluetoothLowEnergyStateChanged()" << newState;
-    if (newState== QLowEnergyService::ServiceDiscovered) {
+    if (newState== QLowEnergyService::RemoteServiceDiscovered) {
         foreach (QLowEnergyCharacteristic LowEnergyCharacteristic, pQLowEnergyService->characteristics()) {
             if (LowEnergyCharacteristic.isValid()) {
                 if (LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::WriteNoResponse || LowEnergyCharacteristic.properties() & QLowEnergyCharacteristic::Write) {
@@ -237,7 +237,7 @@ void QDTerminal::BluetoothLowEnergyStateChanged(QLowEnergyService::ServiceState 
                         ui->QPTELog->textCursor().insertHtml("<font color="+ FontColorWarnings+ ">"+ tr("Read characteristic found")+ "<br></font>");
                     }
                 }
-                QLowEnergyDescriptor LowEnergyDescriptor= LowEnergyCharacteristic.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
+                QLowEnergyDescriptor LowEnergyDescriptor= LowEnergyCharacteristic.descriptor(QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration);
                 if (LowEnergyDescriptor.isValid()) {
                     pQLowEnergyService->writeDescriptor(LowEnergyDescriptor, QByteArray::fromHex("0100"));
                 }
@@ -355,7 +355,7 @@ void QDTerminal::OnNewConnection() {
                 int VerticalScrollBarValue= ui->QPTELog->verticalScrollBar()->value();
                 TextCursorSet();
                 ui->QPTELog->textCursor().insertHtml("<br><font color="+ FontColorWarnings+ ">"+ tr("Connection from")+ " "+ QVSslSocketsServer.last()->peerAddress().toString()+ ":"+ QString::number(QVSslSocketsServer.last()->peerPort())+ "<br></font>");
-                connect(QVSslSocketsServer.last(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+                connect(QVSslSocketsServer.last(), SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
                 connect(QVSslSocketsServer.last(), SIGNAL(disconnected()), this, SLOT(Disconnected()));
                 connect(QVSslSocketsServer.last(), SIGNAL(peerVerifyError(QSslError)), this, SLOT(PeerVerifyError(QSslError)));
                 connect(QVSslSocketsServer.last(), SIGNAL(readyRead()), this, SLOT(ReadyRead()));
@@ -519,7 +519,7 @@ void QDTerminal::on_QPBClose_clicked() {
         }
         case MODE_TCP_CLIENT: {
             disconnect(pQTcpSocketClient, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
-            disconnect(pQTcpSocketClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+            disconnect(pQTcpSocketClient, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
             disconnect(pQTcpSocketClient, SIGNAL(connected()), this, SLOT(Connected()));
             disconnect(pQTcpSocketClient, SIGNAL(disconnected()), this, SLOT(Disconnected()));
             pQTcpSocketClient->disconnectFromHost();
@@ -527,7 +527,7 @@ void QDTerminal::on_QPBClose_clicked() {
         }
         case MODE_TCP_CLIENT_SSL: {
             disconnect(pQSslSocketClient, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
-            disconnect(pQSslSocketClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+            disconnect(pQSslSocketClient, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
             disconnect(pQSslSocketClient, SIGNAL(connected()), this, SLOT(Connected()));
             disconnect(pQSslSocketClient, SIGNAL(disconnected()), this, SLOT(Disconnected()));
             pQSslSocketClient->disconnectFromHost();
@@ -929,7 +929,7 @@ void QDTerminal::OpenTcpClientPort() {
     ui->QLConnection->setText("TCP Client: "+ Server+ ":"+ QString::number(Socket));
     ui->QPBSendFile->setEnabled(true);
     connect(pQTcpSocketClient, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
-    connect(pQTcpSocketClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+    connect(pQTcpSocketClient, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
     connect(pQTcpSocketClient, SIGNAL(connected()), this, SLOT(Connected()));
     connect(pQTcpSocketClient, SIGNAL(disconnected()), this, SLOT(Disconnected()));
     pQTcpSocketClient->connectToHost(Server, Socket);
@@ -949,7 +949,7 @@ void QDTerminal::OpenTcpClientSslPort() {
     ui->QLConnection->setText("TCP SSL Client: "+ Server+ ":"+ QString::number(Socket));
     ui->QPBSendFile->setEnabled(true);
     connect(pQSslSocketClient, SIGNAL(connected()), this, SLOT(Connected()));
-    connect(pQSslSocketClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
+    connect(pQSslSocketClient, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(Error(QAbstractSocket::SocketError)));
     connect(pQSslSocketClient, SIGNAL(disconnected()), this, SLOT(Disconnected()));
     connect(pQSslSocketClient, SIGNAL(peerVerifyError(QSslError)), this, SLOT(PeerVerifyError(QSslError)));
     connect(pQSslSocketClient, SIGNAL(readyRead()), this, SLOT(ReadyRead()));
@@ -1265,7 +1265,7 @@ void QDTerminal::ShowBufferIn(QByteArray &QBABufferIn) {
                 QVRows[count].Value.replace(QChar(27), "[ESC]");
             } else {
                 if (QVRows.at(count).Value.indexOf(QChar(27))> -1) {
-                    QString Color= QVRows.at(count).Value.midRef(QVRows.at(count).Value.indexOf(QChar(27))+ 1, 16).toString();
+                    QString Color= QVRows.at(count).Value.mid(QVRows.at(count).Value.indexOf(QChar(27))+ 1, 16);
                     for (int count_2= 0; count_2< Color.length(); count_2++) {
                         if (Color.at(count_2)== QChar(109)) {
                             Color.remove(count_2, Color.length());

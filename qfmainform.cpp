@@ -56,15 +56,15 @@ void QFMainForm::finished(QNetworkReply *reply) {
 }
 
 void QFMainForm::on_QAAuthor_triggered() {
-    QMessageBox::information(this, tr("Info"), "Denis Gottardello\nwww.denisgottardello.it\ninfo@denisgottardello.it", "Ok");
+    QMessageBox::information(this, tr("Info"), "Denis Gottardello\nwww.denisgottardello.it\ninfo@denisgottardello.it", QMessageBox::Ok);
 }
 
 void QFMainForm::on_QAQtVersion_triggered() {
-    QMessageBox::information(this, tr("Info"), tr("Qt version: ")+ QT_VERSION_STR, "Ok");
+    QMessageBox::information(this, tr("Info"), tr("Qt version: ")+ QT_VERSION_STR, QMessageBox::Ok);
 }
 
 void QFMainForm::on_QAVersion_triggered() {
-    QMessageBox::information(this, tr("Info"), tr("QtComPort Version ")+ VERSION, "Ok");
+    QMessageBox::information(this, tr("Info"), tr("QtComPort Version ")+ VERSION, QMessageBox::Ok);
 }
 
 void QFMainForm::on_QPBBridge_clicked() {

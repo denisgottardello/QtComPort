@@ -67,7 +67,7 @@ QDOpenComPort::QDOpenComPort(QWidget *parent) : QDialog(parent), ui(new Ui::QDOp
     pQBluetoothDeviceDiscoveryAgent= new QBluetoothDeviceDiscoveryAgent();
     pQBluetoothDeviceDiscoveryAgent->setLowEnergyDiscoveryTimeout(5000);
     connect(pQBluetoothDeviceDiscoveryAgent, SIGNAL(deviceDiscovered(QBluetoothDeviceInfo)), this, SLOT(BluetoothLowEnergyDeviceDiscovered(QBluetoothDeviceInfo)));
-    connect(pQBluetoothDeviceDiscoveryAgent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)), this, SLOT(BluetoothLowEnergyError(QBluetoothDeviceDiscoveryAgent::Error)));
+    connect(pQBluetoothDeviceDiscoveryAgent, SIGNAL(errorOccurred(QBluetoothDeviceDiscoveryAgent::Error)), this, SLOT(BluetoothLowEnergyError(QBluetoothDeviceDiscoveryAgent::Error)));
     connect(pQBluetoothDeviceDiscoveryAgent, SIGNAL(finished()), this, SLOT(BluetoothLowEnergyFinished()));
 }
 
@@ -154,7 +154,7 @@ void QDOpenComPort::BluetoothLowEnergyServiceDiscovered(const QBluetoothUuid &) 
 
 void QDOpenComPort::BluetoothLowEnergyStateChanged(QLowEnergyService::ServiceState newState) {
     qDebug() << "BluetoothLowEnergyStateChanged()" << newState;
-    if (newState== QLowEnergyService::ServiceDiscovered) {
+    if (newState== QLowEnergyService::RemoteServiceDiscovered) {
         Service service;
         service.Index= ui->QCBBluetoothLowEnergyServices->currentIndex();
         service.QLowEnergyCharacteristics= pQLowEnergyService->characteristics();
@@ -211,7 +211,7 @@ void QDOpenComPort::on_QPBBluetoothLowEnergyConnectCharacteristicsGet_clicked() 
     connect(pQLowEnergyService, SIGNAL(characteristicRead(QLowEnergyCharacteristic,QByteArray)), this, SLOT(BluetoothLowEnergyCharacteristicRead(QLowEnergyCharacteristic,QByteArray)));
     connect(pQLowEnergyService, SIGNAL(characteristicWritten(QLowEnergyCharacteristic,QByteArray)), this, SLOT(BluetoothLowEnergyCharacteristicWritten(QLowEnergyCharacteristic,QByteArray)));
     connect(pQLowEnergyService, SIGNAL(stateChanged(QLowEnergyService::ServiceState)), this, SLOT(BluetoothLowEnergyStateChanged(QLowEnergyService::ServiceState)));
-    if (pQLowEnergyService->state()== QLowEnergyService::DiscoveryRequired) pQLowEnergyService->discoverDetails();
+    if (pQLowEnergyService->state()== QLowEnergyService::RemoteService) pQLowEnergyService->discoverDetails();
 }
 
 void QDOpenComPort::on_QPBBluetoothLowEnergyConnect_clicked() {
@@ -251,7 +251,7 @@ void QDOpenComPort::on_QPBHelp_clicked() {
                                                    "<b>" + tr("Public key")+ "</b><br>openssl rsa -in KeyPrivate.key -pubout -out KeyPublic.key<br><br>"
                                                    "<b>" + tr("Certificate")+ "</b><br>openssl req -new -x509 -key KeyPrivate.key -out Certificate.crt -days 360<br><br>"
                                                    "<b>" + tr("Extract the certificate from remote server")+ "</b><br>openssl s_client -showcerts -connect smtp.gmail.com:465 &lt;/dev/null | sed -n -e '/-.BEGIN/,/-.END/ p' &gt; gmail.crt<br><br>"
-                                                   "<b>" + tr("Notes")+ "</b><br>"+ tr("Generating certificate it is important to define a Common name (e.g. server FQDN or YOUR name)"), "Ok");
+                                                   "<b>" + tr("Notes")+ "</b><br>"+ tr("Generating certificate it is important to define a Common name (e.g. server FQDN or YOUR name)"), QMessageBox::Ok);
 }
 
 void QDOpenComPort::on_QRBBluetoothLowEnergy_toggled(bool ) {

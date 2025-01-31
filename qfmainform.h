@@ -23,7 +23,6 @@
 
 #include "qdbridge.h"
 #include "QDesktopServices"
-#include "QDesktopWidget"
 #include "qdterminal.h"
 #include "QFileDialog"
 #include "QMessageBox"
@@ -34,7 +33,7 @@
 #include "QSerialPortInfo"
 #include <QMainWindow>
 
-#define VERSION QString("0.0.29.0")
+#define VERSION QString("0.0.30.0")
 
 namespace Ui {
     class QFMainForm;

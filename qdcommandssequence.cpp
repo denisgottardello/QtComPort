@@ -123,7 +123,7 @@ void QDCommandsSequence::Timeout() {
                 QByteArray QBABuffferOut;
                 QString Temp= ((QLineEdit*)(ui->QTWCommands->cellWidget(Index, 2)))->text();
                 while (Temp.length()> 1) {
-                    QBABuffferOut.append(Temp.midRef(0, 2).toString().toUInt(nullptr, 16));
+                    QBABuffferOut.append(Temp.mid(0, 2).toUInt(nullptr, 16));
                     Temp.remove(0, 2);
                 }
                 pQDTerminal->SendByteArray(QBABuffferOut);

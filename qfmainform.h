@@ -23,7 +23,6 @@
 
 #include "qdbridge.h"
 #include "QDesktopServices"
-#include "qdterminal.h"
 #include "QFileDialog"
 #include "QMessageBox"
 #include "QNetworkAccessManager"
@@ -32,8 +31,12 @@
 #include "QScrollBar"
 #include "QSerialPortInfo"
 #include <QMainWindow>
+#ifndef QDTERMINAL_H
+    class QFMainForm;
+    #include "qdterminal.h"
+#endif
 
-#define VERSION QString("0.0.30.0")
+#define VERSION QString("0.0.31.0")
 
 namespace Ui {
     class QFMainForm;
@@ -46,11 +49,11 @@ class QFMainForm : public QMainWindow
 public:
     explicit QFMainForm(QWidget *parent = nullptr);
     ~QFMainForm();
+    QVector<QDTerminal*> QVTerminals;
 
 private:
     Ui::QFMainForm *ui;
     QNetworkAccessManager *NetworkAccessManager= nullptr;
-    QVector<QDTerminal*> QVTerminals;
     void ReadConfigurationFile(QString Path);
 
 private slots:

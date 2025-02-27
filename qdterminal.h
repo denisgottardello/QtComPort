@@ -42,6 +42,10 @@
     class QDTerminal;
     #include "qdterminallogformats.h"
 #endif
+#ifndef QFMAINFORM_H
+    class QDTerminal;
+    #include "qfmainform.h"
+#endif
 
 enum Modes {
     MODE_BLUETOOTH_LOW_ENERGY= 5,
@@ -149,6 +153,7 @@ private:
     QcSSLServer *pQcSSLServer= nullptr;
     QDateTime QDTLastByteIn;
     QDCommandsSequence *pQDCommandsSequence= nullptr;
+    QFMainForm *pQFMainForm= nullptr;
     QList<QBluetoothUuid> QLBluetoothUuids;
     QLowEnergyCharacteristic LowEnergyCharacteristicRead;
     QLowEnergyCharacteristic LowEnergyCharacteristicWrite;

@@ -68,44 +68,41 @@ void QFMainForm::on_QAVersion_triggered() {
 }
 
 void QFMainForm::on_QPBBridge_clicked() {
-    QDBridge *pQDBridge= new QDBridge(this); {
-        for (int count= 0; count< QVTerminals.count(); count++) {
-            QDBridge::TerminalRadioButton RadioButton1;
-            QListWidgetItem *NewItem1= new QListWidgetItem(pQDBridge->ui->QLWConnections1);
-            RadioButton1.RadioButton= new QRadioButton();
-            RadioButton1.count= count;
-            RadioButton1.RadioButton->setText(QVTerminals[count]->ui->QLConnection->text());
-            NewItem1->setSizeHint(ui->QPBBridge->size());
-            connect(RadioButton1.RadioButton, SIGNAL(toggled(bool)), pQDBridge, SLOT(OnTerminalsToggled(bool)));
-            pQDBridge->ui->QLWConnections1->setItemWidget(NewItem1, RadioButton1.RadioButton);
-            pQDBridge->QVTerminalRadioButtons1.append(RadioButton1);
+    QDBridge Bridge(this);
+    for (int count= 0; count< QVTerminals.count(); count++) {
+        QDBridge::TerminalRadioButton RadioButton1;
+        QListWidgetItem *NewItem1= new QListWidgetItem(Bridge.ui->QLWConnections1);
+        RadioButton1.RadioButton= new QRadioButton();
+        RadioButton1.count= count;
+        RadioButton1.RadioButton->setText(QVTerminals[count]->ui->QLConnection->text());
+        NewItem1->setSizeHint(ui->QPBBridge->size());
+        connect(RadioButton1.RadioButton, SIGNAL(toggled(bool)), &Bridge, SLOT(OnTerminalsToggled(bool)));
+        Bridge.ui->QLWConnections1->setItemWidget(NewItem1, RadioButton1.RadioButton);
+        Bridge.QVTerminalRadioButtons1.append(RadioButton1);
 
-            QDBridge::TerminalRadioButton RadioButton2;
-            QListWidgetItem *NewItem2= new QListWidgetItem(pQDBridge->ui->QLWConnections2);
-            RadioButton2.RadioButton= new QRadioButton();
-            RadioButton2.count= count;
-            RadioButton2.RadioButton->setText(QVTerminals[count]->ui->QLConnection->text());
-            NewItem2->setSizeHint(ui->QPBBridge->size());
-            connect(RadioButton2.RadioButton, SIGNAL(toggled(bool)), pQDBridge, SLOT(OnTerminalsToggled(bool)));
-            pQDBridge->ui->QLWConnections2->setItemWidget(NewItem2, RadioButton2.RadioButton);
-            pQDBridge->QVTerminalRadioButtons2.append(RadioButton2);
-        }
-        if (pQDBridge->exec()== QDialog::Accepted) {
-            for (int count= 0; count< pQDBridge->QVTerminalRadioButtons1.count(); count++) {
-                if (pQDBridge->QVTerminalRadioButtons1[count].RadioButton->isChecked()) {
-                    for (int count_2= 0; count_2< pQDBridge->QVTerminalRadioButtons2.count(); count_2++) {
-                        if (pQDBridge->QVTerminalRadioButtons2[count_2].RadioButton->isChecked()) {
-                            QVTerminals[count]->pQDTerminal= QVTerminals[count_2];
-                            QVTerminals[count_2]->pQDTerminal= QVTerminals[count];
-                            break;
-                        }
+        QDBridge::TerminalRadioButton RadioButton2;
+        QListWidgetItem *NewItem2= new QListWidgetItem(Bridge.ui->QLWConnections2);
+        RadioButton2.RadioButton= new QRadioButton();
+        RadioButton2.count= count;
+        RadioButton2.RadioButton->setText(QVTerminals[count]->ui->QLConnection->text());
+        NewItem2->setSizeHint(ui->QPBBridge->size());
+        connect(RadioButton2.RadioButton, SIGNAL(toggled(bool)), &Bridge, SLOT(OnTerminalsToggled(bool)));
+        Bridge.ui->QLWConnections2->setItemWidget(NewItem2, RadioButton2.RadioButton);
+        Bridge.QVTerminalRadioButtons2.append(RadioButton2);
+    }
+    if (Bridge.exec()== QDialog::Accepted) {
+        for (int count= 0; count< Bridge.QVTerminalRadioButtons1.count(); count++) {
+            if (Bridge.QVTerminalRadioButtons1[count].RadioButton->isChecked()) {
+                for (int count_2= 0; count_2< Bridge.QVTerminalRadioButtons2.count(); count_2++) {
+                    if (Bridge.QVTerminalRadioButtons2[count_2].RadioButton->isChecked()) {
+                        QVTerminals[count]->pQDTerminal= QVTerminals[count_2];
+                        QVTerminals[count_2]->pQDTerminal= QVTerminals[count];
+                        break;
                     }
-                    break;
                 }
+                break;
             }
         }
-    }{
-        delete pQDBridge;
     }
 }
 

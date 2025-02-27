@@ -23,6 +23,7 @@
 
 QDTerminal::QDTerminal(QWidget *parent, QString ConnectionPath) : QDialog(parent), ui(new Ui::QDTerminal) {
     ui->setupUi(this);
+    pQFMainForm= static_cast<QFMainForm*>(parent);
     this->ConnectionPath= ConnectionPath;
     DirectoryPath= "";
     ui->QLCTS->setStyleSheet("background-color: green; color: black");
@@ -63,6 +64,9 @@ QDTerminal::~QDTerminal() {
     QVTcpSocketsServer.clear();
     delete pQTcpServer;
     delete pQTcpSocketClient;
+    for (int count= 0; count< pQFMainForm->QVTerminals.count(); count++) {
+        if (pQFMainForm->QVTerminals.at(count)->pQDTerminal== this) pQFMainForm->QVTerminals.at(count)->pQDTerminal= nullptr;
+    }
     delete ui;
 }
 
